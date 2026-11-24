@@ -16,10 +16,10 @@ narrative: >
   clocks synchronized to Google's time service (guide: Google
   responsible for all three 3.3.7 parts; no Workspace feature to
   configure). Reports API events carry UTC timestamps and the
-  collector archives them unchanged. Test: manual evidence (sample
-  archived Reports record with a UTC time). The guide does not name
-  the time source; Google's public time service is documented
-  separately.
+  collector archives each record unchanged as JSON Lines. Test:
+  manual evidence (sample archived Reports record with a UTC time).
+  The guide does not name the time source; Google's public time
+  service is documented separately.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented

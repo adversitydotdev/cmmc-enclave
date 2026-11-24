@@ -23,8 +23,10 @@ narrative: >
   user email (3.3.5). Tests: Config rules
   guardduty-enabled-centralized and securityhub-enabled; an annual
   on-demand query across CloudTrail and Workspace records is the
-  evidence. Planned: the Athena tables and saved queries are not yet
-  in the M2 or M3 scope or the cost model (small, billed per query).
+  evidence. The Workspace table (workspace_audit, partitioned by
+  application and dt) is in Terraform next to the CloudTrail table.
+  Planned: the saved queries that join CloudTrail and Workspace on
+  user email are not yet written (small, billed per query).
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: planned
