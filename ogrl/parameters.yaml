@@ -9,8 +9,10 @@
 # section 7.3: no expressions or formatting inside the braces), in string
 # fields. The wizard renders the bundle by replacing every `{{ name }}` with the
 # value below in every file under org/ (no per-file target list to maintain),
-# then writes the result to the Fathom load path. The wizard must fail if any
-# `{{ ... }}` remains after rendering. Unrendered placeholders are valid OGRL strings, so the
+# and in the policy and procedure documents under ogrl/policy/ and ogrl/procedure/,
+# then recomputes resource.digest (sha-256) on every org/policy and org/procedure
+# object so it pins the rendered document, and writes the result to the Fathom
+# load path. The wizard must fail if any `{{ ... }}` remains after rendering. Unrendered placeholders are valid OGRL strings, so the
 # template lints clean as committed.
 #
 # Enum fields (the CUI impact levels) can't hold a placeholder and still lint,
