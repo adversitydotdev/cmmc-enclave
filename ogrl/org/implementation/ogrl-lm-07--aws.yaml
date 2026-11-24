@@ -24,6 +24,6 @@ narrative: >
   disciplines the clocks of managed service log writers is not
   described in the sources we use.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: subservice
+responsibility: shared
 status: implemented
 subservice_ref: party--dev.adversity.cmmc-enclave.aws

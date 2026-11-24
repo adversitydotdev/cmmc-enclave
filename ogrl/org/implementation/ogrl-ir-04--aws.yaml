@@ -18,6 +18,6 @@ narrative: >-
   evidence, AWS Health notification contacts set to the security
   mailbox.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: subservice
+responsibility: shared
 status: implemented
 subservice_ref: party--dev.adversity.cmmc-enclave.aws

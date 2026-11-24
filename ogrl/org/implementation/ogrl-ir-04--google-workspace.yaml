@@ -18,6 +18,6 @@ narrative: >-
   evidence, Assured Controls entitlement shown in the Admin console
   and the security contact set.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: subservice
+responsibility: shared
 status: implemented
 subservice_ref: party--dev.adversity.cmmc-enclave.google

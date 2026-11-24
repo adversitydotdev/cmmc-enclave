@@ -22,6 +22,6 @@ narrative: >-
   authenticate. Tested by Policy API read of the 2SV methods
   setting; masking is manual screenshot evidence.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: subservice
+responsibility: shared
 status: implemented
 subservice_ref: party--dev.adversity.cmmc-enclave.google

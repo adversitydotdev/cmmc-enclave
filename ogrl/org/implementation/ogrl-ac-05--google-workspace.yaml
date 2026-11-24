@@ -25,6 +25,6 @@ narrative: >-
   2SV-enrolled and enforced user attributes for 100% of active
   users.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: subservice
+responsibility: shared
 status: implemented
 subservice_ref: party--dev.adversity.cmmc-enclave.google

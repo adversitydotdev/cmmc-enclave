@@ -22,6 +22,6 @@ narrative: >
   evidence (screenshot) of the Gmail TLS compliance rule and of
   Google FedRAMP High authorization.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: subservice
+responsibility: shared
 status: implemented
 subservice_ref: party--dev.adversity.cmmc-enclave.google
