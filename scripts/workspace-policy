@@ -1,0 +1,173 @@
+#!/usr/bin/env python3
+"""Set the Policy-API-writable Workspace settings from docs/runbook/workspace.md through the
+Cloud Identity Policy API (issue #54).
+
+Usage:
+  scripts/workspace-policy --customer-id C01234567 --cui-ou /CUI --non-cui-ou /Non-CUI \
+      [--credentials key.json --subject admin@example.com] [--skip passkeys] [--apply]
+
+OU arguments are Directory API paths ('/CUI', resolved to ids through orgunits.get, scope
+admin.directory.orgunit) or ids ('id:03ph...', 'orgUnits/...').
+Credentials: --credentials (key path or key JSON), else GOOGLEWORKSPACE_CREDENTIALS, else
+application default credentials. Scopes requested: cloud-identity.policies and
+admin.directory.orgunit (the latter only to resolve OU paths).
+
+Default is --dry-run: prints every request it would send and sends nothing except read-only
+GETs (policy list, OU lookup) when credentials are available. Idempotent: each setting is a
+singleton per (setting type, org unit); an existing policy with the wanted values is left alone,
+one with different values is patched, a missing one is created.
+
+Settings (writable status checked against the supported-settings page, retrieved 2026-11-24):
+  drive_and_docs.general_access_default  CUI OU      Mutate: Yes   (runbook 8.2)
+  multi_party_approval.require_approvals tenant-wide Mutate: Yes   (runbook 5.1)
+  security.passkeys_restriction          both OUs    Mutate: Yes   (runbook 5.4)
+NOT scripted:
+  service_status   the page lists it (boolean per OU or group) but does not state Mutate, so a
+                   write cannot be confirmed from Google docs. Stays manual (runbook 7.1).
+  meet.*           the runbook sets no meet.* setting (only 13.7, a policy-only item with no API),
+                   so nothing is scripted. Writable types exist (video_recording, safety_*,
+                   meet_joining, meet_messaging, ...); add them here if the runbook grows a step.
+
+References (retrieved 2026-11-24):
+  [R1] Supported settings:
+       https://docs.cloud.google.com/identity/docs/concepts/supported-policy-api-settings
+  Policy resource, list and create: see scripts/workspace_common.py.
+
+API-shape UNCERTAINTIES are marked "UNVERIFIED". Test in a tenant before relying on them.
+"""
+import argparse
+import json
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+from workspace_common import (BASE, SCOPE, SCOPE_ORGUNIT, Http, customer_name,  # noqa: E402
+                              list_policies, org_unit_name, policy_body, resolve_org_unit, subset,
+                              wait_operation)
+
+# UNVERIFIED: the "settings/" prefix on setting.type (policies.list examples use it).
+T_DRIVE = "settings/drive_and_docs.general_access_default"
+T_MPA = "settings/multi_party_approval.require_approvals"
+T_PASSKEYS = "settings/security.passkeys_restriction"
+TYPE_REGEX = (r"settings/(drive_and_docs\.general_access_default"
+              r"|multi_party_approval\.require_approvals|security\.passkeys_restriction)")
+
+# Field names and enum values below are from [R1] (confirmed).
+VALUE_DRIVE = {"default_file_access": "PRIVATE_TO_OWNER"}               # console "Restricted"
+VALUE_MPA = {"multi_party_approval_state": "ENABLED"}
+VALUE_PASSKEYS = {"allowed_passkeys_type": "HARDWARE_SECURITY_KEYS_ONLY"}  # console "security keys only"
+
+SKIPPABLE = ("drive", "mpa", "passkeys")
+
+
+def plan(cui, non_cui, root, skip=()):
+    """[(label, setting type, org unit, value)]. Org units are 'orgUnits/<id>' names.
+    MPA is tenant-wide in the console; UNVERIFIED which orgUnit the API wants for it, the root
+    OU is used (the Policy API has no tenant-level query)."""
+    out = []
+    if "drive" not in skip:
+        out.append(("drive general access default (CUI OU)", T_DRIVE, cui, VALUE_DRIVE))
+    if "mpa" not in skip:
+        out.append(("multi-party approval (tenant)", T_MPA, root, VALUE_MPA))
+    if "passkeys" not in skip:
+        out.append(("passkeys: security keys only (CUI OU)", T_PASSKEYS, cui, VALUE_PASSKEYS))
+        out.append(("passkeys: security keys only (non-CUI OU)", T_PASSKEYS, non_cui, VALUE_PASSKEYS))
+    return out
+
+
+def find_existing(existing, stype, org_unit):
+    for p in existing:
+        if (p.get("setting", {}).get("type") == stype
+                and p.get("policyQuery", {}).get("orgUnit") == org_unit):
+            return p
+    return None
+
+
+def upsert(http, items, existing, customer, apply):
+    """Returns [(action, label)]; action is unchanged, create or update."""
+    log = []
+    for label, stype, ou, value in items:
+        cur = find_existing(existing, stype, ou)
+        if cur and subset(value, cur["setting"].get("value")):
+            log.append(("unchanged", label))
+            continue
+        if cur:
+            req = ("PATCH", f"{BASE}/{cur['name']}", {"updateMask": "setting.value"},
+                   {"setting": {"type": stype, "value": value}})  # UNVERIFIED updateMask path
+            act = "update"
+        else:
+            req = ("POST", f"{BASE}/policies", None, policy_body(customer, ou, stype, value))
+            act = "create"
+        if apply:
+            wait_operation(http, http.request(req[0], req[1], params=req[2], body=req[3]))
+        else:
+            print(json.dumps({"would": act, "setting": label, "method": req[0], "url": req[1],
+                              "params": req[2], "body": req[3]}, indent=2, sort_keys=True))
+        log.append((act, label))
+    return log
+
+
+def resolve_ous(http, cui, non_cui, root, apply):
+    """Paths ('/CUI') are looked up; ids pass through. In a dry run a failed lookup (the OU does
+    not exist yet, as in bootstrap --plan-only) yields a placeholder instead of an error.
+    The root OU defaults to the CUI OU's parentOrgUnitId (both OUs are top-level, see
+    terraform/modules/workspace)."""
+    def one(arg, what):
+        if not arg.startswith("/"):
+            return org_unit_name(arg), None
+        if http is None:  # no credentials: dry run only
+            return f"orgUnits/<id of {arg}>", None
+        try:
+            ou = resolve_org_unit(http, arg)
+            return org_unit_name(ou["orgUnitId"]), ou
+        except Exception as e:  # noqa: BLE001
+            if apply:
+                raise RuntimeError(f"cannot resolve {what} {arg}: {e}")
+            print(f"note: cannot resolve {what} {arg} yet ({e}); using a placeholder", file=sys.stderr)
+            return f"orgUnits/<id of {arg}>", None
+
+    c, cou = one(cui, "CUI OU")
+    n, _ = one(non_cui, "non-CUI OU")
+    if root:
+        r, _ = one(root, "root OU")
+    elif cou and cou.get("parentOrgUnitId"):
+        r = org_unit_name(cou["parentOrgUnitId"])
+    else:
+        r = "orgUnits/<id of the root OU>"
+        if apply:
+            raise RuntimeError("cannot determine the root OU; pass --root-ou")
+    return c, n, r
+
+
+def run(http, customer_id, cui_ou, non_cui_ou, root_ou, apply, skip=()):
+    customer = customer_name(customer_id)
+    cui, non_cui, root = resolve_ous(http, cui_ou, non_cui_ou, root_ou, apply)
+    existing = list_policies(http, customer, TYPE_REGEX) if http else []
+    return upsert(http, plan(cui, non_cui, root, skip), existing, customer, apply)
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--customer-id", required=True, help="Workspace customer ID, e.g. C01234567")
+    ap.add_argument("--cui-ou", required=True, help="CUI OU: path '/CUI' or id ('id:...', 'orgUnits/...')")
+    ap.add_argument("--non-cui-ou", required=True, help="non-CUI OU: path or id")
+    ap.add_argument("--root-ou", help="root OU id for tenant-wide settings (default: parent of the CUI OU)")
+    ap.add_argument("--skip", action="append", default=[], choices=SKIPPABLE,
+                    help="leave a setting alone (repeatable)")
+    ap.add_argument("--credentials", help="Service account key path or JSON "
+                    "(else GOOGLEWORKSPACE_CREDENTIALS, else application default credentials)")
+    ap.add_argument("--subject", help="Super admin to impersonate with domain-wide delegation")
+    g = ap.add_mutually_exclusive_group()
+    g.add_argument("--apply", action="store_true", help="Send changes (default is dry run)")
+    g.add_argument("--dry-run", action="store_true", help="Print what would be sent (default)")
+    a = ap.parse_args(argv)
+    creds = a.credentials or os.environ.get("GOOGLEWORKSPACE_CREDENTIALS")
+    http = Http(creds, a.subject, scopes=(SCOPE, SCOPE_ORGUNIT)) if (a.apply or creds) else None
+    log = run(http, a.customer_id, a.cui_ou, a.non_cui_ou, a.root_ou, a.apply, a.skip)
+    for act, label in log:
+        print(f"{act:9} {label}", file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
