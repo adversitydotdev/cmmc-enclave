@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ac-21
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ac-21
+external_references:
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  {{ company_name }} identifies user functions and system management
+  functions in the SSP (3.13.3 a, b) and requires them to be
+  separated (3.13.3 c): admins use separate privileged accounts or
+  roles and separate consoles from daily work, and users are
+  standard users on endpoints. Evidence is the function list in the
+  SSP and the admin role roster. Written into the System and
+  Communications Protection Policy.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

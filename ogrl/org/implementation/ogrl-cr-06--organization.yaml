@@ -10,10 +10,15 @@ external_references:
     url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
   - source: AWS FIPS 140-3 compliance
     url: "https://aws.amazon.com/compliance/fips/"
-narrative: >
+narrative: >-
   {{ company_name }} maintains the inventory of CUI cryptographic
   uses with module and CMVP certificate number, reviewed annually
-  against the CMVP list. A policy template follows in #20.
+  against the CMVP list. A policy template follows in #20. It also
+  owns the rule that CUI stays out of application logs and SSM
+  Session Manager sessions on CUI hosts, which have no FIPS endpoint
+  in commercial regions, checked by a quarterly sample of log
+  content (3.13.11, 3.3.1). Evidence is the inventory with
+  certificate numbers and the quarterly sample record.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: provider
 status: planned

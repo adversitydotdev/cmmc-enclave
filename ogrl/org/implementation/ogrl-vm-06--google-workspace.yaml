@@ -24,7 +24,10 @@ narrative: >-
   in the Admin console. Context-aware access and mobile settings
   have no Policy API read; evidence is access level screenshots and
   the device inventory export. Google management only works if the
-  company enrolls its devices.
+  company enrolls its devices. Mobile and desktop connections
+  (3.1.18 c) are logged: Login audit events record device and
+  sign-in details, and the Reports API collector archives them to
+  the AWS log archive for the weekly review.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

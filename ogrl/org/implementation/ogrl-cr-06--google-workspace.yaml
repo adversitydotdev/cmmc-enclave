@@ -8,12 +8,18 @@ control_ref: control--ogrl-cr-06
 external_references:
   - source: "Google Workspace CMMC implementation guide (2025)"
     url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=108"
-narrative: >
+narrative: >-
   Google carries FIPS-validated cryptography for Workspace (Google
   guide: native), covered by its FedRAMP High authorization. We
   record the module and CMVP certificate numbers from Google's
   documentation in the crypto inventory; certificate numbers not
   verified from a public source here. Test: manual evidence.
+  Certificate number: Google's default encryption documentation
+  states a FIPS 140-2 validated module in production under CMVP
+  certificate 4407
+  (https://docs.cloud.google.com/docs/security/encryption/default-encryption);
+  it does not name the module, so confirm on the CMVP site before
+  the SSP records it.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented

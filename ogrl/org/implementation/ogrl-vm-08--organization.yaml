@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-vm-08
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-vm-08
+external_references:
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  {{ company_name }} documents which mobile code is allowed
+  (approved browser extensions, signed macros, reviewed Marketplace
+  and Apps Script apps), blocks the rest, approves exceptions in
+  writing, monitors use through Workspace audit logs and endpoint
+  EDR telemetry, and reviews the restrictions annually (3.13.13).
+  Evidence is the restriction list and the annual review record.
+  Written into the System and Communications Protection Policy.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

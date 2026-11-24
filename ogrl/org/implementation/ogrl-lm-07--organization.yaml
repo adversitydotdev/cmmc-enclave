@@ -1,0 +1,22 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-lm-07
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-lm-07
+external_references:
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  {{ company_name }} specifies the authoritative time sources in the
+  SSP (3.3.7 b): the Amazon Time Sync Service for AWS compute,
+  Google's time service for Workspace, and OS network time for
+  endpoints. Audit records use UTC timestamps from the systems' own
+  clocks (3.3.7 a). Instances must not be pointed at other NTP
+  servers, and the baseline checks synchronization (3.3.7 c).
+  Evidence is the SSP statement and a sample time-sync output.
+  Written into the Audit and Accountability Policy.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

@@ -8,7 +8,7 @@ control_ref: control--ogrl-lm-01
 external_references:
   - source: "NIST SP 800-171 Rev 2, 3.3.1 to 3.3.3"
     url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
-narrative: >
+narrative: >-
   {{ company_name }} owns the logging scope: the written list of
   auditable events (authentication, privilege changes, privileged
   function execution, configuration changes, CUI access), the 365
@@ -16,7 +16,10 @@ narrative: >
   and after significant changes or incidents, which updates the list
   (3.3.3). Evidence is the logged-events standard, the dated review
   record, and the resulting Terraform or runbook change. Policy
-  templates come with issue #20.
+  templates come with issue #20. The logged-event standard also
+  forbids CUI in log content (application logs and Session Manager
+  transcripts), because CloudWatch Logs and SSM have no FIPS
+  endpoint (3.13.11); the quarterly sample covers it.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: provider
 status: planned

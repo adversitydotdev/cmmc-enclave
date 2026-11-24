@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+"""Objective-level coverage worksheet for NIST SP 800-171A (issue #41).
+
+Usage: scripts/objective-coverage [--library DIR] [--bundle DIR] [--out CSV]
+
+For each Rev 2 requirement in the baseline and each assessment objective,
+lists the implementations (reached through library control->requirement
+mappings) and the policies/procedures linked to those controls. Writes
+docs/srm/objectives.csv (deterministic: sorted, no timestamps).
+
+Limits: the script cannot judge semantics. `needs_review` is "yes" only when
+no implementation and no policy/procedure is linked at all. Each implementation
+is shown as <component>/<control>:<responsibility>/<status>#<n>, where n is the
+count of significant words shared by the objective statement and the
+implementation narrative (a rough hint for the human reviewer, not a verdict).
+"""
+import argparse
+import csv
+import os
+import re
+import sys
+from pathlib import Path
+
+import yaml
+
+REPO = Path(__file__).resolve().parent.parent
+BASELINE = "baseline--ogrl-cmmc-l2"
+REQ_PFX = "requirement--nist-sp-800-171-r2-"
+STOP = set("""and are for from that the their this with within which system systems
+organizational organization information other used such including been have not
+only these those will""".split())
+
+
+def load(p):
+    with open(p, encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+
+def words(s):
+    return {w for w in re.findall(r"[a-z0-9]+", str(s).lower())
+            if len(w) > 3 and w not in STOP}
+
+
+def short(ref):
+    return ref.split("--", 1)[1].replace("dev.adversity.cmmc-enclave.", "")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--library", default=os.environ.get("OGRL_LIBRARY"))
+    ap.add_argument("--bundle", default=str(REPO / "ogrl" / "org"))
+    ap.add_argument("--out", default=str(REPO / "docs" / "srm" / "objectives.csv"))
+    a = ap.parse_args()
+    if not a.library or not Path(a.library).is_dir():
+        sys.exit("objective-coverage: set $OGRL_LIBRARY or use --library")
+    lib, bundle = Path(a.library), Path(a.bundle)
+
+    base = load(lib / "baseline" / "ogrl-cmmc-l2.yaml")
+    if base["id"] != BASELINE:
+        sys.exit(f"unexpected baseline {base['id']}")
+    reqs = sorted(base["requirement_refs"],
+                  key=lambda r: tuple(int(x) for x in r[len(REQ_PFX):].split("-")))
+
+    ctrls_for = {r: set() for r in reqs}
+    for p in sorted((lib / "mapping").glob("ogrl-*_to_nist-sp-800-171-r2-*.yaml")):
+        m = load(p)
+        if m["target_ref"] in ctrls_for:
+            ctrls_for[m["target_ref"]].add(m["source_ref"])
+
+    impls = {}  # control -> [(component, responsibility, status, narrative words)]
+    for p in sorted((bundle / "implementation").glob("*.yaml")):
+        i = load(p)
+        impls.setdefault(i["control_ref"], []).append(
+            (short(i["component_ref"]), i["responsibility"], i["status"],
+             words(i.get("narrative", ""))))
+    docs = {}  # control -> [policy or procedure names]
+    for sub in ("policy", "procedure"):
+        for p in sorted((bundle / sub).glob("*.yaml")):
+            d = load(p)
+            label = p.stem if sub == "policy" else "procedure:" + p.stem
+            for c in d.get("control_refs", []):
+                docs.setdefault(c, []).append(label)
+
+    rows = []
+    for r in reqs:
+        rid = r[len("requirement--"):].replace("nist-sp-800-171-r2-", "")
+        o = load(lib / "requirement" / "nist-sp-800-171-r2" / (rid + ".yaml"))
+        for ob in o.get("objectives", []):
+            ms = sorted({m["method"] for m in ob.get("methods", [])})
+            sw = words(ob.get("statement", ""))
+            cov, pol = [], set()
+            for c in sorted(ctrls_for[r]):
+                cn = c.replace("control--", "")
+                pol.update(docs.get(c, []))
+                for comp, resp, st, nw in impls.get(c, []):
+                    cov.append((comp, cn, resp, st, len(sw & nw)))
+            cov.sort(key=lambda x: (-x[4], x[0], x[1]))
+            covs = "; ".join(f"{c}/{cn}:{rs}/{st}#{n}" for c, cn, rs, st, n in cov)
+            rows.append([o["display_id"], ob["id"], " ".join(ms), covs,
+                         "; ".join(sorted(pol)),
+                         "yes" if not cov and not pol else "no"])
+    out = Path(a.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f, lineterminator="\n")
+        w.writerow(["requirement", "objective", "methods", "covering_implementations",
+                    "policies", "needs_review"])
+        w.writerows(rows)
+    print(f"{len(rows)} objectives, {sum(r[5] == 'yes' for r in rows)} needs_review -> {out}")
+
+
+if __name__ == "__main__":
+    main()

@@ -16,7 +16,10 @@ narrative: >-
   and reviews it at least annually and after significant system
   change or assessment findings. Test: manual evidence, the signed
   SSP version with approval date and review history. Policy template
-  arrives with issue #20.
+  arrives with issue #20. The SSP also lists the requirements and
+  components marked not applicable, with the scoping reason (for
+  example CUI never reaches the component) and the signer's approval
+  (3.12.4 d).
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: provider
 status: planned

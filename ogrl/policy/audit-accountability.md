@@ -29,7 +29,7 @@ All systems that process, store, or transmit CUI, including AWS, Google Workspac
 7. Alerts for audit logging failure (a source stops sending, an agent fails, storage fills, logging is disabled) go to the security on-call team and logging platform owner within 1 hour. The response is: open a ticket, restore collection, and assess the gap. The alert path is tested at least annually. (3.3.4)
 8. Only named logging administrators may manage audit logging, and only security and designated on-call engineers may read logs. Both lists are reviewed with the quarterly access review. Tampering alerts go to the security on-call team. (3.3.8, 3.3.9)
 9. Alert triage, weekly review, and incident handling use one ticket and hand off to each other. Query and report capability across AWS and Workspace logs is tested at least annually. (3.3.5, 3.3.6)
-10. System clocks sync to an authoritative UTC-traceable source so timestamps are comparable. (3.3.7)
+10. System clocks sync to an authoritative UTC-traceable source so timestamps are comparable: the Amazon Time Sync Service for AWS compute, Google's time service for Workspace, and OS network time for endpoints. (3.3.7)
 
 ## Roles
 
