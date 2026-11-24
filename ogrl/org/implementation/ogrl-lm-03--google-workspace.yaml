@@ -22,7 +22,11 @@ narrative: >
   Object Lock in AWS (see the AWS row), so a Workspace admin cannot
   alter the retained record. Test: manual evidence (admin role
   assignment export), because admin role privileges are not a
-  supported Policy API setting we rely on.
+  supported Policy API setting we rely on. The audit viewer role is
+  a googleworkspace_role resource in the Terraform module
+  terraform/modules/workspace, created once its Audit and
+  investigation View privilege name is set from the
+  googleworkspace_privileges data source.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

@@ -24,7 +24,11 @@ narrative: >-
   readable through the Policy API, so evidence is the Reports API
   admin audit log (user suspend events) matched to HR termination
   records. Closes the 3.9.2 account-action half only; return of
-  credentials and CUI is Organization.
+  credentials and CUI is Organization. The CUI and non-CUI
+  organizational units are the googleworkspace_org_unit resources in
+  the Terraform module terraform/modules/workspace, and accounts
+  created through its googleworkspace_user resource land in the
+  right unit.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

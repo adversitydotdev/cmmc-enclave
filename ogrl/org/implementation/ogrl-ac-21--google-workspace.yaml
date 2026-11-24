@@ -17,7 +17,9 @@ narrative: >
   (security key 2SV), and admins use separate accounts from daily
   mailboxes. Google is responsible for the service. Tested by a
   Directory API role assignment read (roles are not in the Policy
-  API) and manual evidence of the admin list.
+  API) and manual evidence of the admin list. The least-privilege
+  custom roles are googleworkspace_role resources in the Terraform
+  module terraform/modules/workspace.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

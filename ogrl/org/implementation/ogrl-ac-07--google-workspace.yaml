@@ -21,7 +21,10 @@ narrative: >-
   records privileged actions (3.1.7) and Alert Center rules flag
   super admin role grants. Tested by exporting admin role
   assignments and the admin audit log through the Reports API; no
-  Policy API read exists for role assignment.
+  Policy API read exists for role assignment. The custom admin roles
+  are googleworkspace_role resources, and their assignments
+  googleworkspace_role_assignment resources, in the Terraform module
+  terraform/modules/workspace.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented
