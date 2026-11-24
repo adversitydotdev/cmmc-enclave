@@ -12,6 +12,10 @@
 # the Fathom load path. Unrendered placeholders are valid OGRL strings, so the
 # template lints clean as committed.
 #
+# Enum fields (the CUI impact levels) can't hold a placeholder and still lint,
+# so those parameters use `set_value`: the wizard writes the chosen value at
+# each JSON pointer. The committed bundle carries the defaults.
+#
 # Control parameters (for example control--ogrl-ps-01 access_removal_sla) are a
 # separate mechanism: baseline.parameter_bindings or
 # implementation.parameter_values. None are set here; issues #9 to #16 add them.
@@ -98,6 +102,34 @@ parameters:
       - org/party/ssp-signer.yaml#/name
       - org/system/enclave.yaml#/boundary
 
+  cui_confidentiality:
+    label: CUI confidentiality impact (FIPS 199)
+    type: enum
+    values: [moderate, high]
+    default: moderate
+    required: true
+    help: 32 CFR 2002 requires CUI to be protected at no less than moderate confidentiality.
+    set_value:
+      - org/system/enclave.yaml#/information_types/0/confidentiality
+  cui_integrity:
+    label: CUI integrity impact (FIPS 199)
+    type: enum
+    values: [low, moderate, high]
+    default: moderate
+    required: true
+    help: Not set by CUI rules. Rate how much harm unauthorized changes to this CUI would cause.
+    set_value:
+      - org/system/enclave.yaml#/information_types/0/integrity
+  cui_availability:
+    label: CUI availability impact (FIPS 199)
+    type: enum
+    values: [low, moderate, high]
+    default: low
+    required: true
+    help: Not set by CUI rules. Rate how much harm losing access to this CUI would cause.
+    set_value:
+      - org/system/enclave.yaml#/information_types/0/availability
+
 # Facts the bundle carries that are not wizard inputs:
 fixed:
   fedramp_authorizations:
@@ -106,6 +138,7 @@ fixed:
       last_change 2026-05-19). FedRAMP authorizations do not expire, but
       RFC 0001 section 7.20 requires `authorization.expires`, so the bundle
       sets it to a review-by date (2027-11-23), not a FedRAMP expiry.
+      Tracked in adversitydotdev/ogrl-rfcs#5.
       Re-verify at each SSP issue.
     entries:
       - {party: aws, identifier: AGENCYAMAZONEW, product: AWS US East/West, level: Moderate, authorized: 2013-05-01}
