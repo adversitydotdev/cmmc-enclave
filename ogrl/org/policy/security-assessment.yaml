@@ -14,7 +14,7 @@ owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 resource:
   digest:
     algorithm: sha-256
-    value: "919dc8f38d3f91f1b20b6ee8313b023eb1b8473b41959d47cd1a1b9ee606cd3f"
+    value: "8b9ed3cd3c4771b36825a0055effbde7da6fdda6204ec65fe60a273060389cf2"
   media_type: text/markdown
   uri: ../policy/security-assessment.md
 review_interval: annual
