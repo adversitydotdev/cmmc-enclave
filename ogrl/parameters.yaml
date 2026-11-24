@@ -1,0 +1,113 @@
+# Wizard parameters for the enclave OGRL bundle (ogrl/org).
+#
+# Not an OGRL object: it sits beside ogrl/org, not inside it, so bundle
+# readers never scan it.
+#
+# Mechanism: RFC 0001 gives system, program, party, and component objects no
+# parameter field (parameters exist only on controls and baselines). The
+# bundle therefore carries the RFC's placeholder syntax, `{{ name }}` (RFC 0001
+# section 7.3: no expressions or formatting inside the braces), in string
+# fields. The wizard renders the bundle by replacing each `{{ name }}` with the
+# value below in every file listed under `targets`, then writes the result to
+# the Fathom load path. Unrendered placeholders are valid OGRL strings, so the
+# template lints clean as committed.
+#
+# Control parameters (for example control--ogrl-ps-01 access_removal_sla) are a
+# separate mechanism: baseline.parameter_bindings or
+# implementation.parameter_values. None are set here; issues #9 to #16 add them.
+
+parameters:
+  company_name:
+    label: Company legal name
+    type: string
+    required: true
+    example: Acme Defense LLC
+    targets:
+      - org/party/company.yaml#/name
+      - org/system/enclave.yaml#/name
+      - org/system/enclave.yaml#/function
+      - org/system/enclave.yaml#/information_types/0/description
+      - org/program/cmmc-l2.yaml#/name
+      - org/implementation/example-aws-ps-01.yaml#/narrative
+      - org/component/organization.yaml#/description
+  domain:
+    label: Primary Google Workspace domain
+    type: string
+    required: true
+    example: acme-defense.com
+    targets:
+      - org/system/enclave.yaml#/boundary
+      - org/component/google-workspace.yaml#/description
+  tier:
+    label: Impact tier
+    type: enum
+    values: [standard, itar]
+    default: standard
+    required: true
+    targets:
+      - org/system/enclave.yaml#/function
+      - org/component/aws.yaml#/description
+    post_render:
+      standard: >-
+        Delete the second `subservice` entry in
+        org/system/enclave.yaml#/parties (AWS GovCloud, identifier
+        F1603047866).
+      itar: >-
+        Keep the AWS GovCloud entry. Keep or delete the commercial entry
+        (identifier AGENCYAMAZONEW) to match whether the grc account
+        (commercial, D7) counts as in the system boundary; the current
+        decision keeps both.
+  user_count:
+    label: Number of enclave users
+    type: integer
+    required: true
+    example: 25
+    targets:
+      - org/system/enclave.yaml#/function
+      - org/component/endpoints.yaml#/description
+  cui_categories:
+    label: CUI categories handled (comma separated CUI Registry category names)
+    type: string
+    required: true
+    example: CTI, Export Controlled
+    targets:
+      - org/system/enclave.yaml#/function
+      - org/system/enclave.yaml#/information_types/0/name
+  sites:
+    label: Offices and alternate work sites (comma separated; "remote only" if none)
+    type: string
+    required: true
+    example: Huntsville AL office, remote
+    targets:
+      - org/system/enclave.yaml#/boundary
+      - org/component/organization.yaml#/description
+  ssp_signer_name:
+    label: SSP signer, full name
+    type: string
+    required: true
+    example: Jane Doe
+    targets:
+      - org/party/ssp-signer.yaml#/name
+      - org/system/enclave.yaml#/boundary
+  ssp_signer_title:
+    label: SSP signer, title
+    type: string
+    required: true
+    example: Chief Information Security Officer
+    targets:
+      - org/party/ssp-signer.yaml#/name
+      - org/system/enclave.yaml#/boundary
+
+# Facts the bundle carries that are not wizard inputs:
+fixed:
+  fedramp_authorizations:
+    note: >-
+      Source: FedRAMP Marketplace data set (GSA/marketplace-fedramp-gov-data,
+      last_change 2026-05-19). FedRAMP authorizations do not expire, but
+      RFC 0001 section 7.20 requires `authorization.expires`, so the bundle
+      sets it to a review-by date (2027-11-23), not a FedRAMP expiry.
+      Re-verify at each SSP issue.
+    entries:
+      - {party: aws, identifier: AGENCYAMAZONEW, product: AWS US East/West, level: Moderate, authorized: 2013-05-01}
+      - {party: aws, identifier: F1603047866, product: AWS GovCloud, level: High, authorized: 2016-06-21}
+      - {party: google, identifier: F1206081364, product: Google Workspace, level: High, authorized: 2021-10-28}

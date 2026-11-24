@@ -1,0 +1,20 @@
+# EXAMPLE ONLY: proves the implementation shape. The 110 real
+# implementations are authored in issues #9 to #16.
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.example-aws-ps-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ps-01
+narrative: >
+  EXAMPLE. AWS operates and controls physical access to the data
+  centers hosting the enclave, validated through the AWS SOC 2
+  report and its FedRAMP authorization. {{ company_name }} retains
+  physical access control for its own offices and sites.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws
+tags:
+  - example

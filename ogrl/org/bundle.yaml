@@ -1,0 +1,7 @@
+type: bundle
+id: bundle--dev.adversity.cmmc-enclave
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: "CMMC Level 2 Enclave (AWS and Google Workspace)"
+version: "0.1.0"

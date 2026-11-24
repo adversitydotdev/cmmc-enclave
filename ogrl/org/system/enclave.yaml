@@ -1,0 +1,89 @@
+type: system
+id: system--dev.adversity.cmmc-enclave.enclave
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: "{{ company_name }} CUI enclave"
+boundary: >
+  The AWS organization (management, log archive, security tooling,
+  enclave workload, and grc accounts; commercial regions for the
+  standard tier, AWS GovCloud (US) for the ITAR tier), the Google
+  Workspace tenant {{ domain }} and its CUI organizational unit,
+  Fathom in the grc account, and the endpoints, sites ({{ sites }}),
+  and people that access them. SSP signer: {{ ssp_signer_name }},
+  {{ ssp_signer_title }}.
+component_refs:
+  - component--dev.adversity.cmmc-enclave.aws
+  - component--dev.adversity.cmmc-enclave.google-workspace
+  - component--dev.adversity.cmmc-enclave.fathom
+  - component--dev.adversity.cmmc-enclave.endpoints
+  - component--dev.adversity.cmmc-enclave.organization
+external_references:
+  - source: >-
+      FedRAMP Marketplace, AWS US East/West (Moderate, JAB, package
+      AGENCYAMAZONEW)
+    url: "https://marketplace.fedramp.gov/products/AGENCYAMAZONEW"
+  - source: >-
+      FedRAMP Marketplace, AWS GovCloud (High, JAB, package
+      F1603047866)
+    url: "https://marketplace.fedramp.gov/products/F1603047866"
+  - source: >-
+      FedRAMP Marketplace, Google Workspace (High, JAB, package
+      F1206081364)
+    url: "https://marketplace.fedramp.gov/products/F1206081364"
+  - source: >-
+      AWS DFARS compliance (standard regions Moderate, GovCloud
+      High)
+    url: "https://aws.amazon.com/compliance/dfars/"
+  - source: Google Workspace FedRAMP configuration guide
+    url: "https://knowledge.workspace.google.com/admin/compliance/google-workspace-fedramp-configuration-guide"
+function: >
+  Processes, stores, and transmits Controlled Unclassified
+  Information ({{ cui_categories }}) for {{ company_name }} under
+  its DoD contracts, for about {{ user_count }} users. Impact tier:
+  {{ tier }}.
+information_types:
+  - name: >-
+      Controlled Unclassified Information ({{ cui_categories }})
+    availability: low
+    component_refs:
+      - component--dev.adversity.cmmc-enclave.aws
+      - component--dev.adversity.cmmc-enclave.google-workspace
+      - component--dev.adversity.cmmc-enclave.fathom
+      - component--dev.adversity.cmmc-enclave.endpoints
+    confidentiality: moderate
+    description: >
+      CUI that {{ company_name }} receives or creates under its DoD
+      contracts and handles inside the enclave.
+    integrity: moderate
+parties:
+  - party_ref: party--dev.adversity.cmmc-enclave.company
+    function: System owner and operator
+    role: operator
+  - party_ref: party--dev.adversity.cmmc-enclave.aws
+    authorization:
+      authorized: "2013-05-01"
+      expires: "2027-11-23"
+      identifier: AGENCYAMAZONEW
+    function: >-
+      Cloud infrastructure, commercial regions (AWS US East/West,
+      standard tier)
+    role: subservice
+  - party_ref: party--dev.adversity.cmmc-enclave.aws
+    authorization:
+      authorized: "2016-06-21"
+      expires: "2027-11-23"
+      identifier: F1603047866
+    function: >-
+      Cloud infrastructure, AWS GovCloud (US) (ITAR tier only;
+      remove for standard tier)
+    role: subservice
+  - party_ref: party--dev.adversity.cmmc-enclave.google
+    authorization:
+      authorized: "2021-10-28"
+      expires: "2027-11-23"
+      identifier: F1206081364
+    function: >-
+      Identity provider, email, file storage, and collaboration
+      (Google Workspace)
+    role: subservice

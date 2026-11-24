@@ -1,0 +1,13 @@
+type: component
+id: component--dev.adversity.cmmc-enclave.aws
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: AWS organization
+description: >
+  AWS Organizations tree for the enclave: management, log archive,
+  security tooling, enclave workload, and the dedicated grc account.
+  Commercial regions for the standard tier; AWS GovCloud (US) for
+  the ITAR tier ({{ tier }}).
+kind: infrastructure
+party_ref: party--dev.adversity.cmmc-enclave.aws

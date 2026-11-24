@@ -1,0 +1,8 @@
+type: program
+id: program--dev.adversity.cmmc-enclave.cmmc-l2
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: "{{ company_name }} CMMC Level 2"
+baseline_ref: baseline--ogrl-cmmc-l2
+system_ref: system--dev.adversity.cmmc-enclave.enclave
