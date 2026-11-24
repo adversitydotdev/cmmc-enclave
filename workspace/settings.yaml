@@ -1,0 +1,872 @@
+summary:
+  total_settings: 56
+  requirements_covered: 47
+  by_method:
+    terraform: 10
+    policy_api_write: 4
+    manual: 42
+  by_check:
+    policy_api_read: 26
+    reports_api: 2
+    admin_sdk: 11
+    manual_evidence: 17
+  sources:
+    guide: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf
+    policy_api: https://docs.cloud.google.com/identity/docs/concepts/supported-policy-api-settings
+    provider: 'macadmins/googleworkspace 1.5.3 (resources: user, group, group_settings, group_member(s),
+      org_unit, role, role_assignment, schema, domain, domain_alias, chrome_policy*, gmail_send_as_alias)'
+  notes: guide_page is the page where the requirement section starts (body page numbers; the guide's table
+    of contents is off by one or two for some). Values tagged OGRL come from ogrl/org/implementation narratives;
+    the guide mostly names features, not values. Editions not verified per feature; D1 baseline is Enterprise
+    Plus. Retrieved 2026-11-23.
+
+settings:
+- id: user-directory-accounts
+  requirement_refs:
+  - 3.1.1
+  - 3.1.6
+  - 3.5.1
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=14
+  admin_console_path: Directory > Users > Add new user
+  recommended_value: One named account per person in the right OU; separate non-privileged daily account
+    for every admin (3.1.6, guide p26)
+  method: terraform
+  terraform_resource: googleworkspace_user
+  policy_api_setting: null
+  check: admin_sdk
+  ou_scope: all
+  edition_required: null
+  notes: Directory API users.list is the check (suspended, isAdmin, orgUnitPath, lastLoginTime). Guide
+    also lists GCDS and Directory Sync (LDAP); not used here (Google is the IdP, D2). Policy API has no
+    user-lifecycle setting.
+- id: org-units-cui
+  requirement_refs:
+  - 3.1.1
+  - 3.4.6
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=14
+  admin_console_path: Directory > Organizational units
+  recommended_value: OU tree with a CUI OU and a non-CUI OU (SCOPE section 5); users placed by OU
+  method: terraform
+  terraform_resource: googleworkspace_org_unit
+  policy_api_setting: null
+  check: admin_sdk
+  ou_scope: n/a
+  edition_required: null
+  notes: 'Guide does not name OUs; OGRL/SCOPE do. Every OU-scoped check below depends on this. Check:
+    Directory API orgunits.list.'
+- id: saml-app-aws-identity-center
+  requirement_refs:
+  - 3.1.1
+  - 3.5.2
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=61
+  admin_console_path: Apps > Web and mobile apps > Add app > Add custom SAML app (Google as IdP to AWS
+    IAM Identity Center)
+  recommended_value: SAML app on for the CUI and non-CUI OUs, signed assertions, ACS URL and entity ID
+    from Identity Center
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: all
+  edition_required: null
+  notes: 'Neither provider fork nor any Google API creates a custom SAML app in IdP mode (SCOPE section
+    5). Guide p61 SSO profiles are the opposite direction (Google as SP to a third-party IdP) and do not
+    apply when Google is the IdP. Evidence: screenshots of app config and per-OU service state, plus the
+    AWS Identity Center identity-source page.'
+- id: api-controls-third-party-apps
+  requirement_refs:
+  - 3.1.1
+  - 3.1.3
+  - 3.1.20
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=37
+  admin_console_path: Security > Access and data control > API controls > Settings > Unconfigured third-party
+    apps
+  recommended_value: 'Don''t allow users to access any third-party apps (guide offers only: basic Sign
+    in with Google scopes, or none); allow-list reviewed apps explicitly'
+  method: manual
+  terraform_resource: null
+  policy_api_setting: api_controls.unconfigured_third_party_apps
+  check: policy_api_read
+  ou_scope: all
+  edition_required: null
+  notes: 'Read-only in Policy API. Related readable: api_controls.internal_apps, api_controls.app_approval_requests,
+    api_controls.custom_user_message, api_controls.google_services. Domain-wide delegation lives on the
+    same page (see reports-api-collection).'
+- id: reseller-access-removal
+  requirement_refs:
+  - 3.1.1
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=17
+  admin_console_path: Billing > Subscriptions (reseller access)
+  recommended_value: No reseller admin access after onboarding (only if the tenant was resold)
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: n/a
+  edition_required: null
+  notes: Guide additional consideration 3, p17. One-time step; no API.
+- id: device-inventory-endpoint-mgmt
+  requirement_refs:
+  - 3.1.1
+  - 3.4.1
+  - 3.5.1
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=16
+  admin_console_path: Devices > Overview (Mobile devices, Endpoints, Company-owned)
+  recommended_value: Endpoint Verification / advanced management on for the CUI OU; quarterly inventory
+    export kept as evidence
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: admin_sdk
+  ou_scope: cui
+  edition_required: null
+  notes: 'Enrolment is per-device and cannot be automated from here. Read: Directory API mobiledevices/chromeosdevices
+    and Cloud Identity Devices API. Guide cites CIS Benchmarks for 3.4.1 (p49). Google does not inventory
+    the company''s own hardware.'
+- id: admin-roles-custom
+  requirement_refs:
+  - 3.1.2
+  - 3.1.4
+  - 3.1.5
+  - 3.1.7
+  - 3.4.5
+  - 3.13.3
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=18
+  admin_console_path: Account > Admin roles > Create new role
+  recommended_value: Task-scoped custom roles (user admin, group admin, security reader, audit); no daily
+    work from super admin
+  method: terraform
+  terraform_resource: googleworkspace_role (+ data.googleworkspace_privileges)
+  policy_api_setting: null
+  check: admin_sdk
+  ou_scope: n/a
+  edition_required: null
+  notes: Directory API roles.list. Not a Policy API setting. Limit 750 custom roles (p19). 3.1.7 audit
+    half is covered by the audit rows.
+- id: admin-role-assignments
+  requirement_refs:
+  - 3.1.4
+  - 3.1.5
+  - 3.1.7
+  - 3.4.5
+  - 3.13.3
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=19
+  admin_console_path: Account > Admin roles > (role) > Assign admins / Assign role to group
+  recommended_value: Role assigned to groups where possible, minimal named list; CUSTOMER or ORG_UNIT
+    scope per role
+  method: terraform
+  terraform_resource: googleworkspace_role_assignment
+  policy_api_setting: null
+  check: admin_sdk
+  ou_scope: n/a
+  edition_required: null
+  notes: 'Directory API roleAssignments.list. Provider note: ORG_UNIT scope only works if all privileges
+    are OU compatible. Guide p26 points to View role assignments and privileges for the review.'
+- id: super-admin-minimum
+  requirement_refs:
+  - 3.1.5
+  - 3.1.6
+  - 3.4.5
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=25
+  admin_console_path: 'Directory > Users (filter: Admin status); Account > Admin roles > Super Admin'
+  recommended_value: Two to a few named super admins, security keys, each also holds a separate daily
+    account
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: admin_sdk
+  ou_scope: n/a
+  edition_required: null
+  notes: Count of isAdmin users via Directory API users.list. Terraform could set is_admin but that hides
+    the privilege in code; keep manual. Multi-party approval needs 2+ super admins (p51).
+- id: dlp-rules-cui
+  requirement_refs:
+  - 3.1.3
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=19
+  admin_console_path: Security > Access and data control > Data protection > Manage rules (Drive, Chat,
+    Gmail)
+  recommended_value: Rules for CUI markings and detectors on the CUI OU; action block or warn on external
+    share; optionally combine with Context-Aware Access
+  method: policy_api_write
+  terraform_resource: null
+  policy_api_setting: rule.dlp
+  check: policy_api_read
+  ou_scope: cui
+  edition_required: null
+  notes: Policy API can write rule.dlp and detector.regular_expression / detector.word_list / detector.url_list.
+    DLP for Gmail is beta in the guide (p19-21). Edition not stated in the guide; verify per feature.
+- id: chrome-dlp
+  requirement_refs:
+  - 3.1.3
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=20
+  admin_console_path: Devices > Chrome > Settings > Users and browsers (data controls)
+  recommended_value: Optional. Chrome data controls for managed browsers on the CUI OU
+  method: terraform
+  terraform_resource: googleworkspace_chrome_policy
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: cui
+  edition_required: null
+  notes: Guide lists Chrome DLP for 3.1.3 but OGRL does not rely on it (Chrome telemetry out of scope,
+    ogrl-lm-06). Chrome policy API is not the Policy API.
+- id: drive-external-sharing
+  requirement_refs:
+  - 3.1.3
+  - 3.1.22
+  guide_page: null
+  admin_console_path: Apps > Google Workspace > Drive and Docs > Sharing settings > Sharing options
+  recommended_value: External sharing off or allow-listed for the CUI OU; anyone-with-link off
+  method: manual
+  terraform_resource: null
+  policy_api_setting: drive_and_docs.external_sharing
+  check: policy_api_read
+  ou_scope: cui
+  edition_required: null
+  notes: Guide does not name this setting; OGRL ogrl-ac-03, -12, -18, -19 do. Read-only in Policy API.
+- id: drive-general-access-default
+  requirement_refs:
+  - 3.1.3
+  - 3.1.22
+  guide_page: null
+  admin_console_path: Apps > Google Workspace > Drive and Docs > Sharing settings > General access default
+  recommended_value: Restricted (not Anyone with the link)
+  method: policy_api_write
+  terraform_resource: null
+  policy_api_setting: drive_and_docs.general_access_default
+  check: policy_api_read
+  ou_scope: cui
+  edition_required: null
+  notes: 'Writable via Policy API (Mutate: Yes). Not named by the guide; from OGRL ogrl-ac-19.'
+- id: failed-login-activity-rule
+  requirement_refs:
+  - 3.1.8
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=27
+  admin_console_path: Rules > Create rule > Activity (data source User log events, event Failed login)
+  recommended_value: Failed login count > 5 per 24 hours, action Suspend user, alert High, notify super
+    admins (guide example values, p28)
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: all
+  edition_required: null
+  notes: Custom activity rules are not exposed in the Policy API (only rule.system_defined_alerts, read-only).
+    Fired alerts are visible through the Alert Center API and Reports API login events. Guide p28 does
+    give a concrete lockout rule.
+- id: web-session-duration
+  requirement_refs:
+  - 3.1.11
+  - 3.13.9
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=29
+  admin_console_path: Security > Access and data control > Google session control > Web session duration
+  recommended_value: 12 hours or less for CUI OU (OGRL baseline); guide gives no value, default 14 days
+    (p79)
+  method: manual
+  terraform_resource: null
+  policy_api_setting: security.session_controls
+  check: policy_api_read
+  ou_scope: cui
+  edition_required: null
+  notes: Read-only in Policy API; field webSessionDuration in seconds (43200). Admin console session is
+    fixed at 1 hour; native mobile apps and OAuth apps ignore it (p30). Multi-party approval applies to
+    this setting.
+- id: reports-api-collection
+  requirement_refs:
+  - 3.1.12
+  - 3.3.1
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=30
+  admin_console_path: GCP console > APIs > enable Admin SDK API; Security > Access and data control >
+    API controls > Domain-wide delegation
+  recommended_value: Admin SDK API on, service account with domain-wide delegation limited to admin.reports.audit.readonly
+    and admin.reports.usage.readonly; collector pulls every activity application
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: reports_api
+  ou_scope: n/a
+  edition_required: null
+  notes: 'The google_project_service resource in hashicorp/google could enable the API (not the macadmins
+    provider); delegation is console only. Guide p41: pull data into a central repository if retention
+    needs exceed Workspace limits.'
+- id: admin-sdk-api-access
+  requirement_refs:
+  - 3.1.15
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=32
+  admin_console_path: Account > Admin roles (API privileges follow the console privileges); GCP console
+    enable Admin SDK
+  recommended_value: Remote API privileges exist only through admin roles; no extra API roles
+  method: terraform
+  terraform_resource: googleworkspace_role
+  policy_api_setting: null
+  check: admin_sdk
+  ou_scope: n/a
+  edition_required: null
+  notes: 'Guide p33: console privileges grant the matching Admin API privileges, so this is admin-roles-custom
+    restated. Service account list from the DWD page is manual evidence.'
+- id: device-activation-approval
+  requirement_refs:
+  - 3.1.18
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=33
+  admin_console_path: Devices > Mobile and endpoints > Settings > Universal > Security > Device approvals
+  recommended_value: Require admin approval checked; notification email set
+  method: manual
+  terraform_resource: null
+  policy_api_setting: devices.activation_approval
+  check: policy_api_read
+  ou_scope: cui
+  edition_required: null
+  notes: Read-only in Policy API. Guide notes company-owned devices registered by serial number are auto-approved
+    (p35).
+- id: device-encryption-required
+  requirement_refs:
+  - 3.1.19
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=35
+  admin_console_path: Devices > Mobile and endpoints > Settings > Universal > Security > Require device
+    encryption
+  recommended_value: 'On'
+  method: manual
+  terraform_resource: null
+  policy_api_setting: devices.encryption
+  check: policy_api_read
+  ou_scope: cui
+  edition_required: null
+  notes: 'Read-only in Policy API. Applies with advanced mobile management. Guide p36: also needs FIPS
+    validated modules for 3.13.11.'
+- id: pop-imap-access
+  requirement_refs:
+  - 3.1.20
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=36
+  admin_console_path: Apps > Google Workspace > Gmail > End user access > POP and IMAP access
+  recommended_value: Off for the CUI OU unless a named client is approved (guide gives no value)
+  method: manual
+  terraform_resource: null
+  policy_api_setting: gmail.pop_access / gmail.imap_access
+  check: policy_api_read
+  ou_scope: cui
+  edition_required: null
+  notes: Both read-only in Policy API.
+- id: less-secure-apps
+  requirement_refs:
+  - 3.1.20
+  guide_page: null
+  admin_console_path: Security > Authentication > Less secure apps
+  recommended_value: Don't allow users to use less secure apps
+  method: manual
+  terraform_resource: null
+  policy_api_setting: security.less_secure_apps
+  check: policy_api_read
+  ou_scope: all
+  edition_required: null
+  notes: Not named by the guide; supports 3.1.20 and OGRL ogrl-ac-20. Read-only in Policy API.
+- id: sites-publishing
+  requirement_refs:
+  - 3.1.22
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=38
+  admin_console_path: Apps > Google Workspace > Sites (service status) and Sites > New Sites
+  recommended_value: Sites service off for the CUI OU; sites_creation_and_modification off
+  method: manual
+  terraform_resource: null
+  policy_api_setting: sites.sites_creation_and_modification
+  check: policy_api_read
+  ou_scope: cui
+  edition_required: null
+  notes: Read-only in Policy API. Guide notes Sites are private by default (p39). Publishing roster is
+    an admin-roles item.
+- id: audit-investigation-role
+  requirement_refs:
+  - 3.3.8
+  - 3.3.9
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=44
+  admin_console_path: Account > Admin roles > Create role > Security Center > Audit and investigation
+    (View / Manage / View sensitive content)
+  recommended_value: Custom role with Audit and investigation View held by a short list; Manage and View
+    sensitive content only for the security team
+  method: terraform
+  terraform_resource: googleworkspace_role
+  policy_api_setting: null
+  check: admin_sdk
+  ou_scope: n/a
+  edition_required: null
+  notes: 'Guide notes the Reports privilege is being replaced by Audit and Investigation View (p45). Terraform
+    needs the exact privilege name from data.googleworkspace_privileges; verify it exists in provider
+    1.5.3. Check: roles.list and roleAssignments.list.'
+- id: investigation-tool-review
+  requirement_refs:
+  - 3.3.3
+  - 3.3.5
+  - 3.3.6
+  - 3.1.12
+  - 3.14.7
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=41
+  admin_console_path: Security > Security center > Investigation tool
+  recommended_value: Saved searches/reports per data source (Admin, Login, Drive, Gmail, Device); reviewed
+    on the OGRL cadence
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: n/a
+  edition_required: null
+  notes: 'Guide p42: cannot change which data sources are collected; access depends on edition and privileges.
+    No setting to read; evidence is a saved query and exported result.'
+- id: activity-reporting-rules
+  requirement_refs:
+  - 3.3.5
+  - 3.3.6
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=42
+  admin_console_path: Rules > Create rule > Reporting / Activity
+  recommended_value: Rules for suspicious sign-in, admin setting change, external sharing; alert center
+    on, notify security mailbox
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: n/a
+  edition_required: null
+  notes: Custom rules are not in the Policy API supported list. Rules page also lists data protection
+    and system defined rules (p44).
+- id: alert-center-notifications
+  requirement_refs:
+  - 3.6.1
+  - 3.14.3
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=70
+  admin_console_path: Rules > System defined rules (notifications); Security > Alert center
+  recommended_value: System defined alerts on with notification to the security mailbox
+  method: manual
+  terraform_resource: null
+  policy_api_setting: rule.system_defined_alerts
+  check: policy_api_read
+  ou_scope: n/a
+  edition_required: null
+  notes: Policy API lists rule.system_defined_alerts as read-only. OGRL ogrl-lm-02 and ogrl-vm-04 say
+    alert rule coverage is not verified; the page indicates it is readable.
+- id: workspace-status-dashboard
+  requirement_refs:
+  - 3.14.3
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=81
+  admin_console_path: Google Workspace Status Dashboard (status.cloud.google.com) subscription
+  recommended_value: 'Subscribe security mailbox to service alerts (guide: periodically check)'
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: n/a
+  edition_required: null
+  notes: Public page and feed, no tenant setting.
+- id: security-center-dashboard
+  requirement_refs:
+  - 3.14.6
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=83
+  admin_console_path: Security > Security center > Dashboard
+  recommended_value: Reviewed on the OGRL cadence; no setting
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: n/a
+  edition_required: null
+  notes: 'Panels: user login attempts, suspicious attachments, OAuth grants, suspicious device activity.'
+- id: apps-reports-gmail
+  requirement_refs:
+  - 3.14.6
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=84
+  admin_console_path: Reporting > Apps reporting > Gmail
+  recommended_value: Review inbound/outbound volumes, spam and TLS encrypted fractions
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: reports_api
+  ou_scope: n/a
+  edition_required: null
+  notes: Reports API customerUsageReports carries Gmail usage parameters, so trends can be pulled by the
+    collector.
+- id: security-health-baseline
+  requirement_refs:
+  - 3.4.2
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=49
+  admin_console_path: Security > Security center > Security health
+  recommended_value: Review all findings; baseline of record is this file
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: policy_api_read
+  ou_scope: n/a
+  edition_required: null
+  notes: Security health itself has no API; Fathom's check is the per-setting Policy API compare of rows
+    in this file marked policy_api_read. Guide cites Google security checklists and CIS Benchmarks.
+- id: multi-party-approval
+  requirement_refs:
+  - 3.4.3
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=50
+  admin_console_path: Security > Authentication > Multi-party approval settings
+  recommended_value: 'Require multi-party approval for sensitive admin actions: on (on by default with
+    2+ super admins)'
+  method: policy_api_write
+  terraform_resource: null
+  policy_api_setting: multi_party_approval.require_approvals
+  check: policy_api_read
+  ou_scope: n/a
+  edition_required: null
+  notes: Writable via Policy API (also security_actions, groups_actions, domains_actions, calendar_actions,
+    security_actions_api_access). Covers 2SV, account recovery, session control, login challenges, SSO,
+    domain-wide delegation. Needs 2 or more super admins.
+- id: service-status-per-ou
+  requirement_refs:
+  - 3.4.6
+  - 3.4.7
+  - 3.1.22
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=53
+  admin_console_path: Apps > Google Workspace > Service status; Apps > Additional Google services
+  recommended_value: Only FedRAMP High services On for the CUI OU; all others Off (SCOPE section 5)
+  method: manual
+  terraform_resource: null
+  policy_api_setting: service_status
+  check: policy_api_read
+  ou_scope: cui
+  edition_required: null
+  notes: Policy API documents service_status as a boolean per OU or group, so it is likely readable. OGRL
+    ogrl-ac-03, -18, -19 say it has no Policy API read. Mutate not stated. Verify live. Marketplace and
+    sites are separate rows.
+- id: marketplace-user-install
+  requirement_refs:
+  - 3.4.6
+  - 3.4.8
+  - 3.4.9
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=58
+  admin_console_path: Apps > Google Workspace Marketplace apps > Apps list > User install settings
+  recommended_value: Allow users to install only allowlisted apps (internal apps optional)
+  method: manual
+  terraform_resource: null
+  policy_api_setting: workspace_marketplace.apps_access_options
+  check: policy_api_read
+  ou_scope: cui
+  edition_required: null
+  notes: Read-only in Policy API.
+- id: marketplace-allowlist
+  requirement_refs:
+  - 3.4.6
+  - 3.4.8
+  - 3.4.9
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=55
+  admin_console_path: Apps > Google Workspace Marketplace apps > Apps list > Allowlist app
+  recommended_value: Reviewed apps only; quarterly review
+  method: manual
+  terraform_resource: null
+  policy_api_setting: workspace_marketplace.apps_allowlist
+  check: policy_api_read
+  ou_scope: cui
+  edition_required: null
+  notes: Read-only; returns application IDs, not names (Google page ships a conversion script).
+- id: web-mobile-apps-access-review
+  requirement_refs:
+  - 3.4.9
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=58
+  admin_console_path: Apps > Web and mobile apps (filter by OU or group, Access details)
+  recommended_value: Review of per-OU app access, monitored for installs
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: cui
+  edition_required: null
+  notes: Console list only. Guide p59.
+- id: mobile-system-apps-block
+  requirement_refs:
+  - 3.4.6
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=53
+  admin_console_path: Devices > Mobile and endpoints > Settings > Universal (system apps)
+  recommended_value: Optional. Block unneeded system apps on company-owned devices
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: cui
+  edition_required: null
+  notes: Guide p55 mentions it; no Policy API setting identified.
+- id: 2sv-enrollment
+  requirement_refs:
+  - 3.5.3
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=62
+  admin_console_path: Security > Authentication > 2-step verification > Allow users to turn on 2-Step
+    Verification
+  recommended_value: Checked, both OUs
+  method: manual
+  terraform_resource: null
+  policy_api_setting: security.two_step_verification_enrollment
+  check: policy_api_read
+  ou_scope: all
+  edition_required: null
+  notes: Read-only in Policy API.
+- id: 2sv-enforcement
+  requirement_refs:
+  - 3.5.3
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=62
+  admin_console_path: Security > Authentication > 2-step verification > Enforcement
+  recommended_value: On (starts immediately) for both OUs
+  method: manual
+  terraform_resource: null
+  policy_api_setting: security.two_step_verification_enforcement
+  check: policy_api_read
+  ou_scope: all
+  edition_required: null
+  notes: Read-only; field enforcedFrom timestamp. Reports API user_accounts (is_2sv_enrolled / is_enforced)
+    gives per-user proof. Needs a super admin session.
+- id: 2sv-methods
+  requirement_refs:
+  - 3.5.3
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=62
+  admin_console_path: Security > Authentication > 2-step verification > Methods
+  recommended_value: Only security key (passkeys count) per OGRL; enum PASSKEY_ONLY; guide offers no value
+  method: manual
+  terraform_resource: null
+  policy_api_setting: security.two_step_verification_enforcement_factor
+  check: policy_api_read
+  ou_scope: all
+  edition_required: null
+  notes: Read-only; field allowedSignInFactorSet. Guide lists all methods without picking one, so 'security
+    key only' is an OGRL choice (ogrl-ac-05).
+- id: 2sv-post-sso
+  requirement_refs:
+  - 3.5.3
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=63
+  admin_console_path: Security > Authentication > Login challenges > Post-SSO verification
+  recommended_value: Not applicable while Google is the IdP (no inbound SSO profile)
+  method: manual
+  terraform_resource: null
+  policy_api_setting: security.login_challenges
+  check: manual_evidence
+  ou_scope: all
+  edition_required: null
+  notes: Policy API security.login_challenges only exposes enableEmployeeIdChallenge, not Post-SSO verification.
+    Revisit if a third-party IdP is ever added.
+- id: passkeys-restriction
+  requirement_refs:
+  - 3.5.3
+  guide_page: null
+  admin_console_path: Security > Authentication > Passkeys
+  recommended_value: Optional. Restrict to security-key bound passkeys
+  method: policy_api_write
+  terraform_resource: null
+  policy_api_setting: security.passkeys_restriction
+  check: policy_api_read
+  ou_scope: all
+  edition_required: null
+  notes: Writable via Policy API. Not named by the guide.
+- id: password-strength
+  requirement_refs:
+  - 3.5.7
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=65
+  admin_console_path: Security > Authentication > Password management > Strength
+  recommended_value: Enforce strong password checked (allowedStrength STRONG); enforceRequirementsAtLogin
+    true
+  method: manual
+  terraform_resource: null
+  policy_api_setting: security.password
+  check: policy_api_read
+  ou_scope: all
+  edition_required: null
+  notes: 'Read-only in Policy API. Guide p67: do not require specific counts of character types.'
+- id: password-length
+  requirement_refs:
+  - 3.5.7
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=65
+  admin_console_path: Security > Authentication > Password management > Length
+  recommended_value: Minimum 12, maximum 100 (OGRL; guide range 8 to 100)
+  method: manual
+  terraform_resource: null
+  policy_api_setting: security.password
+  check: policy_api_read
+  ou_scope: all
+  edition_required: null
+  notes: Fields minimumLength / maximumLength.
+- id: password-reuse
+  requirement_refs:
+  - 3.5.7
+  - 3.5.8
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=65
+  admin_console_path: Security > Authentication > Password management > Reuse
+  recommended_value: Allow password reuse unchecked (default)
+  method: manual
+  terraform_resource: null
+  policy_api_setting: security.password
+  check: policy_api_read
+  ou_scope: all
+  edition_required: null
+  notes: 'Field allowReuse = false. Guide p66 says unchecked also satisfies the change-of-characters part
+    of 3.5.7. Guide p68: password history depth cannot be set. 3.5.8 is on p67-68.'
+- id: password-expiration
+  requirement_refs:
+  - 3.5.7
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=65
+  admin_console_path: Security > Authentication > Password management > Expiration
+  recommended_value: Optional. Never expire (0 seconds) unless policy requires
+  method: manual
+  terraform_resource: null
+  policy_api_setting: security.password
+  check: policy_api_read
+  ou_scope: all
+  edition_required: null
+  notes: Field expirationDuration. Guide lists it only as an option (p67).
+- id: password-change-next-login
+  requirement_refs:
+  - 3.5.9
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=69
+  admin_console_path: Directory > Users > Reset password > Ask for a password change at the next sign-in
+  recommended_value: Set on every new or reset account
+  method: terraform
+  terraform_resource: googleworkspace_user (change_password_at_next_login)
+  policy_api_setting: null
+  check: admin_sdk
+  ou_scope: all
+  edition_required: null
+  notes: 'Directory API user.changePasswordAtNextLogin; Reports API user_accounts password events also
+    help. Provider doc: ignored when signing in via a third-party IdP. OGRL ogrl-ac-06 says no read exists;
+    Directory API does expose it.'
+- id: inactive-account-suspension
+  requirement_refs:
+  - 3.5.6
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=64
+  admin_console_path: Directory > Users > More options > Suspend user
+  recommended_value: Suspend after 90 days idle (period is ours; guide only says define one)
+  method: terraform
+  terraform_resource: googleworkspace_user (suspended)
+  policy_api_setting: null
+  check: admin_sdk
+  ou_scope: all
+  edition_required: null
+  notes: Last sign-in in Directory API lastLoginTime and Reports API login events. There is no native
+    auto-suspend; a scheduled job must apply it (ogrl-ac-09).
+- id: offboarding-suspend-delete
+  requirement_refs:
+  - 3.9.2
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=72
+  admin_console_path: Directory > Users > Suspend user / Delete user
+  recommended_value: Suspend on termination or transfer, delete after data handover
+  method: terraform
+  terraform_resource: googleworkspace_user (suspended)
+  policy_api_setting: null
+  check: admin_sdk
+  ou_scope: all
+  edition_required: null
+  notes: Directory API suspended flag and Reports API admin audit (SUSPEND_USER). Process step is the
+    offboarding ticket.
+- id: gmail-tls-compliance
+  requirement_refs:
+  - 3.13.1
+  - 3.13.8
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=73
+  admin_console_path: Apps > Google Workspace > Gmail > Compliance > Secure transport (TLS) compliance
+  recommended_value: Require TLS (CA-signed, verified host) for CUI partner domains
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: cui
+  edition_required: null
+  notes: Not found in the Policy API supported list (nearest are gmail.content_compliance and gmail.restrict_delivery).
+    OGRL ogrl-ac-04 and ogrl-cr-01 expect a Policy API read; verify live, otherwise screenshot.
+- id: mta-sts
+  requirement_refs:
+  - 3.13.1
+  - 3.13.8
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=73
+  admin_console_path: DNS (mta-sts TXT, _smtp._tls TXT) plus hosted policy file; Gmail MTA-STS guidance
+  recommended_value: Testing mode first, then enforce; TLS reporting on
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: n/a
+  edition_required: null
+  notes: DNS and web hosted policy, not an Admin console setting, so no Policy API read (ogrl-ac-04 and
+    ogrl-cr-01 say otherwise). Check by public DNS and policy file fetch. DNS may be Terraform-managed
+    if hosted in Route 53 (aws_route53_record), outside the Workspace provider.
+- id: smime
+  requirement_refs:
+  - 3.13.1
+  - 3.13.8
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=74
+  admin_console_path: Apps > Google Workspace > Gmail > User settings > S/MIME
+  recommended_value: Optional
+  method: manual
+  terraform_resource: null
+  policy_api_setting: gmail.smime_encryption
+  check: policy_api_read
+  ou_scope: cui
+  edition_required: null
+  notes: Read-only in Policy API (also gmail.enhanced_smime_encryption). Needs enterprise certificates.
+- id: client-side-encryption
+  requirement_refs:
+  - 3.13.1
+  - 3.13.8
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=75
+  admin_console_path: Security > Access and data control > Client-side encryption
+  recommended_value: Optional; required for ITAR tier per OGRL. External key service configured
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: cui
+  edition_required: null
+  notes: No Policy API setting identified. Guide covers Meet CSE too (p75). Edition requirement not verified
+    here.
+- id: dkim-spf
+  requirement_refs:
+  - 3.13.15
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=80
+  admin_console_path: Apps > Google Workspace > Gmail > Authenticate email; DNS TXT records (DKIM selector,
+    SPF)
+  recommended_value: DKIM signing on, 2048 bit key; SPF record published
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: n/a
+  edition_required: null
+  notes: gmail.spoofing_and_authentication in the Policy API covers inbound spoofing protections, not
+    DKIM keys. Check by DNS lookup and console screenshot. DNS records may be Terraform-managed outside
+    the Workspace provider.
+- id: meet-hardware-remote-join
+  requirement_refs:
+  - 3.13.12
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=79
+  admin_console_path: Devices > Google Meet hardware; Account > Admin roles (hardware admins)
+  recommended_value: Policy prohibits remote join; Meet hardware off unless needed; short admin roster
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: n/a
+  edition_required: null
+  notes: 'Guide p80: there is no setting that disables remote join. OGRL ogrl-vm-07 mentions Meet camera/mic
+    defaults; those are not part of the guide''s 3.13.12 text.'
+- id: context-aware-access
+  requirement_refs:
+  - 3.1.1
+  - 3.5.2
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=62
+  admin_console_path: Security > Access and data control > Context-Aware Access
+  recommended_value: Optional. Access level requiring a managed device on the SAML app and CUI services
+  method: manual
+  terraform_resource: null
+  policy_api_setting: null
+  check: manual_evidence
+  ou_scope: cui
+  edition_required: null
+  notes: Not in the Policy API supported list. Underlying GCP Access Context Manager resources may be
+    Terraform-able with hashicorp/google; not verified. Edition requirement not verified here.
+- id: audit-log-gcp-sharing
+  requirement_refs:
+  - 3.3.1
+  guide_page: https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=41
+  admin_console_path: Account > Account settings > Legal and compliance > Sharing options (data sharing
+    with Google Cloud)
+  recommended_value: Optional. Off while the Reports API collector is the audit store
+  method: manual
+  terraform_resource: null
+  policy_api_setting: cloud_sharing_options.cloud_data_sharing
+  check: policy_api_read
+  ou_scope: n/a
+  edition_required: null
+  notes: Policy API page row mapped by name only; verify it is this setting. Guide p41 says needs a GCP
+    subscription.
