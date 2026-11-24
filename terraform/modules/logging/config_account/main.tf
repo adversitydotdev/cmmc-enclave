@@ -48,3 +48,27 @@ resource "aws_config_configuration_recorder_status" "this" {
 
   depends_on = [aws_config_delivery_channel.this]
 }
+
+# Alarm on Config delivery failures (3.3.4): history or snapshot delivery to the
+# archive bucket failed. Message types end in DeliveryFailed (for example
+# ConfigurationSnapshotDeliveryFailed). The target is the security account's SNS
+# topic; its policy allows these rules by source ARN.
+resource "aws_cloudwatch_event_rule" "config_delivery_failed" {
+  for_each    = var.regions
+  region      = each.value
+  name        = "${var.name_prefix}-config-delivery-failed"
+  description = "AWS Config failed to deliver configuration history or a snapshot."
+  event_pattern = jsonencode({
+    source        = ["aws.config"]
+    "detail-type" = ["Config Configuration History Delivery Status", "Config Configuration Snapshot Delivery Status"]
+    detail        = { messageType = [{ suffix = "DeliveryFailed" }] }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "config_delivery_failed" {
+  for_each  = var.regions
+  region    = each.value
+  rule      = aws_cloudwatch_event_rule.config_delivery_failed[each.value].name
+  target_id = "security-findings-sns"
+  arn       = var.findings_topic_arns[each.value]
+}

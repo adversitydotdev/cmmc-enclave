@@ -14,8 +14,14 @@ variable "home_region" {
 }
 
 variable "allowed_regions" {
-  type    = list(string)
-  default = ["us-east-1", "us-east-2", "us-west-2"]
+  description = "Regions the enclave may use. Defaults to the home region only; the baseline stack refuses more than one region until multi_region_data_protection is set there."
+  type        = list(string)
+  default     = ["us-east-1"]
+
+  validation {
+    condition     = contains(var.allowed_regions, var.home_region)
+    error_message = "home_region must be one of allowed_regions."
+  }
 }
 
 variable "use_fips_endpoint" {
@@ -25,7 +31,7 @@ variable "use_fips_endpoint" {
 }
 
 variable "tags" {
-  description = "Default tags. owner, environment and data-classification are required: the tag SCP denies EC2, EBS and RDS creates without them."
+  description = "Default tags. owner, environment and data-classification are required: the tag SCP denies creates of EC2, EBS, RDS, Lambda, DynamoDB, ECS, Secrets Manager, SNS, SQS and EFS without them."
   type        = map(string)
 
   validation {

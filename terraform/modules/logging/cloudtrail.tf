@@ -102,6 +102,16 @@ locals {
       pattern     = "{ $.userIdentity.type = \"IAMUser\" && $.userIdentity.userName = \"${var.break_glass_user_name}\" }"
       description = "Break-glass IAM user activity."
     }
+    # Compensating control for 3.1.8: IAM has no lockout policy, so every failed
+    # console sign-in by the two local identities alarms.
+    break-glass-login-failed = {
+      pattern     = "{ ($.eventName = ConsoleLogin) && ($.responseElements.ConsoleLogin = \"Failure\") && ($.userIdentity.type = \"IAMUser\") && ($.userIdentity.userName = \"${var.break_glass_user_name}\") }"
+      description = "Failed console sign-in for the break-glass IAM user (3.1.8)."
+    }
+    root-login-failed = {
+      pattern     = "{ ($.eventName = ConsoleLogin) && ($.responseElements.ConsoleLogin = \"Failure\") && ($.userIdentity.type = \"Root\") }"
+      description = "Failed console sign-in for the root user (3.1.8)."
+    }
     cloudtrail-changes = {
       pattern     = "{ ($.eventSource = cloudtrail.amazonaws.com) && (($.eventName = CreateTrail) || ($.eventName = UpdateTrail) || ($.eventName = DeleteTrail) || ($.eventName = StartLogging) || ($.eventName = StopLogging) || ($.eventName = PutEventSelectors) || ($.eventName = PutInsightSelectors)) }"
       description = "CloudTrail configuration changes."

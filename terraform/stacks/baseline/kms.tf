@@ -8,10 +8,11 @@ module "kms" {
     aws.grc         = aws.grc
   }
 
-  name_prefix     = var.name_prefix
-  tier            = var.tier
-  allowed_regions = var.allowed_regions
-  tags            = var.tags
-  organization_id = var.organization_id
-  account_ids     = var.account_ids
+  name_prefix                  = var.name_prefix
+  tier                         = var.tier
+  allowed_regions              = var.allowed_regions
+  multi_region_data_protection = var.multi_region_data_protection
+  tags                         = var.tags
+  organization_id              = var.organization_id
+  account_ids                  = var.account_ids
 }

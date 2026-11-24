@@ -14,12 +14,18 @@ narrative: >
   Config records every supported resource in every account and
   Region and aggregates to the security tooling account. AWS
   Organizations lists accounts. Terraform state lists the managed
-  resources. A tag policy and an SCP require owner, environment, and
-  data classification tags. Reconciliation: Terraform state against
-  Config inventory quarterly. Test: Config rule
-  EC2_INSTANCE_MANAGED_BY_SSM (compute is managed) plus a manual
-  quarterly export of the Config aggregator inventory. AWS carries
-  the platform; {{ company_name }} runs the reconciliation.
+  resources. A tag policy reports non-compliance, an SCP denies
+  creating EC2 instances and volumes, RDS instances, Lambda
+  functions, DynamoDB tables, ECS clusters, Secrets Manager secrets,
+  SNS topics, SQS queues, and EFS file systems without owner,
+  environment, and data-classification tags, and the org-wide Config
+  rule required-tags flags every other taggable resource (S3 buckets
+  cannot be gated at create by tag) and anything created before the
+  SCP. Reconciliation: Terraform state against Config inventory
+  quarterly. Test: Config rule EC2_INSTANCE_MANAGED_BY_SSM (compute
+  is managed) plus a manual quarterly export of the Config
+  aggregator inventory. AWS carries the platform; {{ company_name }}
+  runs the reconciliation.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

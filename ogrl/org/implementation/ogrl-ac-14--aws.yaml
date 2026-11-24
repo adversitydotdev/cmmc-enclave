@@ -17,9 +17,14 @@ narrative: >-
   90 days, covering 3.5.7 and 3.5.8 for that account; temporary
   passwords force reset at first sign-in (3.5.9); console sign-in is
   TLS and AWS stores credentials (3.5.10). IAM has no account
-  lockout, so 3.1.8 for the break-glass user relies on FIDO key MFA
-  and the use alert. The change-of-4-characters rule is not an IAM
-  option. Tested by Config rule iam-password-policy.
+  lockout, so 3.1.8 for the break-glass user relies on FIDO key MFA,
+  the use alert, and a compensating control: CloudWatch metric
+  filters and alarms on failed ConsoleLogin events for the
+  break-glass user and for root, notifying the security findings
+  topic within minutes. This detects guessing; it does not lock the
+  account. The change-of-4-characters rule is not an IAM option.
+  Tested by Config rule iam-password-policy; the alarms are tested
+  by a periodic failed-login drill whose ticket is the evidence.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: partial

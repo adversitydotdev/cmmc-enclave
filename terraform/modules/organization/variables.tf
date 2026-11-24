@@ -136,7 +136,7 @@ variable "protected_kms_alias_patterns" {
 }
 
 variable "enforce_required_tags" {
-  description = "Deny creating EC2 instances, volumes and RDS instances without the required tag keys."
+  description = "Deny creating EC2 instances, volumes, RDS instances, Lambda functions, DynamoDB tables, ECS clusters, secrets, SNS topics, SQS queues and EFS file systems without the required tag keys."
   type        = bool
   default     = true
 }

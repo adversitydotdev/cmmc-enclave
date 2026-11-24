@@ -24,9 +24,13 @@ narrative: >
   successful run in 15 minutes (the collector's Success metric,
   missing data counts as breaching); and no new objects under
   workspace-audit/ for 6 hours (the collector's ObjectsWritten
-  metric, tunable for quiet tenants). GuardDuty and Security Hub are
-  on in every account. Tests: Config rules
-  cloud-trail-cloud-watch-logs-enabled,
+  metric, tunable for quiet tenants). Both collector metrics are
+  self-reported by the Lambda, so they show what the collector says
+  it wrote, not what S3 holds. An EventBridge rule in every account
+  and Region matches AWS Config configuration history and snapshot
+  delivery failures and publishes to the same findings topic.
+  GuardDuty and Security Hub are on in every account. Tests: Config
+  rules cloud-trail-cloud-watch-logs-enabled,
   cloudwatch-alarm-action-check, guardduty-enabled-centralized,
   securityhub-enabled, plus a periodic test alert whose ticket is
   the evidence. AWS does not alert customers on their own trail

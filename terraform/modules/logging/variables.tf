@@ -158,3 +158,20 @@ variable "backup_selection_tag" {
     value = "true"
   }
 }
+
+variable "multi_region_data_protection" {
+  description = "Acknowledge that AWS Backup vaults and plans covers home_region only. Leave false: with more than one allowed region the backup precondition fails until the module loops over regions (KMS keys are regional, so that also needs multi-region keys or a key per region)."
+  type        = bool
+  default     = false
+}
+
+variable "required_tag_keys" {
+  description = "Tag keys the required-tags Config rule checks (max 6). Keep in step with the organization module."
+  type        = list(string)
+  default     = ["owner", "environment", "data-classification"]
+
+  validation {
+    condition     = length(var.required_tag_keys) >= 1 && length(var.required_tag_keys) <= 6
+    error_message = "required_tag_keys takes 1 to 6 keys (the managed rule has tag1Key..tag6Key)."
+  }
+}

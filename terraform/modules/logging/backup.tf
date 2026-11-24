@@ -143,3 +143,15 @@ resource "aws_backup_selection" "workload" {
     value = var.backup_selection_tag.value
   }
 }
+
+# Vaults, plan and the log_archive copy exist in the home region only, and
+# their CMKs are regional. Refuse a wider allowlist so CUI cannot land in a
+# region with no backup (3.8.9).
+resource "terraform_data" "backup_single_region_guard" {
+  lifecycle {
+    precondition {
+      condition     = length(var.allowed_regions) == 1 || var.multi_region_data_protection
+      error_message = "allowed_regions has more than one region but AWS Backup vaults and plans cover the home region only. Narrow allowed_regions to the home region."
+    }
+  }
+}

@@ -68,3 +68,9 @@ variable "enable_ebs_default_encryption" {
   type        = bool
   default     = true
 }
+
+variable "multi_region_data_protection" {
+  description = "Acknowledge that CMKs and EBS default encryption covers home_region only. Leave false: with more than one allowed region the kms precondition fails until the module loops over regions (KMS keys are regional, so that also needs multi-region keys or a key per region)."
+  type        = bool
+  default     = false
+}

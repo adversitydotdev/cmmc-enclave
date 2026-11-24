@@ -61,3 +61,15 @@ locals {
     },
   ]
 }
+
+# EBS default encryption and the CMKs are configured in the provider's region
+# only. Looping needs a key per region (or multi-region keys) per account, so
+# refuse a wider allowlist rather than leave other regions unencrypted by default.
+resource "terraform_data" "single_region_guard" {
+  lifecycle {
+    precondition {
+      condition     = length(var.allowed_regions) == 1 || var.multi_region_data_protection
+      error_message = "allowed_regions has more than one region but KMS keys and EBS default encryption are home-region only. Narrow allowed_regions to the home region (3.13.16)."
+    }
+  }
+}

@@ -43,6 +43,27 @@ data "aws_iam_policy_document" "findings_topic" {
     }
   }
 
+  # Config delivery-failure rules in every account publish here directly.
+  statement {
+    sid       = "ConfigDeliveryRulesPublish"
+    actions   = ["sns:Publish"]
+    resources = [aws_sns_topic.findings[each.value].arn]
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = local.all_ids
+    }
+    condition {
+      test     = "ArnLike"
+      variable = "aws:SourceArn"
+      values   = ["arn:${local.partition}:events:${each.value}:*:rule/${var.name_prefix}-config-delivery-failed"]
+    }
+  }
+
   statement {
     sid       = "DenyInsecureTransport"
     effect    = "Deny"
@@ -80,6 +101,8 @@ resource "aws_sns_topic_subscription" "email" {
 }
 
 locals {
+  findings_topic_arns = { for r in local.regions : r => aws_sns_topic.findings[r].arn }
+
   finding_rules = {
     guardduty = {
       description = "GuardDuty findings."

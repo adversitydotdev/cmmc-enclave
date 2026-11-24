@@ -26,14 +26,15 @@ module "logging" {
     aws.grc         = aws.grc
   }
 
-  name_prefix          = var.name_prefix
-  tier                 = var.tier
-  allowed_regions      = var.allowed_regions
-  tags                 = var.tags
-  home_region          = var.home_region
-  account_ids          = var.account_ids
-  organization_id      = var.organization_id
-  organization_root_id = var.organization_root_id
+  name_prefix                  = var.name_prefix
+  tier                         = var.tier
+  allowed_regions              = var.allowed_regions
+  multi_region_data_protection = var.multi_region_data_protection
+  tags                         = var.tags
+  home_region                  = var.home_region
+  account_ids                  = var.account_ids
+  organization_id              = var.organization_id
+  organization_root_id         = var.organization_root_id
   kms_key_arns = {
     log_archive        = module.kms.kms_key_arns["logs"]
     management         = module.kms.kms_key_arns["logs"] # cross-account: the logs key grants CloudWatch Logs in every account
