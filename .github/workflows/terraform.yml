@@ -1,0 +1,62 @@
+name: terraform
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CHECKOV_VERSION: "3.4.7"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Installs terraform and tflint at the versions pinned in mise.toml.
+      - uses: jdx/mise-action@924e7c586e33d7d4bae9c14e26c5d22e2beb6e78 # v5.3.0
+        with:
+          cache: true
+
+      - name: terraform fmt
+        run: terraform fmt -check -recursive -diff
+        working-directory: terraform
+
+      # Modules have no root config; they validate through the stacks.
+      - name: terraform init and validate (each stack)
+        run: |
+          set -euo pipefail
+          for dir in terraform/stacks/*/; do
+            echo "::group::${dir}"
+            terraform -chdir="${dir}" init -backend=false -input=false
+            terraform -chdir="${dir}" validate
+            echo "::endgroup::"
+          done
+
+      - name: tflint (every module and stack)
+        env:
+          GITHUB_TOKEN: ${{ github.token }} # avoids rate limits fetching the aws ruleset
+        run: |
+          set -euo pipefail
+          cfg="${GITHUB_WORKSPACE}/terraform/.tflint.hcl"
+          tflint --init --config="${cfg}"
+          for dir in terraform/modules/*/ terraform/stacks/*/; do
+            echo "::group::${dir}"
+            tflint --chdir="${dir}" --config="${cfg}" --minimum-failure-severity=warning
+            echo "::endgroup::"
+          done
+
+      # No soft-fail; inline "#checkov:skip=ID:reason" comments are honored.
+      - name: checkov
+        run: pipx run "checkov==${CHECKOV_VERSION}" -d terraform --framework terraform --quiet --compact

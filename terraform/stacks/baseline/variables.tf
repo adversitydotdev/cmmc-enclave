@@ -40,6 +40,11 @@ variable "organization_id" {
 }
 
 variable "tags" {
-  type    = map(string)
-  default = {}
+  description = "Default tags. owner, environment and data-classification are required: the tag SCP denies EC2, EBS and RDS creates without them."
+  type        = map(string)
+
+  validation {
+    condition     = alltrue([for k in ["owner", "environment", "data-classification"] : contains(keys(var.tags), k)])
+    error_message = "tags must include owner, environment and data-classification."
+  }
 }
