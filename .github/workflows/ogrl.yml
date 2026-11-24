@@ -1,0 +1,104 @@
+name: ogrl
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  OGRL_RS_VERSION: v0.4.0
+  # Pinned commit of adversitydotdev/ogrl-library; bump deliberately.
+  OGRL_LIBRARY_REF: 5c0987730e2af897d0071cd3826f1c3c4faf8926
+
+jobs:
+  ogrl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: adversitydotdev/ogrl-library
+          ref: ${{ env.OGRL_LIBRARY_REF }}
+          path: ogrl-library
+          persist-credentials: false
+
+      - name: Cache ogrl binary
+        id: cache-ogrl
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.local/bin/ogrl
+          key: ogrl-${{ runner.os }}-${{ runner.arch }}-${{ env.OGRL_RS_VERSION }}
+
+      # Prebuilt release binary; checksum comes from the same release.
+      - name: Install ogrl
+        if: steps.cache-ogrl.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          asset=ogrl-x86_64-unknown-linux-gnu.tar.gz
+          tmp="$(mktemp -d)"
+          gh release download "${OGRL_RS_VERSION}" -R adversitydotdev/ogrl-rs \
+            -p "${asset}" -p "${asset}.sha256" -D "${tmp}"
+          (cd "${tmp}" && sha256sum -c "${asset}.sha256")
+          mkdir -p "${HOME}/.local/bin"
+          tar -xzf "${tmp}/${asset}" -C "${HOME}/.local/bin" ogrl
+
+      - name: Add ogrl to PATH
+        run: echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
+
+      - name: ogrl version
+        run: ogrl --version
+
+      - name: ogrl fmt
+        run: ogrl fmt ogrl/org --check
+
+      - name: ogrl lint
+        run: ogrl lint ogrl/org --library ogrl-library/library --profile organization
+
+      # Report only: gaps are expected until evidence exists.
+      - name: ogrl eval (report only)
+        run: |
+          {
+            echo '### ogrl eval --summary'
+            echo '```'
+            ogrl eval ogrl/org --library ogrl-library/library --summary
+            echo '```'
+          } | tee -a "${GITHUB_STEP_SUMMARY}"
+
+      # SRM drift check (#38). Contract for scripts/render-srm (issue #17):
+      #   scripts/render-srm <outdir>
+      #   - executable; `ogrl` is on PATH; library is at ./ogrl-library/library
+      #     (also exported as OGRL_LIBRARY)
+      #   - writes the full generated SRM (Markdown + CSV) into <outdir> using the
+      #     same file names as the committed copy in ${SRM_DIR}
+      #   - exits non-zero on error
+      # CI fails if `diff -r <outdir> ${SRM_DIR}` is non-empty. Skipped when the
+      # script does not exist yet.
+      - name: SRM drift
+        env:
+          SRM_DIR: docs/srm
+          OGRL_LIBRARY: ogrl-library/library
+        run: |
+          set -euo pipefail
+          if [ ! -x scripts/render-srm ]; then
+            echo "::notice::scripts/render-srm not found or not executable; skipping SRM drift check"
+            exit 0
+          fi
+          out="$(mktemp -d)"
+          scripts/render-srm "${out}"
+          if ! diff -ru "${SRM_DIR}" "${out}"; then
+            echo "::error::SRM in ${SRM_DIR} drifted from the OGRL bundle; rerun scripts/render-srm ${SRM_DIR} and commit"
+            exit 1
+          fi
