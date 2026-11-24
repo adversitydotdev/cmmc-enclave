@@ -292,7 +292,7 @@ resource "aws_kms_key" "logs" {
   rotation_period_in_days = 365
   deletion_window_in_days = var.deletion_window_in_days
   policy                  = data.aws_iam_policy_document.logs.json
-  tags                    = merge(var.tags, { DataClass = "logs" })
+  tags                    = merge(var.tags, { DataClass = "logs", "enclave:protected" = "logging" })
 }
 
 resource "aws_kms_alias" "logs" {
@@ -308,7 +308,7 @@ resource "aws_kms_key" "security" {
   rotation_period_in_days = 365
   deletion_window_in_days = var.deletion_window_in_days
   policy                  = data.aws_iam_policy_document.security.json
-  tags                    = merge(var.tags, { DataClass = "security" })
+  tags                    = merge(var.tags, { DataClass = "security", "enclave:protected" = "logging" })
 }
 
 resource "aws_kms_alias" "security" {

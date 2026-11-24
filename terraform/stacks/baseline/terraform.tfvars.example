@@ -1,2 +1,26 @@
-# Output of the logging module (log archive bucket ARN).
-flow_log_bucket_arn = "arn:aws:s3:::example-log-archive"
+# Outputs of stacks/org
+account_ids = {
+  management  = "111111111111"
+  log_archive = "222222222222"
+  security    = "333333333333"
+  workload    = "444444444444"
+  grc         = "555555555555"
+}
+organization_id      = "o-xxxxxxxxxx"
+organization_root_id = "r-xxxx"
+
+# Required by the tag SCP (stacks/org): EC2, EBS and RDS creates are denied without them.
+tags = {
+  owner               = "it@example.com"
+  environment         = "prod"
+  data-classification = "cui"
+}
+
+# Identity Center users (SCIM-provisioned from Google Workspace) per group.
+# group_members = {
+#   enclave-admins   = ["alice@example.com"]
+#   enclave-auditors = ["bob@example.com"]
+# }
+
+# enclave_bucket_arns = ["arn:aws:s3:::example-enclave-bucket"]
+# notification_emails = ["security@example.com"]

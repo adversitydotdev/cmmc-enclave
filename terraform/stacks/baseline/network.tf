@@ -1,8 +1,3 @@
-variable "flow_log_bucket_arn" {
-  description = "Log archive bucket ARN for VPC flow logs. Output of the logging module."
-  type        = string
-}
-
 variable "workload_vpc_cidr" {
   type    = string
   default = "10.10.0.0/16"
@@ -27,7 +22,7 @@ module "network_workload" {
   name                = "workload"
   vpc_cidr            = var.workload_vpc_cidr
   az_count            = 2
-  flow_log_bucket_arn = var.flow_log_bucket_arn
+  flow_log_bucket_arn = module.logging.log_archive_bucket_arn
 }
 
 module "network_grc" {
@@ -46,5 +41,5 @@ module "network_grc" {
   az_count              = 1
   enable_public_subnets = true
   enable_nat_gateway    = true
-  flow_log_bucket_arn   = var.flow_log_bucket_arn
+  flow_log_bucket_arn   = module.logging.log_archive_bucket_arn
 }

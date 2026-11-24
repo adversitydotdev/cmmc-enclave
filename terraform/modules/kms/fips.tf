@@ -1,6 +1,6 @@
 # FIPS endpoint reference for services this baseline uses.
 # Source: https://aws.amazon.com/compliance/fips/ (checked 2026-11-23).
-# Entries with note "verify" were not on the page text read; confirm before relying on them.
+# Verified against botocore endpoints.json 1.44.10 (2026-11-23) for us-east-1 and us-gov-west-1.
 # GovCloud endpoints are FIPS-validated by default even where the hostname has no "-fips" label.
 locals {
   fips_services = {
@@ -13,24 +13,26 @@ locals {
     sqs                  = { commercial = true, govcloud = true, note = "" }
     ec2                  = { commercial = true, govcloud = true, note = "" }
     rds                  = { commercial = true, govcloud = true, note = "" }
-    backup               = { commercial = true, govcloud = true, note = "" }
+    backup               = { commercial = false, govcloud = false, note = "no FIPS endpoint; providers pin the standard endpoint" }
     ecs                  = { commercial = true, govcloud = true, note = "Fargate uses the ECS endpoint" }
     ecr                  = { commercial = true, govcloud = true, note = "" }
     guardduty            = { commercial = true, govcloud = true, note = "" }
     inspector2           = { commercial = true, govcloud = true, note = "" }
     events               = { commercial = true, govcloud = true, note = "EventBridge" }
     macie2               = { commercial = true, govcloud = false, note = "no GovCloud FIPS endpoint listed" }
-    kms                  = { commercial = true, govcloud = true, note = "verify" }
-    elasticloadbalancing = { commercial = true, govcloud = true, note = "verify" }
-    sts                  = { commercial = true, govcloud = true, note = "verify" }
-    ssm                  = { commercial = true, govcloud = true, note = "verify" }
-    secretsmanager       = { commercial = true, govcloud = true, note = "verify" }
-    securityhub          = { commercial = true, govcloud = true, note = "verify" }
-    organizations        = { commercial = true, govcloud = true, note = "verify; global endpoint" }
-    iam                  = { commercial = true, govcloud = true, note = "verify; global endpoint" }
-    access-analyzer      = { commercial = true, govcloud = true, note = "verify" }
-    sso                  = { commercial = false, govcloud = false, note = "IAM Identity Center; not confirmed, treated as no FIPS endpoint" }
-    identitystore        = { commercial = false, govcloud = false, note = "not confirmed, treated as no FIPS endpoint" }
+    kms                  = { commercial = true, govcloud = true, note = "" }
+    elasticloadbalancing = { commercial = true, govcloud = true, note = "" }
+    sts                  = { commercial = true, govcloud = true, note = "" }
+    ssm                  = { commercial = true, govcloud = true, note = "" }
+    secretsmanager       = { commercial = true, govcloud = true, note = "" }
+    securityhub          = { commercial = true, govcloud = true, note = "" }
+    organizations        = { commercial = true, govcloud = true, note = "global FIPS endpoint" }
+    iam                  = { commercial = true, govcloud = true, note = "global FIPS endpoint" }
+    access-analyzer      = { commercial = true, govcloud = true, note = "" }
+    sso                  = { commercial = false, govcloud = true, note = "IAM Identity Center admin API; providers pin the standard endpoint in commercial" }
+    identitystore        = { commercial = false, govcloud = true, note = "providers pin the standard endpoint in commercial" }
+    athena               = { commercial = true, govcloud = true, note = "" }
+    glue                 = { commercial = true, govcloud = true, note = "" }
   }
 
   # Services lacking a FIPS endpoint in the active tier.

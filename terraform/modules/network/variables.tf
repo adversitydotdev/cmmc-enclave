@@ -58,6 +58,19 @@ variable "interface_endpoint_services" {
   default     = ["sts", "ssm", "ssmmessages", "ec2messages", "kms", "logs", "ecr.api", "ecr.dkr", "secretsmanager"]
 }
 
+variable "fips_interface_endpoint_services" {
+  description = <<-EOT
+    FIPS PrivateLink services added in the standard tier so clients with use_fips_endpoint
+    resolve privately (3.13.11). Only sts-fips and kms-fips exist among our services; ssm,
+    logs, ecr and secretsmanager have no FIPS PrivateLink service, so in a no-egress VPC
+    their clients must use the standard endpoint (documented gap, SCOPE section 9).
+    s3-fips and dynamodb-fips go through the gateway endpoints. GovCloud endpoints are
+    FIPS already, so this list is ignored for tier itar.
+  EOT
+  type        = list(string)
+  default     = ["sts-fips", "kms-fips"]
+}
+
 variable "gateway_endpoint_services" {
   description = "Gateway endpoint services (free), attached to the private route table."
   type        = list(string)

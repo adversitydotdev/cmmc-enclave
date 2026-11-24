@@ -176,7 +176,7 @@ resource "aws_vpc_security_group_ingress_rule" "endpoints_https" {
 }
 
 resource "aws_vpc_endpoint" "interface" {
-  for_each = toset(var.interface_endpoint_services)
+  for_each = toset(local.interface_endpoint_services)
 
   vpc_id              = aws_vpc.this.id
   service_name        = "${local.svc_prefix}.${each.value}"
@@ -226,9 +226,16 @@ resource "aws_ec2_network_insights_path" "igw_to_private" {
   count = var.enable_reachability_check && local.has_igw ? 1 : 0
 
   source           = aws_internet_gateway.this[0].id
-  destination      = tolist(aws_vpc_endpoint.interface[var.interface_endpoint_services[0]].network_interface_ids)[0]
+  destination      = tolist(aws_vpc_endpoint.interface[local.interface_endpoint_services[0]].network_interface_ids)[0]
   protocol         = "tcp"
   destination_port = 443
 
   tags = merge(var.tags, { Name = "${local.name}-igw-to-private" })
+}
+
+locals {
+  interface_endpoint_services = concat(
+    var.interface_endpoint_services,
+    var.tier == "standard" ? var.fips_interface_endpoint_services : [],
+  )
 }

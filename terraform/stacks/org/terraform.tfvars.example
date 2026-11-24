@@ -15,3 +15,10 @@ exempt_principal_arn_patterns = [
   "arn:*:iam::*:role/OrganizationAccountAccessRole",
   "arn:*:iam::*:role/enclave-pipeline*",
 ]
+
+# Required: the tag SCP denies EC2, EBS and RDS creates without these.
+tags = {
+  owner               = "it@example.com"
+  environment         = "prod"
+  data-classification = "cui"
+}
