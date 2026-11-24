@@ -1,0 +1,11 @@
+type: component
+id: component--dev.adversity.cmmc-enclave.endpoints
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Endpoints
+description: >
+  Laptops and mobile devices used by about {{ user_count }} users to
+  reach the enclave. Device management, disk encryption, and EDR are
+  the company's responsibility and out of scope for this repository.
+kind: infrastructure

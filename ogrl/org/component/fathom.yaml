@@ -1,0 +1,11 @@
+type: component
+id: component--dev.adversity.cmmc-enclave.fathom
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: "Fathom (GRC application)"
+description: >
+  Fathom OGRL application, a single-page app in the dedicated grc
+  account. A Security Protection Asset in assessment scope. Holds
+  the enclave OGRL bundle, test results, and evidence metadata.
+kind: software
