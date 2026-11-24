@@ -98,6 +98,7 @@ jobs:
           fi
           out="$(mktemp -d)"
           scripts/render-srm "${out}"
+          if [ -x scripts/objective-coverage ]; then scripts/objective-coverage --library "${OGRL_LIBRARY}" --out "${out}/objectives.csv"; fi
           if ! diff -ru "${SRM_DIR}" "${out}"; then
             echo "::error::SRM in ${SRM_DIR} drifted from the OGRL bundle; rerun scripts/render-srm ${SRM_DIR} and commit"
             exit 1
