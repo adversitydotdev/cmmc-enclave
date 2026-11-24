@@ -14,6 +14,8 @@ Most small defense contractors handling CUI end up with the same shape of enviro
 - **OGRL** for the documentation. Every control the enclave implements ships as OGRL objects (system, components, implementations, tests) bound to the `baseline--ogrl-cmmc-l2` baseline in [ogrl-library](https://github.com/adversitydotdev/ogrl-library). Fathom comes up already loaded with them, so the SSP, the shared responsibility matrix, and the POA&M are live from the first login.
 - **A local wizard** that runs in your browser, asks about your company (users, domain, CUI types, ITAR or not), and writes the Terraform variables and OGRL parameters. Nothing leaves your machine.
 
+To deploy from the wizard's output: `scripts/bootstrap --config enclave-config/` (add `--plan-only` to review first, `--resume` after a failure; `--help` lists the stages).
+
 ## What it is not
 
 - Not a certification. It's a baseline that covers the technical controls AWS and Google Workspace can carry, and it tells you plainly what's still on you.
