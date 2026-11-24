@@ -109,6 +109,8 @@ Facts behind the table:
 - **Audit:** Reports API pulled on a schedule into the AWS log archive so one place holds the audit trail for 3.3.x.
 - **Endpoints:** context-aware access can require a managed device, but managing the device is out of scope.
 
+The ordered manual steps, with expected values and checks, are in [docs/runbook/workspace.md](runbook/workspace.md).
+
 ### How much of Workspace can Terraform do
 
 Less than we'd like. HashiCorp archived its `googleworkspace` provider on June 30, 2025 ([repo](https://github.com/hashicorp/terraform-provider-googleworkspace)). Two community forks are maintained; we use `macadmins/googleworkspace` (D5), pinned to an exact version. Both cover users, groups, OUs, roles, role assignments, schemas, and Chrome policy, not security settings. Neither can create a SAML app or turn services on or off per OU. The Cloud Identity Policy API reads most Admin console settings, including per-OU service status, and writes a growing subset: DLP rules and detectors, Drive general access default, Meet settings, multi-party approval, passkeys restriction ([supported settings](https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings)). Most `security.*` settings stay read-only. The per-setting breakdown is in `workspace/settings.yaml` (#27): 56 settings, 10 Terraform, 4 Policy API write, 42 manual. So the plan is:

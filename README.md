@@ -29,6 +29,8 @@ Last checked: 2026-11-23. This moves; check the sources.
 - The reform task force report was due to DoW CIO in September. We found no public release.
 - Nothing here is a certification or a promise of one. Details in [docs/SCOPE.md](docs/SCOPE.md#2-where-cmmc-stands-verified-november-23-2026).
 
+Google Workspace manual runbook (ordered steps, expected values, how each is checked): [docs/runbook/workspace.md](docs/runbook/workspace.md).
+
 Shared responsibility matrix for all 110 requirements, generated from the OGRL bundle: [docs/srm/srm.md](docs/srm/srm.md) ([CSV](docs/srm/srm.csv)).
 
 ## Tiers
