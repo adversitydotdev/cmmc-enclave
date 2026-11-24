@@ -25,13 +25,13 @@ variable "fathom_bootstrap_admin_emails" {
 variable "fathom_ref" {
   description = "Fathom commit SHA for deploy/aws/template.yaml."
   type        = string
-  default     = "10375ebafb0a59ac10824c12e144862151d1a1b4"
+  default     = "7db744e6bfadc90003202f15829357d26d6b65bb"
 }
 
 variable "fathom_template_sha256" {
   description = "sha256 of the template at fathom_ref."
   type        = string
-  default     = "912c7973f062f1ab86e049bfa509defaae7a6f65136ed018cdfe534d7fe4a7cc"
+  default     = "482085d875250b65a3eaa7e033b68b0afab43c61ec069acdfb96b686d64b0c25"
 }
 
 variable "fathom_enable_services" {
