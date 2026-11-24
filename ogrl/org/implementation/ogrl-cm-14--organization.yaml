@@ -1,0 +1,19 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-cm-14
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-cm-14
+external_references:
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  {{ company_name }} keeps an authorized maintenance personnel list,
+  reviewed annually. Anyone not on the list is escorted and
+  supervised by a named workforce member for the whole visit, and
+  the supervisor is recorded. Test: manual evidence, list review and
+  visit records.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

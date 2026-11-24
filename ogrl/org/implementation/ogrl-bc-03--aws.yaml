@@ -1,0 +1,29 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-bc-03
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-bc-03
+external_references:
+  - source: public
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: public
+    url: "https://docs.aws.amazon.com/aws-backup/latest/devguide/vault-lock.html"
+  - source: public
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/backup-plan-min-frequency-and-min-retention-check.html"
+narrative: >-
+  AWS Backup in the workload account with Backup Vault Lock
+  (compliance mode), KMS CMK encryption, and cross-account copy to
+  the log archive account so production credentials cannot delete
+  recovery points. Not yet in the Terraform baseline, so planned.
+  Tests: Config rules
+  backup-plan-min-frequency-and-min-retention-check,
+  rds-in-backup-plan, ebs-in-backup-plan, efs-in-backup-plan,
+  dynamodb-in-backup-plan (CMMC 2.0 L2 conformance pack,
+  MP.L2-3.8.9). AWS protects the facilities holding the backup
+  storage; the customer configures vaults, keys, and retention.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: planned
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

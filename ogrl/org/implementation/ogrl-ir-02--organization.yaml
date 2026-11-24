@@ -1,0 +1,19 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ir-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ir-02
+external_references:
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  Reports are triaged within 1 hour, classified on the written
+  severity matrix, and given an incident commander. High severity
+  goes to the security lead and executives. Alert Center and
+  Security Hub notifications route to the on-call mailbox. Test:
+  manual evidence, incident tickets showing triage times.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

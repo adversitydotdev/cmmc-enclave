@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-cr-04
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-cr-04
+external_references:
+  - source: public
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=96"
+  - source: public
+    url: "https://cloud.google.com/docs/security/deletion"
+narrative: >-
+  Google sanitizes media holding customer data before disposal or
+  reuse (NIST SP 800-88), and the Workspace guide lists MP.L1-3.8.3
+  as Google's responsibility for Workspace media. Test: manual
+  evidence, annual review of the Google Workspace FedRAMP High
+  authorization listing and the public Google data center security
+  page; no CRM material is used.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

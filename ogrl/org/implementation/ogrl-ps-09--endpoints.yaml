@@ -1,0 +1,18 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-ps-09
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-ps-09
+external_references:
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  Laptops and portable drives holding CUI are kept in custody or
+  locked away when unattended and use full-disk encryption.
+  Endpoints are out of scope for this repository. Test: manual
+  evidence, sample device check.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

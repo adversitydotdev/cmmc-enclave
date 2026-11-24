@@ -1,0 +1,28 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-cm-13
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-cm-13
+external_references:
+  - source: public
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: public
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/iam-user-mfa-enabled.html"
+  - source: public
+    url: "https://aws.amazon.com/compliance/fedramp/"
+narrative: >-
+  Nonlocal administration of AWS runs through IAM Identity Center
+  with Google Workspace as the SAML IdP, so MFA (security keys) is
+  enforced at the IdP, and permission sets expire after 1 hour. The
+  break-glass path is an IAM user with FIDO keys. Sessions end at
+  expiry, and CloudTrail logs every session. Tests: Config rule
+  iam-user-mfa-enabled (CMMC 2.0 L2 pack, MA.L2-3.7.5); Identity
+  Center permission set session duration read from Terraform state.
+  AWS operates its own maintenance access under its FedRAMP
+  boundary.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

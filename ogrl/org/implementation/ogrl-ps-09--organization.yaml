@@ -1,0 +1,22 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ps-09
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ps-09
+external_references:
+  - source: public
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=122"
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  Paper CUI and portable digital media stay in an authorized user's
+  custody while in use and in locked storage when not, with keys
+  limited to designated custodians and the access record reviewed
+  quarterly. Google Workspace excludes 3.8.1 and 3.8.2 (guide), so
+  it is not a component here. Test: manual evidence, storage access
+  review and spot check.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned
