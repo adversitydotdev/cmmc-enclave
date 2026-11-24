@@ -7,6 +7,9 @@ on:
       - "ogrl/**"
       - "terraform/stacks/**"
       - "scripts/build-wizard"
+      - "scripts/render-config"
+      - "scripts/package-fathom-seed"
+      - "scripts/bootstrap"
       - ".github/workflows/wizard.yml"
   push:
     branches: [main]
@@ -15,6 +18,9 @@ on:
       - "ogrl/**"
       - "terraform/stacks/**"
       - "scripts/build-wizard"
+      - "scripts/render-config"
+      - "scripts/package-fathom-seed"
+      - "scripts/bootstrap"
       - ".github/workflows/wizard.yml"
 
 permissions:
@@ -45,7 +51,10 @@ jobs:
         run: scripts/build-wizard --check
 
       # Rendering, digests, tfvars against declared variables, determinism, and
-      # the zip opened with Python's zipfile (wizard/test/check_zip.py).
+      # the zip opened with Python's zipfile (wizard/test/check_zip.py). Also
+      # scripts/render-config (wizard/test/render-config.test.js): CLI output is
+      # byte-identical to the wizard's, and passes package-fathom-seed and
+      # bootstrap's config checks.
       - name: node --test
         run: node --test
 
