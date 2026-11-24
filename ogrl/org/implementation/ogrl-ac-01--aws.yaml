@@ -1,0 +1,29 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-01
+external_references:
+  - source: IAM Identity Center with Google Workspace as IdP
+    url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html"
+  - source: IAM Identity Center permission sets
+    url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/permissionsetsconcept.html"
+  - source: AWS Config CMMC 2.0 Level 2 operational best practices
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+narrative: >-
+  Identity Center users come only from Workspace SCIM sync; groups
+  and memberships are Terraform (aws_identitystore_group*) changed
+  by reviewed pull request, so each AWS account holder has an
+  approved change record. Disabling or suspending the user in
+  Workspace stops SAML sign-in and the next SCIM sync deactivates
+  the Identity Center user; permission set sessions last 1 hour, so
+  access ends within the deprovision SLA. The break-glass IAM user
+  is the only non-federated human identity, kept on the privileged
+  roster. Tested by Config rules iam-user-unused-credentials-check
+  and iam-user-group- membership-check, plus the library test
+  test--ogrl-ac-01-lifecycle.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

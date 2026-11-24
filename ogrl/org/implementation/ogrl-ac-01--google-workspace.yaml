@@ -1,0 +1,30 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-ac-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-ac-01
+external_references:
+  - source: Control which apps access Google Workspace data
+    url: "https://support.google.com/a/answer/7281227"
+  - source: Cloud Identity Policy API supported settings
+    url: "https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings"
+  - source: "Google Workspace CMMC implementation guide (page 14)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=14"
+  - source: "Google Workspace CMMC implementation guide (page 72)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=72"
+narrative: >-
+  Workspace is the identity provider. CUI users sit in a dedicated
+  organizational unit. Admins create accounts on an approved request
+  and suspend them on termination or role change, which blocks SSO
+  to AWS at once. Third-party OAuth apps are blocked unless approved
+  (api_controls.unconfigured_third_party_apps), limiting access by
+  processes acting for users. Workspace user lifecycle state is not
+  readable through the Policy API, so evidence is the Reports API
+  admin audit log (user suspend events) matched to HR termination
+  records. Closes the 3.9.2 account-action half only; return of
+  credentials and CUI is Organization.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

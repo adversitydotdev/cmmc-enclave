@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ac-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ac-01
+external_references:
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  {{ company_name }} approves every user and service account request
+  through the system owner or manager before provisioning, and ties
+  HR termination and role-change events to Workspace suspension
+  within the deprovision SLA (24 hours by baseline parameter). Also
+  owns the 3.9.2 actions beyond account disable: retrieval of keys,
+  tokens, and CUI from departing personnel, and transfer
+  protections. Policy template comes with #20. Tested by
+  test--ogrl-ac-01-lifecycle with approval tickets and termination
+  records as manual evidence.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

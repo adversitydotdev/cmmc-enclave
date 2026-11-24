@@ -1,0 +1,27 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-08
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-08
+external_references:
+  - source: IAM Identity Center permission sets
+    url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/permissionsetsconcept.html"
+  - source: AWS Organizations service control policies
+    url: "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html"
+  - source: AWS Config CMMC 2.0 Level 2 operational best practices
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+narrative: >-
+  Duties are split in the account design: log archive and security
+  tooling accounts are separate from the enclave workload account,
+  so workload admins cannot change the org CloudTrail bucket, which
+  has Object Lock. Permission sets separate admin, auditor, and
+  Fathom operator. Terraform changes need a reviewer other than the
+  author. SCPs stop member accounts from disabling CloudTrail,
+  Config, and GuardDuty. Tested by Config rules
+  iam-group-has-users-check, iam- user-group-membership-check,
+  iam-policy-no-statements-with-admin- access.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

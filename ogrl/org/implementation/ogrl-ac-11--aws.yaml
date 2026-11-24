@@ -1,0 +1,32 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-11
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-11
+external_references:
+  - source: AWS Systems Manager Session Manager
+    url: "https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html"
+  - source: VPC endpoints
+    url: "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints.html"
+  - source: IAM Identity Center with Google Workspace as IdP
+    url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html"
+  - source: AWS Config CMMC 2.0 Level 2 operational best practices
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+narrative: >-
+  Remote access to the enclave is limited to managed access points:
+  IAM Identity Center sign-in through the Workspace SAML app (MFA
+  with security keys), and Session Manager for shell access, with no
+  SSH, no public bastion, and no inbound internet except the Fathom
+  ALB. API access goes through FIPS and VPC endpoints with TLS 1.2
+  or higher. CloudTrail and Session Manager logs record sessions,
+  and GuardDuty monitors them. Permission sets decide which
+  privileged commands run remotely (3.1.15). Tested by Config rules
+  cloud-trail- cloud-watch-logs-enabled,
+  guardduty-enabled-centralized, cloudwatch- alarm-action-check,
+  elb-tls-https-listeners-only, alb-http-to-https-
+  redirection-check, s3-bucket-ssl-requests-only, restricted-ssh.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
