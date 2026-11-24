@@ -14,13 +14,13 @@ external_references:
     url: "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4735"
 narrative: >
   Google carries FIPS-validated cryptography for Workspace (Google
-  guide: native), covered by its FedRAMP High authorization. We
-  record the module and CMVP certificate numbers from Google's
-  documentation in the crypto inventory; certificate numbers not
-  verified from a public source here. Test: manual
-  evidence.cloud.google.com/docs/security/encryption/default-encryption);
-  it does not name the module, so confirm on the CMVP site before
-  the SSP records it.
+  guide: native), covered by its FedRAMP High authorization.
+  Google's BoringCrypto module holds FIPS 140-3 CMVP certificate
+  #4735 (Active); the earlier FIPS 140-2 certificate #4407 became
+  Historical on 2026-09-21 and is not cited. We record the module
+  and certificate in the crypto inventory and re-check its status on
+  the CMVP site at each SSP review. Test: manual evidence (CMVP
+  certificate page).
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented
