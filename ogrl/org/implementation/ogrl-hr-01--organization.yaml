@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-hr-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-hr-01
+external_references:
+  - source: >-
+      Google Workspace CMMC implementation guide (2025), page 123
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=123"
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  Identity verification, criminal history, and employment history
+  checks complete before an Identity Center permission set or a
+  CUI-OU Workspace account is granted, to the extent law allows.
+  Google guide: outside Workspace, customer. Test: manual evidence,
+  check completion dates compared with account creation dates.
+  Policy template arrives with issue #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

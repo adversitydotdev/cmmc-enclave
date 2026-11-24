@@ -1,0 +1,25 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-gv-12
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-gv-12
+external_references:
+  - source: >-
+      AWS Config conformance pack, Operational Best Practices for
+      CMMC 2.0 Level 2
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: >-
+      Google Workspace CMMC implementation guide (2025), page 126
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=126"
+narrative: >-
+  Control owners carry out remediation by the due dates, close items
+  with evidence, and the security leader reviews open items monthly.
+  The Config pack's own CA.L2-3.12.2 row is a process check (vuln-
+  management-plan-exists), not an automated rule. Test: manual
+  evidence, closed-item evidence and monthly review notes. Policy
+  template arrives with issue #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

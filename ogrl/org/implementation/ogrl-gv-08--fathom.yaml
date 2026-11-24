@@ -1,0 +1,20 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.fathom.ogrl-gv-08
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.fathom
+control_ref: control--ogrl-gv-08
+external_references:
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  Fathom holds the system, program, component, and implementation
+  objects and renders the SSP from them (RFC 0001 section 7.11;
+  ogrl- rs renders OSCAL), covering boundary, environment, how each
+  requirement is met, and connections to other systems (AWS, Google
+  Workspace). Change history is the object revision log. Test:
+  manual evidence, the rendered SSP and its revision history.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: implemented

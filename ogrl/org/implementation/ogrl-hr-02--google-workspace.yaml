@@ -1,0 +1,25 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-hr-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-hr-02
+external_references:
+  - source: >-
+      Google Workspace CMMC implementation guide (2025), page 72
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=72"
+  - source: "Google Workspace Admin Help: suspend a user"
+    url: "https://support.google.com/a/answer/1110339"
+narrative: >-
+  On termination or transfer an admin suspends the user in Workspace
+  (User Directory), which blocks SSO to every app including AWS,
+  then deletes after data handover. The runbook sets the offboarding
+  step; Google provides the suspend and delete functions. Test:
+  Cloud Identity Policy API and Admin console read of suspended
+  users; manual evidence, the offboarding ticket with suspend
+  timestamp.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

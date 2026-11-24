@@ -1,0 +1,34 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-vm-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-vm-02
+external_references:
+  - source: >-
+      AWS Config conformance pack, Operational Best Practices for
+      CMMC 2.0 Level 2
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: AWS Systems Manager Patch Manager
+    url: "https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager.html"
+  - source: >-
+      AWS Config rule
+      ec2-managedinstance-patch-compliance-status-check
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/ec2-managedinstance-patch-compliance-status-check.html"
+narrative: >-
+  AWS patches the infrastructure under managed services. For
+  customer- patched resources, Inspector reports vulnerable packages
+  and the conformance pack checks patch state on SSM-managed
+  instances (Systems Manager Patch Manager is the patching
+  mechanism). Images and instances are rebuilt or patched through
+  Terraform and the change process. Test: Config rule
+  ec2-managedinstance-patch- compliance-status-check (applies only
+  to SSM managed instances); Inspector findings age. The conformance
+  pack lists no rule for 3.14.1 patching itself; its 3.14.1 rows are
+  cloudwatch-alarm-action- check, guardduty-enabled-centralized,
+  securityhub-enabled.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

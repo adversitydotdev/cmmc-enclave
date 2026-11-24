@@ -1,0 +1,22 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-hr-09
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-hr-09
+external_references:
+  - source: >-
+      Google Workspace CMMC implementation guide (2025), page 119
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=119"
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  Insider threat indicators documented and covered in training for
+  all managers, employees, and contractors within 30 days and
+  annually, with a defined reporting channel. Test: manual evidence,
+  indicator list and completion records. Policy template arrives
+  with issue #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned
