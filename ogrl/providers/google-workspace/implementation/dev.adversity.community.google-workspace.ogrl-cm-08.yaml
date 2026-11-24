@@ -1,0 +1,47 @@
+type: implementation
+id: implementation--dev.adversity.community.google-workspace.ogrl-cm-08
+spec_version: "0.2.0"
+created: "2026-11-24T00:00:00Z"
+modified: "2026-11-24T00:00:00Z"
+created_by_ref: party--dev.adversity.community.google-workspace-author
+component_ref: component--dev.adversity.community.google-workspace
+control_ref: control--ogrl-cm-08
+customer_responsibility: >-
+  Turn off services the system does not need for the CUI
+  organizational unit, set the Marketplace allowlist, and restrict
+  API access.
+extensions:
+  dev.adversity.community:
+    authored_from: public-sources
+    statement: >-
+      Community-authored from public sources by adversity.dev; not
+      published, reviewed, or endorsed by Google. Not a vendor
+      responsibility matrix. Verify against the vendor's own
+      documentation before relying on it.
+    vendor_endorsed: false
+    vendor_published: false
+external_references:
+  - source: >-
+      Community-authored from public sources; not published or
+      endorsed by Google
+    url: "https://github.com/adversitydotdev/cmmc-enclave/tree/main/ogrl/providers"
+  - source: Google documentation
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - source: Google documentation
+    url: "https://support.google.com/a/answer/6089179"
+  - source: Google documentation
+    url: "https://support.google.com/a/answer/182442"
+  - source: Google Workspace Admin Help
+    url: "https://support.google.com/a"
+  - source: "FedRAMP Marketplace, Google Workspace (High)"
+    url: "https://marketplace.fedramp.gov/products/F1206081364"
+narrative: >-
+  Workspace lets admins turn services on or off per OU, allowlist
+  Marketplace apps, and restrict third-party API access to
+  allowlisted OAuth apps.
+origin: provider
+responsibility: shared
+status: implemented
+tags:
+  - community-authored
+  - not-vendor-published
