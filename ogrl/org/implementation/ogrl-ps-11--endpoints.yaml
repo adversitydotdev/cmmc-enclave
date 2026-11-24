@@ -14,5 +14,5 @@ narrative: >-
   for this repository. Test: manual evidence, sample encrypted drive
   check.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

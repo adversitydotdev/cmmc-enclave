@@ -19,5 +19,5 @@ narrative: >
   sessions over TLS 1.2 or higher. Evidence is the MDM compliance
   report.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

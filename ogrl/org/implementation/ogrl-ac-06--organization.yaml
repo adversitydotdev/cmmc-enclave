@@ -14,5 +14,5 @@ narrative: >-
   key custody and sealed-root storage, SCIM token rotation owner and
   yearly calendar. Policy template follows in issue #20.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

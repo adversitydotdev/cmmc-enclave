@@ -10,12 +10,12 @@ external_references:
     url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=100"
   - source: public
     url: "https://www.google.com/about/datacenters/data-security/"
-narrative: >-
+narrative: >
   Google limits data center access to authorized personnel; the
   Workspace guide lists PE.L1-3.10.1 as Google's responsibility.
   Test: manual evidence, annual review of the Google Workspace
   FedRAMP High authorization listing and the public Google data
-  center security page; no CRM material is used.
+  center security page.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented

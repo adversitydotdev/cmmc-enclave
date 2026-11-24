@@ -10,14 +10,14 @@ external_references:
     url: "https://aws.amazon.com/compliance/data-center/controls/"
   - source: public
     url: "https://aws.amazon.com/compliance/fedramp/"
-narrative: >-
+narrative: >
   AWS sanitizes or destroys retired storage media per NIST SP 800-88
   before disposal or reuse. The customer side is cryptographic
   erase: all enclave data is under KMS CMKs set in Terraform, and
   key deletion makes the ciphertext unrecoverable. Test: manual
   evidence, annual review of the AWS FedRAMP authorization listing
   (Moderate for US East/West, High for GovCloud) and the public AWS
-  data center controls page; no Artifact or CRM material is used.
+  data center controls page.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

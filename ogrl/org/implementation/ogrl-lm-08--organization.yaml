@@ -12,9 +12,9 @@ narrative: >
   {{ company_name }} writes the investigation workflow that ties
   alert triage, the periodic log review (OGRL-LM-04), and incident
   handling together, so each hands off to the next with one ticket,
-  and runs an on- demand query and report test across AWS and
+  and runs an on-demand query and report test across AWS and
   Workspace logs at least annually. Evidence is the written workflow
   and the test record. Policy templates come with issue #20.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

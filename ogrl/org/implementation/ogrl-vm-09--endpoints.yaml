@@ -14,5 +14,5 @@ narrative: >
   blocked on managed endpoints, and only Meet is approved for voice
   and video. Evidence is the MDM app allowlist.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

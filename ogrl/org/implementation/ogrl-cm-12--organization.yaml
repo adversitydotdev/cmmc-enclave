@@ -14,5 +14,5 @@ narrative: >-
   system, and the result is recorded in the maintenance record.
   Test: manual evidence, scan records.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

@@ -13,5 +13,5 @@ narrative: >-
   to findings and POA&M items. Fathom does not assess risk. Test:
   manual evidence, register export.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
-status: implemented
+responsibility: provider
+status: planned

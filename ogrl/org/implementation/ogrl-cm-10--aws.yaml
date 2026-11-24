@@ -10,14 +10,14 @@ external_references:
     url: "https://aws.amazon.com/compliance/fedramp/"
   - source: public
     url: "https://aws.amazon.com/compliance/data-center/controls/"
-narrative: >-
+narrative: >
   AWS maintains the facilities, hardware, and hypervisor under the
   FedRAMP-authorized boundary and controls who and what performs
   that maintenance. The customer maintains guest software, images,
   and configuration through Terraform change control. Test: manual
   evidence, annual review of the AWS FedRAMP authorization listing
   (Moderate for US East/West, High for GovCloud) and the public AWS
-  data center controls page; no Artifact or CRM material is used.
+  data center controls page.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

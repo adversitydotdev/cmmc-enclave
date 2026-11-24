@@ -15,5 +15,5 @@ narrative: >-
   and prime contractors by contract terms. Test: manual evidence,
   report channel posting and incident tickets.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

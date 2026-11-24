@@ -17,5 +17,5 @@ narrative: >-
   and the 180 day closeout. Test: manual evidence, the POA&M export
   showing owners and due dates.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
-status: implemented
+responsibility: provider
+status: planned

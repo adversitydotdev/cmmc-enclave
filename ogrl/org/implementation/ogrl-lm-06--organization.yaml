@@ -16,5 +16,5 @@ narrative: >
   annually. Evidence is the SSP section, the recipient list, and the
   test ticket. Policy templates come with issue #20.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

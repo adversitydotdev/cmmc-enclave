@@ -13,5 +13,5 @@ narrative: >
   the quarterly review. Policy template follows in issue #20. Test:
   manual review of the approved list and review record.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

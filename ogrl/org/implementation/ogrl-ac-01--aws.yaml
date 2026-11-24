@@ -22,7 +22,7 @@ narrative: >-
   access ends within the deprovision SLA. The break-glass IAM user
   is the only non-federated human identity, kept on the privileged
   roster. Tested by Config rules iam-user-unused-credentials-check
-  and iam-user-group- membership-check, plus the library test
+  and iam-user-group-membership-check, plus the library test
   test--ogrl-ac-01-lifecycle.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared

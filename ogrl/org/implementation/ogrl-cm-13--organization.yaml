@@ -15,5 +15,5 @@ narrative: >-
   remote support tools are listed in the SSP. Test: manual evidence,
   session approval and log samples.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

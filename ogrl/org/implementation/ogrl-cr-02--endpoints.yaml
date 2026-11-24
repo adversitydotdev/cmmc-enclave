@@ -14,5 +14,5 @@ narrative: >
   certificates are escrowed in MDM or an enterprise vault with
   restricted access. Evidence is the MDM escrow report.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

@@ -14,5 +14,5 @@ narrative: >-
   revokes access and wipes company data within 24 hours of a loss
   report. Policy template comes with #20.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

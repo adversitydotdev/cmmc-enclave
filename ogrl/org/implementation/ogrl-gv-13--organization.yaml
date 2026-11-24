@@ -18,5 +18,5 @@ narrative: >-
   800-171 requirement. Test: manual evidence, SPRS record and
   affirmation dates. Policy template arrives with issue #20.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

@@ -23,10 +23,11 @@ narrative: >-
   between AWS tenants and clearing of released memory and storage is
   AWS-operated (3.13.4). Tested by Config rules
   no-unrestricted-route-to-igw,
-  internet-gateway-authorized-vpc-only, vpc-default-security-group-
-  closed, restricted-ssh, restricted-common-ports,
-  subnet-auto-assign- public-ip-disabled, ec2-instance-no-public-ip,
-  s3-account-level- public-access-blocks-periodic, alb-waf-enabled.
+  internet-gateway-authorized-vpc-only,
+  vpc-default-security-group-closed, restricted-ssh,
+  restricted-common-ports, subnet-auto-assign-public-ip-disabled,
+  ec2-instance-no-public-ip,
+  s3-account-level-public-access-blocks-periodic, alb-waf-enabled.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

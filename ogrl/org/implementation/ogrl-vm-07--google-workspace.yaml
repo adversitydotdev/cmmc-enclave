@@ -11,8 +11,8 @@ external_references:
   - source: Google Meet security and privacy
     url: "https://support.google.com/meet/answer/9852160"
 narrative: >
-  Google guide rates this shared. Meet hardware, if used, shows in-
-  use indicators, but an admin can remotely join a device to a
+  Google guide rates this shared. Meet hardware, if used, shows
+  in-use indicators, but an admin can remotely join a device to a
   meeting from the Admin console and no setting disables that, so
   the customer must prohibit it by policy and limit Meet hardware
   admin roles. Our runbook sets the Meet camera and microphone

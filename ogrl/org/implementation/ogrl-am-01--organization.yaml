@@ -15,5 +15,5 @@ narrative: >
   follows in issue #20. Test: manual review of the written procedure
   and the last reconciliation record.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

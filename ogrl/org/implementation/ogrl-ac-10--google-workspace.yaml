@@ -16,8 +16,8 @@ external_references:
     url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=78"
 narrative: >-
   Web session length for CUI users is set in Workspace to 12 hours
-  or less (the baseline cap, including the SAML app to AWS) and re-
-  authentication is required with security keys. Workspace has no
+  or less (the baseline cap, including the SAML app to AWS) and
+  re-authentication is required with security keys. Workspace has no
   inactivity timer for web sessions, so inactivity termination is by
   session length plus the endpoint lock. Tested by reading
   security.session_controls (web session duration) through the

@@ -16,5 +16,5 @@ narrative: >-
   ages compared with the SLA. Policy template arrives with issue
   #20.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

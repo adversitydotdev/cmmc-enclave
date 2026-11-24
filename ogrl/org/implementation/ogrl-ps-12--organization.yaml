@@ -19,5 +19,5 @@ narrative: >-
   and AWS lists it as inheritable, but the sites are the customer's.
   Test: manual evidence, acknowledgments and annual attestations.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

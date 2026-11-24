@@ -15,5 +15,5 @@ narrative: >-
   Network access from endpoints to the enclave already needs the
   Workspace security key.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

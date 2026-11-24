@@ -18,5 +18,5 @@ narrative: >
   the issue tracker (patch timelines follow the flaw remediation
   control). Policy template still to be written (issue 20).
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

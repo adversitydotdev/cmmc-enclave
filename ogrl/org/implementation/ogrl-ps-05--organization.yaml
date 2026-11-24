@@ -16,5 +16,5 @@ narrative: >-
   not applicable in the SSP. Test: manual evidence, facility
   walkthrough record.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

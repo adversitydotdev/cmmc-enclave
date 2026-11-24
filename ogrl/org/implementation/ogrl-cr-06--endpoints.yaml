@@ -17,5 +17,5 @@ narrative: >
   FIPS policy, Apple corecrypto). Evidence is the MDM FIPS setting
   and CMVP certificate numbers.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

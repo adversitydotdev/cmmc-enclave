@@ -16,5 +16,5 @@ narrative: >-
   controls (ogrl-ps-09). Backup restores are exercised annually.
   Test: manual evidence, backup inventory and restore test record.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

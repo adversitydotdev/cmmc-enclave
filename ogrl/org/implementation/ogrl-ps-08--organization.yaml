@@ -16,5 +16,5 @@ narrative: >-
   FIPS-validated encryption (3.1.21). Test: manual evidence,
   allow-list review and approval records.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

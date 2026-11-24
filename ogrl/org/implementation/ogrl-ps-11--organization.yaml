@@ -15,5 +15,5 @@ narrative: >-
   transport is logged and open entries reconciled monthly. Test:
   manual evidence, transport log sample.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

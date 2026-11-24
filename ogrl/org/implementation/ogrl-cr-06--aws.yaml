@@ -21,10 +21,11 @@ narrative: >
   where condition keys allow. ALB listeners use FIPS TLS policies
   and KMS uses FIPS 140 validated HSMs. GovCloud (ITAR tier) uses
   FIPS endpoints by default. Test: terraform plan assertion on
-  provider config plus the ALB policy Config rule elb-predefined-
-  security-policy-ssl-check, and manual CMVP certificate numbers in
-  the crypto inventory. Google lists this native, AWS commercial is
-  shared (SCOPE section 9, item 4).
+  provider config plus the ALB policy Config rule a listener TLS
+  policy check (the conformance pack has no ALB TLS-policy rule, so
+  this is a custom rule or manual evidence), and manual CMVP
+  certificate numbers in the crypto inventory. Google lists this
+  native, AWS commercial is shared (SCOPE section 9, item 4).
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

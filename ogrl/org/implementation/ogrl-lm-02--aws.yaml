@@ -23,7 +23,7 @@ narrative: >
   EventBridge to notifications. SCPs block disabling GuardDuty.
   Tested by the Config rules guardduty-enabled-centralized,
   securityhub-enabled, cloudtrail-enabled, and
-  multi-region-cloudtrail- enabled, plus the library test
+  multi-region-cloudtrail-enabled, plus the library test
   test--ogrl-lm-02-security-monitoring. AWS operates the detection
   service; {{ company_name }} configures it and triages the alerts.
   No Inspector, Macie, or GuardDuty S3 or runtime protection in the

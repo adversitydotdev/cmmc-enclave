@@ -20,8 +20,8 @@ narrative: >-
   Fathom operator. Terraform changes need a reviewer other than the
   author. SCPs stop member accounts from disabling CloudTrail,
   Config, and GuardDuty. Tested by Config rules
-  iam-group-has-users-check, iam- user-group-membership-check,
-  iam-policy-no-statements-with-admin- access.
+  iam-group-has-users-check, iam-user-group-membership-check,
+  iam-policy-no-statements-with-admin-access.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

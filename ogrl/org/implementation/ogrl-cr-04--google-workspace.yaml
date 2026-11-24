@@ -10,13 +10,13 @@ external_references:
     url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=96"
   - source: public
     url: "https://cloud.google.com/docs/security/deletion"
-narrative: >-
+narrative: >
   Google sanitizes media holding customer data before disposal or
   reuse (NIST SP 800-88), and the Workspace guide lists MP.L1-3.8.3
   as Google's responsibility for Workspace media. Test: manual
   evidence, annual review of the Google Workspace FedRAMP High
   authorization listing and the public Google data center security
-  page; no CRM material is used.
+  page.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented

@@ -20,11 +20,11 @@ narrative: >-
   session; no standing IAM users except sealed break-glass. SCPs set
   the maximum permissions for every account. IAM Access Analyzer
   flags unintended external and unused access. Tested by the library
-  test test--ogrl- ac-03-least-privilege and Config rules
-  iam-policy-no-statements- with-admin-access,
-  iam-policy-no-statements-with-full-access, iam-
-  user-no-policies-check, iam-no-inline-policy-check,
-  iam-root-access- key-check.
+  test test--ogrl-ac-03-least-privilege and Config rules
+  iam-policy-no-statements-with-admin-access,
+  iam-policy-no-statements-with-full-access,
+  iam-user-no-policies-check, iam-no-inline-policy-check,
+  iam-root-access-key-check.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

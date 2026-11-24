@@ -17,5 +17,5 @@ narrative: >
   for the company. Test: manual review of a sample of merged PRs for
   the section and sign-off. Policy template follows in issue #20.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

@@ -18,15 +18,15 @@ external_references:
     url: "https://docs.aws.amazon.com/config/latest/developerguide/ec2-managedinstance-patch-compliance-status-check.html"
 narrative: >-
   AWS patches the infrastructure under managed services. For
-  customer- patched resources, Inspector reports vulnerable packages
+  customer-patched resources, Inspector reports vulnerable packages
   and the conformance pack checks patch state on SSM-managed
   instances (Systems Manager Patch Manager is the patching
   mechanism). Images and instances are rebuilt or patched through
   Terraform and the change process. Test: Config rule
-  ec2-managedinstance-patch- compliance-status-check (applies only
-  to SSM managed instances); Inspector findings age. The conformance
+  ec2-managedinstance-patch-compliance-status-check (applies only to
+  SSM managed instances); Inspector findings age. The conformance
   pack lists no rule for 3.14.1 patching itself; its 3.14.1 rows are
-  cloudwatch-alarm-action- check, guardduty-enabled-centralized,
+  cloudwatch-alarm-action-check, guardduty-enabled-centralized,
   securityhub-enabled.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared

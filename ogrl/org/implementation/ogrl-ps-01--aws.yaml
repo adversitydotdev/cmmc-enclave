@@ -12,12 +12,11 @@ external_references:
     url: "https://aws.amazon.com/compliance/data-center/data-centers/"
   - source: public
     url: "https://aws.amazon.com/compliance/fedramp/"
-narrative: >-
+narrative: >
   AWS limits data center access to authorized personnel and reviews
   the lists regularly. Test: manual evidence, annual review of the
   AWS FedRAMP authorization listing (Moderate for US East/West, High
-  for GovCloud) and the public AWS data center controls page; no
-  Artifact or CRM material is used.
+  for GovCloud) and the public AWS data center controls page.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented

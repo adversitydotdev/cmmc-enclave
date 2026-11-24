@@ -13,5 +13,5 @@ narrative: >-
   that holds CUI. Endpoints are out of scope for this repository.
   Test: manual evidence, sample scan record.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

@@ -20,5 +20,5 @@ narrative: >-
   Test: manual evidence, device-control policy export and a
   blocked-device test on a sample endpoint.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

@@ -15,5 +15,5 @@ narrative: >-
   Security Hub notifications route to the on-call mailbox. Test:
   manual evidence, incident tickets showing triage times.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

@@ -16,7 +16,7 @@ narrative: >
   whether or not any attachment setting is on, and keeps its
   protection mechanisms current (3.14.2, 3.14.4, 3.14.5 are native
   per the Google guide, pages 112 to 114). The runbook adds extra
-  protections for the CUI OU: enhanced pre- delivery message
+  protections for the CUI OU: enhanced pre-delivery message
   scanning, Security Sandbox rules for attachments and archives, and
   the Advanced Security Settings for senders with no history or low
   reputation. Tested by manual evidence of those Admin console

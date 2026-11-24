@@ -11,9 +11,9 @@ external_references:
 narrative: >-
   {{ company_name }} documents each permitted remote access method
   (Workspace sign-in, Identity Center, Session Manager), authorizes
-  it before enabling, defines the privileged commands and security-
-  relevant information allowed remotely (3.1.15), and reviews the
-  list annually. Policy template comes with #20.
+  it before enabling, defines the privileged commands and
+  security-relevant information allowed remotely (3.1.15), and
+  reviews the list annually. Policy template comes with #20.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

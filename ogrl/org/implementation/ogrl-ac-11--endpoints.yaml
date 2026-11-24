@@ -15,5 +15,5 @@ narrative: >-
   baseline. {{ company_name }} owns endpoint settings; out of scope
   for this repository.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

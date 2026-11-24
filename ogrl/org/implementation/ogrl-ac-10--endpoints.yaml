@@ -9,11 +9,11 @@ external_references:
   - source: NIST SP 800-171 Rev 2
     url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
 narrative: >-
-  Endpoints lock after 15 minutes of inactivity, require re-
-  authentication to unlock, and conceal the display with a pattern-
-  hiding lock screen. {{ company_name }} sets this in its MDM;
-  device management is out of scope for this repository. Evidence is
-  the MDM profile and compliance report.
+  Endpoints lock after 15 minutes of inactivity, require
+  re-authentication to unlock, and conceal the display with a
+  pattern-hiding lock screen. {{ company_name }} sets this in its
+  MDM; device management is out of scope for this repository.
+  Evidence is the MDM profile and compliance report.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

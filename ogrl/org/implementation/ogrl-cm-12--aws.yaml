@@ -10,14 +10,14 @@ external_references:
     url: "https://aws.amazon.com/compliance/fedramp/"
   - source: public
     url: "https://aws.amazon.com/compliance/data-center/controls/"
-narrative: >-
+narrative: >
   AWS inspects diagnostic and test media for malicious code before
   use in the systems that run the cloud service, as part of the
   FedRAMP-authorized boundary. The enclave workload uses no
   customer-supplied diagnostic media. Test: manual evidence, annual
   review of the AWS FedRAMP authorization listing (Moderate for US
   East/West, High for GovCloud) and the public AWS data center
-  controls page; no Artifact or CRM material is used.
+  controls page.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented

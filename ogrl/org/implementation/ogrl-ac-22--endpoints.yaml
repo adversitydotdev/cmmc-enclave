@@ -22,5 +22,5 @@ narrative: >
   configuration profile and a test showing local networks are
   unreachable while connected.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

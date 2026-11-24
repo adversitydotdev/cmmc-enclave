@@ -10,7 +10,7 @@ external_references:
     url: "https://aws.amazon.com/compliance/data-center/controls/"
   - source: public
     url: "https://aws.amazon.com/compliance/fedramp/"
-narrative: >-
+narrative: >
   AWS physically controls and securely stores the media in its data
   centers and limits access to authorized staff (AWS lists 3.8.1 and
   3.8.2 as inheritable). Digital CUI on the media is also under KMS
@@ -18,7 +18,7 @@ narrative: >-
   paper, USB drives, or laptops. Test: manual evidence, annual
   review of the AWS FedRAMP authorization listing (Moderate for US
   East/West, High for GovCloud) and the public AWS data center
-  controls page; no Artifact or CRM material is used.
+  controls page.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented

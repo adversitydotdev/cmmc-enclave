@@ -17,5 +17,5 @@ narrative: >
   tools cannot activate them, and OS or hardware indicators stay on.
   Evidence is the MDM compliance report, verified quarterly.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

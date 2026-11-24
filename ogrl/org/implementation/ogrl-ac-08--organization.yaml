@@ -15,5 +15,5 @@ narrative: >-
   exceptions with compensating after-the-fact review when the team
   is too small. Policy template comes with #20.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

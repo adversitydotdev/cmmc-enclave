@@ -20,7 +20,7 @@ narrative: >-
   federated sign-in from the Workspace IdP. Tested by Config rules
   internet-gateway-authorized-vpc-only,
   no-unrestricted-route-to-igw, s3-bucket-public-read-prohibited,
-  s3-account-level-public-access- blocks-periodic, restricted-ssh,
+  s3-account-level-public-access-blocks-periodic, restricted-ssh,
   restricted-common-ports.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared

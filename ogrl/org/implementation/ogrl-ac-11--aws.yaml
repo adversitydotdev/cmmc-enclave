@@ -23,10 +23,10 @@ narrative: >-
   or higher. CloudTrail and Session Manager logs record sessions,
   and GuardDuty monitors them. Permission sets decide which
   privileged commands run remotely (3.1.15). Tested by Config rules
-  cloud-trail- cloud-watch-logs-enabled,
-  guardduty-enabled-centralized, cloudwatch- alarm-action-check,
-  elb-tls-https-listeners-only, alb-http-to-https-
-  redirection-check, s3-bucket-ssl-requests-only, restricted-ssh.
+  cloud-trail-cloud-watch-logs-enabled,
+  guardduty-enabled-centralized, cloudwatch-alarm-action-check,
+  elb-tls-https-listeners-only, alb-http-to-https-redirection-check,
+  s3-bucket-ssl-requests-only, restricted-ssh.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

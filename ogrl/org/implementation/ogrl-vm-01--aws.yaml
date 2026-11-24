@@ -23,7 +23,7 @@ narrative: >-
   findings flowing to Security Hub; GuardDuty and Security Hub are
   on in every account. Inspector rescans when new CVEs are
   published. Test: Config rules securityhub-enabled,
-  guardduty-enabled-centralized, guardduty-non- archived-findings,
+  guardduty-enabled-centralized, guardduty-non-archived-findings,
   ec2-managedinstance-patch-compliance-status-check (all listed
   against RA.L2-3.11.2 in the conformance pack); Inspector account
   status read; library test ogrl-vm-01-vuln-scanning for cadence and

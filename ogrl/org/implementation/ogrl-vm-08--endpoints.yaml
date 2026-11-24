@@ -17,5 +17,5 @@ narrative: >
   (Chrome Browser Cloud Management or MDM). Monitoring comes from
   EDR and web filtering telemetry. Evidence is the policy export.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

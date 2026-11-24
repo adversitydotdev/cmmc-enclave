@@ -12,12 +12,12 @@ external_references:
     url: "https://aws.amazon.com/compliance/data-center/data-centers/"
   - source: public
     url: "https://aws.amazon.com/compliance/fedramp/"
-narrative: >-
+narrative: >
   AWS monitors data center entry points with video surveillance and
   alarms and reviews physical access logs. Test: manual evidence,
   annual review of the AWS FedRAMP authorization listing (Moderate
   for US East/West, High for GovCloud) and the public AWS data
-  center controls page; no Artifact or CRM material is used.
+  center controls page.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented

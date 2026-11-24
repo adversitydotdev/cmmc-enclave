@@ -28,16 +28,16 @@ narrative: >
   limited to a named logging admin permission set in log archive and
   security tooling. Tests: Config rules
   s3-bucket-default-lock-enabled, s3-bucket-versioning-enabled,
-  cloud- trail-log-file-validation-enabled,
+  cloud-trail-log-file-validation-enabled,
   cloud-trail-encryption-enabled, cloudwatch-log-group-encrypted,
-  s3-bucket-server-side-encryption- enabled,
+  s3-bucket-server-side-encryption-enabled,
   s3-default-encryption-kms, s3-bucket-ssl-requests-only,
   s3-bucket-public-read-prohibited,
   s3-bucket-public-write-prohibited,
-  s3-account-level-public-access-blocks-periodic, s3-bucket-policy-
-  grantee-check. Config does not test the SCP or who holds the
-  logging admin role; those are manual evidence (SCP export,
-  permission set assignment review).
+  s3-account-level-public-access-blocks-periodic,
+  s3-bucket-policy-grantee-check. Config does not test the SCP or
+  who holds the logging admin role; those are manual evidence (SCP
+  export, permission set assignment review).
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

@@ -18,9 +18,10 @@ narrative: >
   automatic annual rotation, a 30 day deletion window, key policies
   that separate key administrators from key users, and CloudTrail
   logging of every KMS call to the log archive. Tested by Config
-  rules cmk-backing-key-rotation-enabled, kms-cmk-not-scheduled-for-
-  deletion, iam-customer-policy-blocked-kms-actions, iam-inline-
-  policy-blocked-kms-actions.
+  rules cmk-backing-key-rotation-enabled,
+  kms-cmk-not-scheduled-for-deletion,
+  iam-customer-policy-blocked-kms-actions,
+  iam-inline-policy-blocked-kms-actions.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

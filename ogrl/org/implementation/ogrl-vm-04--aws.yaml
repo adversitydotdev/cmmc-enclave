@@ -17,7 +17,7 @@ narrative: >
   the security notification topic, so alerts reach the owners
   without console polling. {{ company_name }} also follows AWS
   security bulletins and AWS Health events for the accounts. Tested
-  by Config rules guardduty-enabled- centralized,
+  by Config rules guardduty-enabled-centralized,
   securityhub-enabled, and cloudwatch-alarm-action-check; the
   bulletin subscription is manual evidence. AWS issues the
   advisories; triage and action are {{ company_name }}'s.

@@ -18,5 +18,5 @@ narrative: >-
   SSP version with approval date and review history. Policy template
   arrives with issue #20.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

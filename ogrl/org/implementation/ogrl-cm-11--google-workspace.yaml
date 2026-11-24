@@ -10,12 +10,12 @@ external_references:
     url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=93"
   - source: public
     url: "https://cloud.google.com/docs/security/deletion"
-narrative: >-
+narrative: >
   Google sanitizes media in its data centers before equipment leaves
   for maintenance; the Workspace guide lists MA.L2-3.7.3 as Google's
   responsibility. Test: manual evidence, annual review of the Google
   Workspace FedRAMP High authorization listing and the public Google
-  data center security page; no CRM material is used.
+  data center security page.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented

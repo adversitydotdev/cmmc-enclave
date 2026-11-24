@@ -14,5 +14,5 @@ narrative: >-
   Telnet, and plain FTP. Tested by manual evidence on
   {{ company_name }} endpoints.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

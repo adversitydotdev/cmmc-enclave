@@ -16,7 +16,7 @@ narrative: >
   the Workspace Status dashboard covers service alerts. Both are
   runbook steps. Tested by manual evidence: alert center
   notification settings and the status dashboard subscription. Per
-  the Google guide this is customer- configured.
+  the Google guide this is customer-configured.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

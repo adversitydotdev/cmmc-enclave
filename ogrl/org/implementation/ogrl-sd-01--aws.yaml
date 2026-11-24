@@ -17,9 +17,9 @@ narrative: >
   entry, KMS, logging), secure defaults (encryption by default, FIPS
   endpoints, public access blocks), and reviewed changes by pull
   request. Tested by Config rules account-part-of-organizations,
-  s3-account-level-public-access-blocks-periodic, vpc-default-
-  security-group-closed, and the CMMC 2.0 L2 conformance pack
-  overall.
+  s3-account-level-public-access-blocks-periodic,
+  vpc-default-security-group-closed, and the CMMC 2.0 L2 conformance
+  pack overall.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: implemented

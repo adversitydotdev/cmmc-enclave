@@ -16,5 +16,5 @@ narrative: >-
   comes with #20. Evidence is the roster and the monthly
   reconciliation record.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

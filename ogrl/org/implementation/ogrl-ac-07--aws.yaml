@@ -21,9 +21,9 @@ narrative: >-
   EventBridge alert on use. CloudTrail org trail records every
   privileged API call (3.1.7), and attempts blocked by SCPs appear
   as denied calls. Tested by Config rules
-  root-account-hardware-mfa-enabled, iam-root-access- key-check,
-  cloudtrail-enabled, multi-region-cloudtrail-enabled, iam-
-  policy-no-statements-with-admin-access.
+  root-account-hardware-mfa-enabled, iam-root-access-key-check,
+  cloudtrail-enabled, multi-region-cloudtrail-enabled,
+  iam-policy-no-statements-with-admin-access.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

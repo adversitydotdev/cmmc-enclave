@@ -15,5 +15,5 @@ narrative: >-
   process (ogrl-ir-02). Test: manual evidence, monthly log review
   records.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

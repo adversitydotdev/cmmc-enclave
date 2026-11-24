@@ -14,5 +14,5 @@ narrative: >-
   policy) and store passwords hashed. Local lockout after failed
   attempts is an endpoint setting (3.1.8).
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

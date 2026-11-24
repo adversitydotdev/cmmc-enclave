@@ -19,12 +19,12 @@ narrative: >
   repositories, and GuardDuty is on in every account for threat
   detection. GuardDuty malware protection and Inspector are not in
   the baseline, and GuardDuty foundational is detection, not file
-  scanning. Tested by Config rules ecr-private-image-
-  scanning-enabled and guardduty-enabled-centralized. If a customer
-  adds EC2 or other general-purpose hosts, EDR on them is the
-  customer's and the control reverts to planned. AWS patches and
-  protects the Fargate platform; image contents are
-  {{ company_name }}'s.
+  scanning. Tested by Config rules
+  ecr-private-image-scanning-enabled and
+  guardduty-enabled-centralized. If a customer adds EC2 or other
+  general-purpose hosts, EDR on them is the customer's and the
+  control reverts to planned. AWS patches and protects the Fargate
+  platform; image contents are {{ company_name }}'s.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

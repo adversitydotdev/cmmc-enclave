@@ -15,5 +15,5 @@ narrative: >-
   anomalies reported to the security team. Test: manual evidence,
   visitor log and monthly review sign-off.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

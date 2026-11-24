@@ -18,11 +18,12 @@ narrative: >
   and Identity Center, workloads run in the enclave and grc
   accounts, and administration is limited to the admin and Fathom
   operator permission sets via SAML (1 hour sessions). End users
-  never get AWS console access to the CUI data plane. The break-
-  glass IAM user is the only IAM user. Tested by Config rules iam-
-  user-no-policies-check, iam-policy-no-statements-with-admin-
-  access, iam-no-inline-policy-check, account-part-of-organizations,
-  plus an Identity Center permission set export.
+  never get AWS console access to the CUI data plane. The
+  break-glass IAM user is the only IAM user. Tested by Config rules
+  iam-user-no-policies-check,
+  iam-policy-no-statements-with-admin-access,
+  iam-no-inline-policy-check, account-part-of-organizations, plus an
+  Identity Center permission set export.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

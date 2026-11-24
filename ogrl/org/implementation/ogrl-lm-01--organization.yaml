@@ -18,5 +18,5 @@ narrative: >
   record, and the resulting Terraform or runbook change. Policy
   templates come with issue #20.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

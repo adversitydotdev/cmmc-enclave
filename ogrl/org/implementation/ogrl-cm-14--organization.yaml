@@ -15,5 +15,5 @@ narrative: >-
   the supervisor is recorded. Test: manual evidence, list review and
   visit records.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

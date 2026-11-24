@@ -14,5 +14,5 @@ narrative: >-
   screening) and the accepted-risk or POA&M record for the Workspace
   and IAM gaps. Policy template follows in issue #20.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

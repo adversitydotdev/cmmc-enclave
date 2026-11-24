@@ -16,5 +16,5 @@ narrative: >-
   or container (ogrl-ps-12). Test: manual evidence, entry log sample
   and device inventory.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

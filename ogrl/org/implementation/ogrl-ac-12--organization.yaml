@@ -14,5 +14,5 @@ narrative: >-
   authorizes new flows (3.1.3 objectives on authorizations). Policy
   template comes with #20.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

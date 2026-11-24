@@ -19,5 +19,5 @@ narrative: >-
   test--ogrl-ac-01-lifecycle with approval tickets and termination
   records as manual evidence.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

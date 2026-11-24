@@ -14,5 +14,5 @@ narrative: >-
   scope for this repository. Test: manual evidence, remote support
   tool configuration.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
+responsibility: provider
 status: planned

@@ -11,10 +11,10 @@ external_references:
 narrative: >-
   Fathom holds the system, program, component, and implementation
   objects and renders the SSP from them (RFC 0001 section 7.11;
-  ogrl- rs renders OSCAL), covering boundary, environment, how each
+  ogrl-rs renders OSCAL), covering boundary, environment, how each
   requirement is met, and connections to other systems (AWS, Google
   Workspace). Change history is the object revision log. Test:
   manual evidence, the rendered SSP and its revision history.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
-responsibility: customer
-status: implemented
+responsibility: provider
+status: planned

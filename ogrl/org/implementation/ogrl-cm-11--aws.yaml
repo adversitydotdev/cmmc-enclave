@@ -10,7 +10,7 @@ external_references:
     url: "https://aws.amazon.com/compliance/data-center/controls/"
   - source: public
     url: "https://aws.amazon.com/compliance/fedramp/"
-narrative: >-
+narrative: >
   AWS sanitizes or destroys storage media before equipment leaves
   its data centers for repair or return, using NIST SP 800-88
   techniques per its public data center controls. Customer data is
@@ -18,7 +18,7 @@ narrative: >-
   removed by AWS holds only ciphertext. Test: manual evidence,
   annual review of the AWS FedRAMP authorization listing (Moderate
   for US East/West, High for GovCloud) and the public AWS data
-  center controls page; no Artifact or CRM material is used.
+  center controls page.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented
