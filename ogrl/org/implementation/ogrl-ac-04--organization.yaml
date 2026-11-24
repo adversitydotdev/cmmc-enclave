@@ -9,7 +9,7 @@ external_references:
   - source: NIST SP 800-171 Rev 2
     url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
   - source: "Google Workspace CMMC implementation guide (2025)"
-    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=73"
 narrative: >
   {{ company_name }} defines and documents the external and key
   internal system boundaries (boundary diagram, data flow, list of

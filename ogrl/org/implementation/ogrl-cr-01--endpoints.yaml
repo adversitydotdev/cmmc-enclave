@@ -9,7 +9,7 @@ external_references:
   - source: NIST SP 800-171 Rev 2
     url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
   - source: "Google Workspace CMMC implementation guide (2025)"
-    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=76"
 narrative: >
   Endpoints are outside this repo; the customer brings its own
   managed devices. Covers remote access encryption (3.1.13), CUI on

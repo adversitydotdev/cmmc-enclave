@@ -7,7 +7,7 @@ component_ref: component--dev.adversity.cmmc-enclave.google-workspace
 control_ref: control--ogrl-vm-08
 external_references:
   - source: "Google Workspace CMMC implementation guide (2025)"
-    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=109"
 narrative: >
   Google lists mobile code control native, but our share is
   Workspace configuration: the CUI OU allows only reviewed

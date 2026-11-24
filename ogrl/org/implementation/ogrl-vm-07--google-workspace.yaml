@@ -7,7 +7,7 @@ component_ref: component--dev.adversity.cmmc-enclave.google-workspace
 control_ref: control--ogrl-vm-07
 external_references:
   - source: "Google Workspace CMMC implementation guide (2025)"
-    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=79"
   - source: Google Meet security and privacy
     url: "https://support.google.com/meet/answer/9852160"
 narrative: >
