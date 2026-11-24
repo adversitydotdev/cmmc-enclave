@@ -1,0 +1,17 @@
+create_organization = true # false: read an existing org (see module variable docs)
+
+account_emails = {
+  log_archive = "aws-log-archive@example.com"
+  security    = "aws-security@example.com"
+  workload    = "aws-workload@example.com"
+  grc         = "aws-grc@example.com"
+}
+
+# existing_account_ids = { log_archive = "<12-digit id>" }
+
+# Roles exempt from the protective SCPs. OrganizationAccountAccessRole is what
+# the baseline stack assumes, so it must stay exempt.
+exempt_principal_arn_patterns = [
+  "arn:*:iam::*:role/OrganizationAccountAccessRole",
+  "arn:*:iam::*:role/enclave-pipeline*",
+]
