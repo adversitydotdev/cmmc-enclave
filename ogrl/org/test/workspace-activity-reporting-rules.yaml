@@ -1,0 +1,18 @@
+type: test
+id: test--dev.adversity.cmmc-enclave.workspace-activity-reporting-rules
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Review Workspace activity and reporting rules
+control_ref: control--ogrl-lm-04
+description: >-
+  Screenshots of the failed login rule (more than 5 in 24 hours,
+  suspend user) and the suspicious sign-in, admin setting change and
+  external sharing rules in the Admin console Rules page. Custom
+  rules are not exposed in the Policy API.
+interval: quarterly
+method: manual
+procedure_ref: procedure--dev.adversity.cmmc-enclave.audit-log-review
+required: false
+tags:
+  - google-workspace

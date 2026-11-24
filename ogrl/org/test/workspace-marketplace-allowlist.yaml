@@ -1,0 +1,17 @@
+type: test
+id: test--dev.adversity.cmmc-enclave.workspace-marketplace-allowlist
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Verify the Marketplace allowlist matches the reviewed list
+control_ref: control--ogrl-cm-08
+description: >-
+  Policy API setting workspace_marketplace.apps_allowlist on the CUI
+  OU contains only application IDs on the quarterly reviewed list.
+interval: daily
+method: automated
+objective_refs:
+  - "requirement--nist-sp-800-171-r2-3-4-8#obj.b"
+required: false
+tags:
+  - google-workspace

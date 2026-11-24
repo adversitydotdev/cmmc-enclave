@@ -1,0 +1,17 @@
+type: test
+id: test--dev.adversity.cmmc-enclave.workspace-audit-log-gcp-sharing
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: >-
+  Verify data sharing with Google Cloud matches the audit collector
+  design
+control_ref: control--ogrl-lm-01
+description: >-
+  Policy API setting cloud_sharing_options.cloud_data_sharing is off
+  while the Reports API collector is the audit store.
+interval: daily
+method: automated
+required: false
+tags:
+  - google-workspace

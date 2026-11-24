@@ -1,0 +1,19 @@
+type: test
+id: test--dev.adversity.cmmc-enclave.workspace-security-health-baseline
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Verify Workspace settings match the recorded baseline
+control_ref: control--ogrl-cm-03
+description: >-
+  Every Policy API read test for Workspace passes against
+  workspace/settings.yaml, the baseline of record. Security health
+  in the Admin console has no API, so this is the per-setting
+  comparison.
+interval: daily
+method: automated
+objective_refs:
+  - "requirement--nist-sp-800-171-r2-3-4-2#obj.b"
+required: false
+tags:
+  - google-workspace

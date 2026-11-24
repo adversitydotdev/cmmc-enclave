@@ -1,0 +1,15 @@
+type: test
+id: test--dev.adversity.cmmc-enclave.workspace-2sv-enrollment
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Verify 2-Step Verification enrollment is allowed
+control_ref: control--ogrl-ac-05
+description: >-
+  Policy API setting security.two_step_verification_enrollment is
+  allowed on both the CUI and non-CUI OUs.
+interval: daily
+method: automated
+required: false
+tags:
+  - google-workspace

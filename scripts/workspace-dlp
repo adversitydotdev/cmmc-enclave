@@ -1,0 +1,288 @@
+#!/usr/bin/env python3
+"""Create or update the CUI-marking DLP detectors and rules through the Cloud Identity Policy API.
+
+Usage:
+  scripts/workspace-dlp --customer-id C01234567 --org-unit id:03ph8a2z1abcdef \
+      [--categories CTI,PRVCY] [--credentials key.json --subject admin@example.com] \
+      [--no-dissemination] [--apply]
+
+Default is --dry-run: prints every request it would send and sends nothing except
+read-only list calls when credentials are supplied (none without --credentials).
+Idempotent: existing policies are found by display name (setting.value.display_name)
+within the same setting type and org unit; unchanged ones are skipped, changed ones
+are patched, missing ones are created.
+
+References (retrieved 2026-11-23):
+  [R1] Supported settings (rule.dlp, detector.*, triggers, actions, conditions):
+       https://docs.cloud.google.com/identity/docs/concepts/supported-policy-api-settings
+  [R2] Policy resource (customer, policyQuery.orgUnit, setting.type/value):
+       https://docs.cloud.google.com/identity/docs/reference/rest/v1beta1/policies
+  [R3] policies.list (filter is a CEL expression, pageSize max 100):
+       https://docs.cloud.google.com/identity/docs/reference/rest/v1beta1/policies/list
+  [R4] policies.create (POST /v1beta1/policies, returns an Operation; scope cloud-identity.policies):
+       https://docs.cloud.google.com/identity/docs/reference/rest/v1beta1/policies/create
+
+API-shape UNCERTAINTIES are marked "UNVERIFIED" below. Test in a tenant before relying on them.
+"""
+import argparse
+import json
+import re
+import sys
+import time
+
+BASE = "https://cloudidentity.googleapis.com/v1beta1"
+SCOPE = "https://www.googleapis.com/auth/cloud-identity.policies"  # [R4]
+
+# [R1] setting types. UNVERIFIED: the "settings/" prefix on setting.type; [R3] filter examples
+# use '^settings/gmail\\..*$', so it is used here.
+T_RULE = "settings/rule.dlp"
+T_REGEX = "settings/detector.regular_expression"
+T_WORDS = "settings/detector.word_list"
+
+# [R1] triggers.
+TRIG_DRIVE_SHARE = "google.workspace.drive.file.v1.share"
+TRIG_GMAIL_SEND = "google.workspace.gmail.email.v1.send"
+
+# CUI Registry category abbreviations commonly seen in banners (CUI//SP-<abbr>).
+DEFAULT_CATEGORIES = []
+# Limited dissemination controls that are part of the CUI banner (32 CFR 2002.16, CUI Registry).
+# Matched only inside a CUI banner so classified-only markings (bare NOFORN) do not trip the rule.
+LDC = ["NOFORN", "FEDCON", "NOCON", "DL ONLY", "FED ONLY", "REL TO", "DISPLAY ONLY"]
+
+
+def detector_specs(categories, dissemination=True):
+    """Return [(setting_type, value)] for the detectors. Regexes are RE2 and case sensitive."""
+    cats = [c.strip().upper() for c in categories if c.strip()]
+    specs = [
+        (T_REGEX, {
+            "display_name": "CUI marking: banner",
+            "description": "CUI or CONTROLLED UNCLASSIFIED INFORMATION as a banner or designation line.",
+            # UNVERIFIED: the inner key of the regular_expression struct ([R1] says only "contains the regex").
+            "regular_expression": {"expression": r"\b(CUI|CONTROLLED UNCLASSIFIED INFORMATION)\b"},
+        }),
+        (T_REGEX, {
+            "display_name": "CUI marking: portion",
+            "description": "Portion markings such as (CUI) or (CUI//SP-CTI).",
+            "regular_expression": {"expression": r"\(CUI(//[A-Z][A-Z\-/ ]*)?\)"},
+        }),
+        (T_REGEX, {
+            "display_name": "CUI marking: specified category",
+            "description": "CUI//SP-<category> banner or portion marking, any category.",
+            "regular_expression": {"expression": r"\bCUI//SP-[A-Z]{2,10}\b"},
+        }),
+    ]
+    if cats:
+        alt = "|".join(re.escape(c) for c in cats)
+        specs.append((T_REGEX, {
+            "display_name": "CUI marking: selected categories",
+            "description": "CUI markings for the categories chosen in the wizard: " + ", ".join(cats),
+            "regular_expression": {"expression": r"\bCUI//(SP-)?(" + alt + r")\b"},
+        }))
+    if dissemination:
+        alt = "|".join(re.escape(x) for x in LDC)
+        specs.append((T_REGEX, {
+            "display_name": "CUI marking: dissemination control",
+            "description": "Limited dissemination control inside a CUI banner, e.g. CUI//SP-CTI//NOFORN.",
+            "regular_expression": {"expression": r"\bCUI//[A-Z\-/ ,]*\b(" + alt + r")\b"},
+        }))
+    return specs
+
+
+def content_condition(refs):
+    """[R1] Drive and Gmail both accept all_content.matches_regex_detector(<detector name>).
+    UNVERIFIED: whether <detector name> is the display name or the policy resource name; we pass
+    the policy resource name when known."""
+    return " || ".join(f"all_content.matches_regex_detector('{r}')" for r in refs)
+
+
+def rule_specs(refs, customer_id, drive_internal_warn=True):
+    cust = f"customers/{customer_id}" if not customer_id.startswith("customers/") else customer_id
+    external = f"!organization_trust_target.matches_customer('{cust}')"   # [R1] trust condition example
+    internal = f"organization_trust_target.matches_customer('{cust}')"
+    cc = content_condition(refs)
+    # UNVERIFIED: rule_type_metadata key for severity ([R1] says it "holds the severity level").
+    meta = {"rule_severity": "HIGH"}
+    rules = [
+        (T_RULE, {
+            "display_name": "CUI: block external Drive sharing",
+            "description": "Block sharing of files carrying CUI markings outside the organization.",
+            "triggers": [TRIG_DRIVE_SHARE],
+            "condition": {"contentCondition": cc, "trustCondition": external},
+            "action": {"driveAction": {"blockAccess": {}}},  # [R1] example: { "driveAction": { "blockAccess": { } } }
+            "state": "ACTIVE",
+            "rule_type_metadata": meta,
+        }),
+        (T_RULE, {
+            "display_name": "CUI: block outbound Gmail to external recipients",
+            "description": "Block outbound messages carrying CUI markings to recipients outside the organization.",
+            "triggers": [TRIG_GMAIL_SEND],
+            "condition": {"contentCondition": cc, "trustCondition": external},
+            # UNVERIFIED: parameter placement/casing ([R1] lists apply_external_messages and
+            # apply_internal_messages as Gmail parameters but shows no JSON).
+            "action": {"gmailAction": {"blockContent": {}, "apply_external_messages": True,
+                                       "apply_internal_messages": False}},
+            "state": "ACTIVE",
+            "rule_type_metadata": meta,
+        }),
+    ]
+    if drive_internal_warn:
+        rules.insert(1, (T_RULE, {
+            "display_name": "CUI: warn on internal Drive sharing",
+            "description": "Warn when a file carrying CUI markings is shared inside the organization.",
+            "triggers": [TRIG_DRIVE_SHARE],
+            # UNVERIFIED: [R1] describes Drive warnUser as "Warn on external sharing"; it may not fire
+            # for internal shares. Verify in a tenant.
+            "condition": {"contentCondition": cc, "trustCondition": internal},
+            "action": {"driveAction": {"warnUser": {}}},
+            "state": "ACTIVE",
+            "rule_type_metadata": meta,
+        }))
+    return rules
+
+
+def policy_body(customer, org_unit, stype, value):
+    """[R2] Policy: customer, policyQuery.orgUnit (orgUnits/{id}, UNVERIFIED format), setting{type,value}."""
+    return {
+        "customer": customer,
+        "policyQuery": {"orgUnit": org_unit, "group": ""},
+        "setting": {"type": stype, "value": value},
+    }
+
+
+class Http:
+    """Thin authorized HTTP layer (google-auth + requests). Tests substitute a fake with the same
+    request(method, url, params=None, body=None) -> dict signature."""
+
+    def __init__(self, credentials_path=None, subject=None):
+        import google.auth
+        from google.auth.transport.requests import AuthorizedSession
+        from google.oauth2 import service_account
+        if credentials_path:
+            creds = service_account.Credentials.from_service_account_file(credentials_path, scopes=[SCOPE])
+            if subject:
+                creds = creds.with_subject(subject)  # UNVERIFIED: DWD impersonation accepted by Policy API
+        else:
+            creds, _ = google.auth.default(scopes=[SCOPE])
+        self.session = AuthorizedSession(creds)
+
+    def request(self, method, url, params=None, body=None):
+        r = self.session.request(method, url, params=params, json=body, timeout=60)
+        if r.status_code >= 300:
+            raise RuntimeError(f"{method} {url} -> {r.status_code}: {r.text[:500]}")
+        return r.json() if r.text else {}
+
+
+def list_policies(http, customer):
+    """[R3] filter is a CEL expression; we narrow to rule.dlp and detector.* for this customer."""
+    flt = (f'customer == "{customer}" && '
+           "setting.type.matches('^settings/(rule\\\\.dlp|detector\\\\..*)$')")
+    out, token = [], None
+    while True:
+        params = {"filter": flt, "pageSize": 100}
+        if token:
+            params["pageToken"] = token
+        page = http.request("GET", f"{BASE}/policies", params=params)
+        out += page.get("policies", [])
+        token = page.get("nextPageToken")
+        if not token:
+            return out
+
+
+def find_existing(existing, stype, org_unit, display_name):
+    for p in existing:
+        s = p.get("setting", {})
+        if (s.get("type") == stype
+                and (s.get("value") or {}).get("display_name") == display_name
+                and p.get("policyQuery", {}).get("orgUnit") == org_unit):
+            return p
+    return None
+
+
+def _subset(want, have):
+    """True when every field we set already has that value (server adds timestamps etc.)."""
+    if isinstance(want, dict):
+        return isinstance(have, dict) and all(k in have and _subset(v, have[k]) for k, v in want.items())
+    return want == have
+
+
+def upsert(http, plan, existing, customer, org_unit, apply):
+    """plan: [(stype, value)]. Returns list of (action, display_name)."""
+    log = []
+    for stype, value in plan:
+        name = value["display_name"]
+        cur = find_existing(existing, stype, org_unit, name)
+        if cur and _subset(value, cur["setting"].get("value")):
+            log.append(("unchanged", name))
+            continue
+        if cur:
+            req = ("PATCH", f"{BASE}/{cur['name']}", {"updateMask": "setting.value"},
+                   {"setting": {"type": stype, "value": value}})  # UNVERIFIED updateMask path
+            act = "update"
+        else:
+            req = ("POST", f"{BASE}/policies", None, policy_body(customer, org_unit, stype, value))
+            act = "create"
+        if apply:
+            op = http.request(req[0], req[1], params=req[2], body=req[3])
+            wait_operation(http, op)
+        else:
+            print(json.dumps({"would": act, "method": req[0], "url": req[1], "params": req[2],
+                              "body": req[3]}, indent=2, sort_keys=True))
+        log.append((act, name))
+    return log
+
+
+def wait_operation(http, op, tries=10):
+    """[R4] create returns an Operation; poll GET /v1beta1/{operation.name} until done."""
+    for _ in range(tries):
+        if not op or op.get("done", True) or "name" not in op:
+            break
+        time.sleep(1)
+        op = http.request("GET", f"{BASE}/{op['name']}")
+    if op and op.get("error"):
+        raise RuntimeError(f"operation failed: {op['error']}")
+
+
+def run(http, customer_id, org_unit, categories, dissemination, apply, drive_internal_warn=True):
+    customer = f"customers/{customer_id}" if not customer_id.startswith("customers/") else customer_id
+    if org_unit.startswith("id:"):
+        org_unit = "orgUnits/" + org_unit[3:]
+    elif not org_unit.startswith("orgUnits/"):
+        org_unit = "orgUnits/" + org_unit
+    existing = list_policies(http, customer) if http else []
+    dets = detector_specs(categories, dissemination)
+    log = upsert(http, dets, existing, customer, org_unit, apply)
+    # Resolve detector resource names for the rule conditions.
+    if apply:
+        existing = list_policies(http, customer)
+    refs = []
+    for stype, v in dets:
+        cur = find_existing(existing, stype, org_unit, v["display_name"])
+        refs.append(cur["name"] if cur else f"<policy name of detector '{v['display_name']}'>")
+    log += upsert(http, rule_specs(refs, customer_id, drive_internal_warn), existing, customer, org_unit, apply)
+    return log
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--customer-id", required=True, help="Workspace customer ID, e.g. C01234567")
+    ap.add_argument("--org-unit", required=True, help="CUI OU id (Directory API orgUnitId, 'id:...' or 'orgUnits/...')")
+    ap.add_argument("--categories", default="", help="Comma separated CUI category abbreviations, e.g. CTI,PRVCY")
+    ap.add_argument("--no-dissemination", action="store_true", help="Skip the CUI dissemination control detector")
+    ap.add_argument("--no-drive-internal-warn", action="store_true")
+    ap.add_argument("--credentials", help="Service account key JSON (else application default credentials)")
+    ap.add_argument("--subject", help="Super admin to impersonate with domain-wide delegation")
+    g = ap.add_mutually_exclusive_group()
+    g.add_argument("--apply", action="store_true", help="Send changes (default is dry run)")
+    g.add_argument("--dry-run", action="store_true", help="Print what would be sent (default)")
+    a = ap.parse_args(argv)
+    cats = [c for c in a.categories.split(",") if c.strip()]
+    http = Http(a.credentials, a.subject) if (a.apply or a.credentials) else None
+    log = run(http, a.customer_id, a.org_unit, cats, not a.no_dissemination, a.apply,
+              not a.no_drive_internal_warn)
+    for act, name in log:
+        print(f"{act:9} {name}", file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
