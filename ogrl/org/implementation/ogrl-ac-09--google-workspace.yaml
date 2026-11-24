@@ -12,11 +12,21 @@ external_references:
     url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html"
 narrative: >-
   Workspace has no native setting that suspends accounts after 90
-  days of inactivity. Conservative plan: a scheduled check reads
-  last login time from the Reports API and flags users idle beyond
-  90 days for suspension within 24 hours; suspended users are
-  deprovisioned in Identity Center by SCIM. Not yet built, so
-  planned. Tested by that same scheduled report in Fathom.
+  days of inactivity. A daily Lambda in the log archive account
+  lists users through the Directory API, reads last login time
+  (creation time for users who never logged in), and finds users
+  idle beyond 90 days. Super admins, a configured email list and a
+  configured org unit list (break-glass, service accounts) are never
+  touched. In report mode, the default, it only writes the list to
+  the log archive (Object Lock, KMS) for review. In suspend mode it
+  also suspends them, inside the 24 hour window, and suspended users
+  are deprovisioned in Identity Center by SCIM. Suspend mode needs
+  its write scope delegated to a dedicated service account by hand
+  and is switched on deliberately in Terraform. Alarms fire on a
+  failed run or on no successful run in 26 hours. Status stays
+  planned while the default report mode is in force; a company that
+  runs suspend mode has this implemented. Tested by the archived run
+  reports and the alarms, reviewed in Fathom.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: planned

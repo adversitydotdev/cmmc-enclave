@@ -26,3 +26,8 @@ jobs:
         run: |
           python3 -m pip install --quiet -r requirements.txt -r requirements-dev.txt
           python3 -m pytest -q
+      - name: Workspace idle account tests
+        working-directory: collectors/workspace_idle
+        run: |
+          python3 -m pip install --quiet -r requirements.txt -r requirements-dev.txt
+          python3 -m pytest -q
