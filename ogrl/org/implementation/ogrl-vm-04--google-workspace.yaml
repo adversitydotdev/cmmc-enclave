@@ -14,9 +14,10 @@ narrative: >
   Alert center system-defined alerts (phishing, malware, suspicious
   activity, device and account alerts) notify the security mailbox;
   the Workspace Status dashboard covers service alerts. Both are
-  runbook steps. Tested by manual evidence: alert center
-  notification settings and the status dashboard subscription. Per
-  the Google guide this is customer-configured.
+  runbook steps. Tested by a Policy API read of
+  rule.system_defined_alerts, plus manual evidence of the status
+  dashboard subscription. Per the Google guide this is
+  customer-configured.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

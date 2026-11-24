@@ -19,11 +19,12 @@ narrative: >-
   IAM Identity Center sign-in through the Workspace SAML app (MFA
   with security keys), and Session Manager for shell access, with no
   SSH, no public bastion, and no inbound internet except the Fathom
-  ALB. API access goes through FIPS and VPC endpoints with TLS 1.2
-  or higher. CloudTrail and Session Manager logs record sessions,
-  and GuardDuty monitors them. Permission sets decide which
-  privileged commands run remotely (3.1.15). Tested by Config rules
-  cloud-trail-cloud-watch-logs-enabled,
+  ALB. API clients use FIPS endpoints where they exist
+  (use_fips_endpoint, enforced client-side) and VPC endpoints, with
+  TLS 1.2 or higher. CloudTrail and Session Manager logs record
+  sessions, and GuardDuty monitors them. Permission sets decide
+  which privileged commands run remotely (3.1.15). Tested by Config
+  rules cloud-trail-cloud-watch-logs-enabled,
   guardduty-enabled-centralized, cloudwatch-alarm-action-check,
   elb-tls-https-listeners-only, alb-http-to-https-redirection-check,
   s3-bucket-ssl-requests-only, restricted-ssh.

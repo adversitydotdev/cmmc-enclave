@@ -25,7 +25,8 @@ narrative: >-
   external sharing is off or allowlisted for the CUI OU.
   Context-aware access can require managed devices. Tested by
   reading api_controls.* and drive_and_docs.external_sharing through
-  the Policy API; per-OU service state is manual evidence.
+  the Policy API; per-OU service on/off state is read through the
+  Policy API service_status setting.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

@@ -14,9 +14,10 @@ narrative: >
   The enclave Terraform applies security engineering principles:
   least privilege through Identity Center permission sets and SCPs,
   defense in depth (account separation, VPC with a single public
-  entry, KMS, logging), secure defaults (encryption by default, FIPS
-  endpoints, public access blocks), and reviewed changes by pull
-  request. Tested by Config rules account-part-of-organizations,
+  entry, KMS, logging), secure defaults (encryption by default,
+  client-side FIPS endpoints, public access blocks), and reviewed
+  changes by pull request. Tested by Config rules
+  account-part-of-organizations,
   s3-account-level-public-access-blocks-periodic,
   vpc-default-security-group-closed, and the CMMC 2.0 L2 conformance
   pack overall.

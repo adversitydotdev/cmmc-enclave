@@ -13,11 +13,15 @@ external_references:
   - source: public
     url: "https://docs.aws.amazon.com/config/latest/developerguide/backup-plan-min-frequency-and-min-retention-check.html"
 narrative: >-
-  AWS Backup in the workload account with Backup Vault Lock
-  (compliance mode), KMS CMK encryption, and cross-account copy to
-  the log archive account so production credentials cannot delete
-  recovery points. Not yet in the Terraform baseline, so planned.
-  Tests: Config rules
+  AWS Backup in the workload account with Backup Vault Lock, KMS CMK
+  encryption, and a cross-account copy to a vault in the log archive
+  account so production credentials cannot delete recovery points.
+  The Terraform logging module defines the vaults, plan, and copy
+  action. Vault Lock starts in governance mode. Compliance mode is
+  set after validation through
+  backup_vault_lock_changeable_for_days, which is irreversible. The
+  log_archive copy vault uses its own backup CMK. Status stays
+  planned until applied and verified. Tests: Config rules
   backup-plan-min-frequency-and-min-retention-check,
   rds-in-backup-plan, ebs-in-backup-plan, efs-in-backup-plan,
   dynamodb-in-backup-plan (CMMC 2.0 L2 conformance pack,

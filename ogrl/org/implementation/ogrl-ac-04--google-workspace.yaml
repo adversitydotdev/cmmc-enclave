@@ -16,9 +16,11 @@ narrative: >
   The Google guide marks 3.13.5 and 3.13.6 as Google native and
   3.13.1 as shared, where our share is Gmail transport (secure
   transport TLS compliance rules, MTA-STS, a runbook step) and
-  optional context-aware access for the CUI OU. Test: Cloud Identity
-  Policy API read of the Gmail TLS compliance and MTA-STS settings,
-  plus manual evidence of Google FedRAMP High authorization.
+  optional context-aware access for the CUI OU. Gmail TLS compliance
+  and MTA-STS are not in the Policy API. Test: DNS check of the
+  MTA-STS TXT record and policy file, DKIM, and SPF, plus manual
+  evidence (screenshot) of the Gmail TLS compliance rule and of
+  Google FedRAMP High authorization.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented

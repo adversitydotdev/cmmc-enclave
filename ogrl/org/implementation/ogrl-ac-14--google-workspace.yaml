@@ -12,18 +12,27 @@ external_references:
     url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
   - source: Cloud Identity Policy API supported settings
     url: "https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings"
+  - source: "Google Workspace CMMC implementation guide (page 27)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=27"
+  - source: "Google Workspace CMMC implementation guide (page 66)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=66"
 narrative: >-
   Users: password management enforces minimum length 12, Enforce
   strong password (Google screens for common and compromised
   values), and enforcement at next sign-in; passwords are sent over
-  TLS. Gaps that Google does not expose: password history for reuse
-  (3.5.8, 24 generations cannot be set; only Allow reuse on/off, set
-  off), a changed-characters rule (3.5.7(c)), and an admin-set
-  lockout count (3.1.8; Google applies its own login challenges).
-  Security keys are the real second factor, which limits the risk of
-  the gaps. Tested by Policy API read of password length and
-  strength settings; the gaps stay open until compensating evidence
-  is accepted or a POA&M item is raised.
+  TLS. Lockout (3.1.8): an activity rule fires on more than 5 failed
+  logins in 24 hours and its action suspends the user (guide
+  p27-28). Unchecking Allow password reuse addresses reuse (guide
+  p66). With the lockout rule in place the Workspace part of 3.1.8
+  is fully implemented. Remaining gap: Google exposes no password
+  history count setting, so 24 generations (3.5.8) cannot be set;
+  only Allow reuse on/off, set off. Security keys are the real
+  second factor, which limits the risk of the gap. Tested by Policy
+  API read of password length, strength, and allowReuse (activity
+  rules are not in the Policy API, so the lockout rule is manual
+  evidence plus Alert Center and Reports API login events); the
+  history gap stays open until compensating evidence is accepted or
+  a POA&M item is raised.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: partial

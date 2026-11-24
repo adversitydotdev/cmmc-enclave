@@ -13,12 +13,12 @@ external_references:
 narrative: >
   The Terraform code is the approved baseline configuration for AWS:
   Organizations, SCPs, logging, KMS CMKs, VPC with no inbound
-  internet except the Fathom ALB, FIPS endpoints, GuardDuty, and
-  Security Hub. The AWS Config CMMC 2.0 Level 2 conformance pack
-  defines the security settings checked (3.4.2). Deviations are made
-  only by merged pull request. Test: Config conformance pack
-  compliance (all rules in the pack), Security Hub standards score,
-  manual annual baseline review.
+  internet except the Fathom ALB, client-side FIPS endpoints,
+  GuardDuty, and Security Hub. The AWS Config CMMC 2.0 Level 2
+  conformance pack defines the security settings checked (3.4.2).
+  Deviations are made only by merged pull request. Test: Config
+  conformance pack compliance (all rules in the pack), Security Hub
+  standards score, manual annual baseline review.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

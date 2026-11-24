@@ -16,8 +16,8 @@ narrative: >
   or custom roles to a small set of dedicated admin accounts
   (security key 2SV), and admins use separate accounts from daily
   mailboxes. Google is responsible for the service. Tested by a
-  Policy API/Admin SDK role assignment read and manual evidence of
-  the admin list.
+  Directory API role assignment read (roles are not in the Policy
+  API) and manual evidence of the admin list.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented
