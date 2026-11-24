@@ -28,7 +28,12 @@ narrative: >-
   api_controls.* and service_status per OU through the Policy API
   and by exporting the admin role assignment list as manual
   evidence. The per-OU service on/off state is read through the
-  Policy API service_status setting (a boolean per OU or group).
+  Policy API service_status setting (a boolean per OU or group). The
+  task-scoped custom admin roles are googleworkspace_role resources
+  in the Terraform module terraform/modules/workspace (user admin
+  and help desk, with an audit viewer role once its privilege name
+  is set), assigned by googleworkspace_role_assignment from a
+  variable map.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

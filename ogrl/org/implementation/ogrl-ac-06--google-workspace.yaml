@@ -21,6 +21,9 @@ narrative: >-
   tested by reading changePasswordAtNextLogin through the Directory
   API, plus manual evidence (new-user creation screenshot, Reports
   API password change events). The Policy API has no read for it.
+  For accounts created through the googleworkspace_user resource in
+  the Terraform module terraform/modules/workspace,
+  change_password_at_next_login is set to true at creation.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

@@ -15,7 +15,10 @@ narrative: >-
   not also hold audit-log and security-reader duties, and the audit
   log is exported to the AWS log archive account where Workspace
   admins have no write access. Evidence is the admin role assignment
-  export compared with the duty matrix.
+  export compared with the duty matrix. The separate user admin,
+  help desk and audit viewer roles are googleworkspace_role
+  resources in the Terraform module terraform/modules/workspace, so
+  duties are split in code.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

@@ -1,0 +1,26 @@
+customer_id             = "C0xxxxxxx"
+impersonated_user_email = "terraform-admin@example.com"
+domain                  = "example.com"
+# Key comes from GOOGLEWORKSPACE_CREDENTIALS (path to the service account JSON); do not set it here.
+
+# cui_ou_name     = "CUI"
+# non_cui_ou_name = "Non-CUI"
+
+# group_members = {
+#   enclave-admins   = ["alice@example.com"]
+#   enclave-auditors = ["bob@example.com"]
+# }
+
+# Users are not managed by default; existing accounts stay untouched.
+# users = {
+#   "carol@example.com" = { given_name = "Carol", family_name = "Lee", ou = "cui" }
+# }
+
+# After the first plan, read the audit_privilege_candidates output and set the exact name:
+# privilege_overrides = {
+#   audit_viewer = ["<name from data.googleworkspace_privileges>"]
+# }
+
+# role_assignments = {
+#   helpdesk = { role = "help_desk", assignee_type = "group", assignee = "helpdesk@example.com", scope_type = "ORG_UNIT", ou = "non_cui" }
+# }
