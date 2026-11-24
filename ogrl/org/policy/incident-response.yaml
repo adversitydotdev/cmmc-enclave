@@ -1,0 +1,22 @@
+type: policy
+id: policy--dev.adversity.cmmc-enclave.incident-response
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Incident Response Policy
+control_refs:
+  - control--ogrl-ir-01
+  - control--ogrl-ir-02
+  - control--ogrl-ir-03
+  - control--ogrl-ir-04
+  - control--ogrl-ir-07
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+resource:
+  digest:
+    algorithm: sha-256
+    value: "117fd37cf195dd433b8e094e1ac42cd7090aebcd4cf744a036a9a1ad563856e8"
+  media_type: text/markdown
+  uri: ../policy/incident-response.md
+review_interval: annual
+status: draft
+version: "0.1"

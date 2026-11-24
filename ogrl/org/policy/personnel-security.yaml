@@ -1,0 +1,20 @@
+type: policy
+id: policy--dev.adversity.cmmc-enclave.personnel-security
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Personnel Security Policy
+control_refs:
+  - control--ogrl-ac-01
+  - control--ogrl-hr-01
+  - control--ogrl-hr-02
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+resource:
+  digest:
+    algorithm: sha-256
+    value: "30aaa543b2b93767ff6baf0bc0fbdd1de7f4f6569c67e62d313627915aaefd5f"
+  media_type: text/markdown
+  uri: ../policy/personnel-security.md
+review_interval: annual
+status: draft
+version: "0.1"

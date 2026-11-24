@@ -1,0 +1,23 @@
+type: policy
+id: policy--dev.adversity.cmmc-enclave.media-protection
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Media Protection Policy
+control_refs:
+  - control--ogrl-bc-03
+  - control--ogrl-cr-04
+  - control--ogrl-ps-08
+  - control--ogrl-ps-09
+  - control--ogrl-ps-10
+  - control--ogrl-ps-11
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+resource:
+  digest:
+    algorithm: sha-256
+    value: d4174f5949c8747bc3c6690ed5a9c84e0656d8fa919118f2d50f3ba9797ff168
+  media_type: text/markdown
+  uri: ../policy/media-protection.md
+review_interval: annual
+status: draft
+version: "0.1"

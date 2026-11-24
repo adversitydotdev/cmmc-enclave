@@ -1,0 +1,21 @@
+type: procedure
+id: procedure--dev.adversity.cmmc-enclave.audit-log-review
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Audit Log Review Procedure
+control_refs:
+  - control--ogrl-lm-01
+  - control--ogrl-lm-04
+  - control--ogrl-lm-06
+  - control--ogrl-lm-08
+interval: weekly
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+policy_ref: policy--dev.adversity.cmmc-enclave.audit-accountability
+resource:
+  digest:
+    algorithm: sha-256
+    value: "8ceda6ed80d0474dba163d65bca530354c3dfc5457dad61caa1181894609ef9b"
+  media_type: text/markdown
+  uri: ../procedure/audit-log-review.md
+status: draft

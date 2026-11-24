@@ -1,0 +1,21 @@
+type: procedure
+id: procedure--dev.adversity.cmmc-enclave.cyber-incident-reporting
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Cyber Incident Reporting Procedure
+control_refs:
+  - control--ogrl-ir-01
+  - control--ogrl-ir-02
+  - control--ogrl-ir-04
+  - control--ogrl-ir-07
+interval: event-driven
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+policy_ref: policy--dev.adversity.cmmc-enclave.incident-response
+resource:
+  digest:
+    algorithm: sha-256
+    value: "1d266eaf7d22261b8d43a17687d65b10ad9922a64b4b501ef3d54536202d2e3e"
+  media_type: text/markdown
+  uri: ../procedure/cyber-incident-reporting.md
+status: draft

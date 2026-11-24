@@ -1,0 +1,20 @@
+type: policy
+id: policy--dev.adversity.cmmc-enclave.awareness-training
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Awareness and Training Policy
+control_refs:
+  - control--ogrl-hr-07
+  - control--ogrl-hr-08
+  - control--ogrl-hr-09
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+resource:
+  digest:
+    algorithm: sha-256
+    value: "74081e7e4c8728b9027a8b30a05fb521f32eff6a45ff1250afd97b188622ec7c"
+  media_type: text/markdown
+  uri: ../policy/awareness-training.md
+review_interval: annual
+status: draft
+version: "0.1"

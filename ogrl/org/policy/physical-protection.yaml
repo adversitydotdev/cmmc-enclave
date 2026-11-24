@@ -1,0 +1,23 @@
+type: policy
+id: policy--dev.adversity.cmmc-enclave.physical-protection
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Physical Protection and Alternate Work Sites Policy
+control_refs:
+  - control--ogrl-ps-01
+  - control--ogrl-ps-02
+  - control--ogrl-ps-03
+  - control--ogrl-ps-04
+  - control--ogrl-ps-05
+  - control--ogrl-ps-12
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+resource:
+  digest:
+    algorithm: sha-256
+    value: "13049dd0db34d8f8032396cf2048b29f958c4f51070ad8f6f38d14dd194d2e3a"
+  media_type: text/markdown
+  uri: ../policy/physical-protection.md
+review_interval: annual
+status: draft
+version: "0.1"

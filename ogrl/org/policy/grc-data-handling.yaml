@@ -1,0 +1,19 @@
+type: policy
+id: policy--dev.adversity.cmmc-enclave.grc-data-handling
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: GRC Data Handling Policy
+control_refs:
+  - control--ogrl-ac-12
+  - control--ogrl-ir-02
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+resource:
+  digest:
+    algorithm: sha-256
+    value: "680b9ef5f0a8737035fcf9b5f9ad6a8491fe5907dd0806427623a820c98dc18f"
+  media_type: text/markdown
+  uri: ../policy/grc-data-handling.md
+review_interval: annual
+status: draft
+version: "0.1"
