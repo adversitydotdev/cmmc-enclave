@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-lm-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-lm-02
+external_references:
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=83"
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  {{ company_name }} defines authorized use of the system, names the
+  alert recipients and on-call rotation, and triages high-severity
+  alerts within the SLA (4 hours). The monitoring and triage
+  procedure is a policy template still to be written (issue 20).
+  Evidence: triage tickets with alert, owner, and time to triage.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

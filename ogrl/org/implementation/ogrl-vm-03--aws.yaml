@@ -1,0 +1,31 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-vm-03
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-vm-03
+external_references:
+  - source: AWS ECR image scanning
+    url: "https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning.html"
+  - source: AWS GuardDuty docs
+    url: "https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html"
+  - source: AWS Config CMMC 2.0 Level 2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+narrative: >
+  The enclave has no general-purpose hosts: Fathom runs on Fargate
+  and everything else is managed services, so there is no host agent
+  to deploy. Terraform enables ECR scan on push for private
+  repositories, and GuardDuty is on in every account for threat
+  detection. GuardDuty malware protection and Inspector are not in
+  the baseline, and GuardDuty foundational is detection, not file
+  scanning. Tested by Config rules ecr-private-image-
+  scanning-enabled and guardduty-enabled-centralized. If a customer
+  adds EC2 or other general-purpose hosts, EDR on them is the
+  customer's and the control reverts to planned. AWS patches and
+  protects the Fargate platform; image contents are
+  {{ company_name }}'s.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

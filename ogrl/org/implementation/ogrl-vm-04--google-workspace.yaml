@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-vm-04
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-vm-04
+external_references:
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=81"
+  - source: Google Workspace Status Dashboard
+    url: "https://www.google.com/appsstatus/dashboard/"
+narrative: >
+  Alert center system-defined alerts (phishing, malware, suspicious
+  activity, device and account alerts) notify the security mailbox;
+  the Workspace Status dashboard covers service alerts. Both are
+  runbook steps. Tested by manual evidence: alert center
+  notification settings and the status dashboard subscription. Per
+  the Google guide this is customer- configured.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

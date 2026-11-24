@@ -1,0 +1,32 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-vm-03
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-vm-03
+external_references:
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=112"
+  - source: >-
+      Google Workspace Admin help, pre-delivery message scanning
+    url: "https://support.google.com/a/answer/7380368"
+narrative: >
+  Google scans all Gmail messages and attachments for malware
+  whether or not any attachment setting is on, and keeps its
+  protection mechanisms current (3.14.2, 3.14.4, 3.14.5 are native
+  per the Google guide, pages 112 to 114). The runbook adds extra
+  protections for the CUI OU: enhanced pre- delivery message
+  scanning, Security Sandbox rules for attachments and archives, and
+  the Advanced Security Settings for senders with no history or low
+  reputation. Tested by manual evidence of those Admin console
+  settings, dated each quarter; a Cloud Identity Policy API read of
+  the Gmail safety settings is used where it exposes them (not
+  verified). Google carries the scanning; real-time scanning of
+  files on the device is the Endpoints component. Edition
+  requirements for Security Sandbox are not verified from a public
+  source.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google
