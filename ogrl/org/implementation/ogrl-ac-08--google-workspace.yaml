@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-ac-08
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-ac-08
+external_references:
+  - source: Custom admin roles
+    url: "https://support.google.com/a/answer/2406043"
+  - source: "Google Workspace CMMC implementation guide (page 22)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=22"
+narrative: >-
+  Admin roles are split so that the people who administer users do
+  not also hold audit-log and security-reader duties, and the audit
+  log is exported to the AWS log archive account where Workspace
+  admins have no write access. Evidence is the admin role assignment
+  export compared with the duty matrix.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

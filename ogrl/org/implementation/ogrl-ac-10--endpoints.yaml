@@ -1,0 +1,19 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-ac-10
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-ac-10
+external_references:
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  Endpoints lock after 15 minutes of inactivity, require re-
+  authentication to unlock, and conceal the display with a pattern-
+  hiding lock screen. {{ company_name }} sets this in its MDM;
+  device management is out of scope for this repository. Evidence is
+  the MDM profile and compliance report.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

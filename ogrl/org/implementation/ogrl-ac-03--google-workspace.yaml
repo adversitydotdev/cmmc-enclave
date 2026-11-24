@@ -1,0 +1,34 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-ac-03
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-ac-03
+external_references:
+  - source: Custom admin roles
+    url: "https://support.google.com/a/answer/2406043"
+  - source: Turn a service on or off for Google Workspace users
+    url: "https://support.google.com/a/answer/182442"
+  - source: Control which apps access Google Workspace data
+    url: "https://support.google.com/a/answer/7281227"
+  - source: Cloud Identity Policy API supported settings
+    url: "https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings"
+  - source: "Google Workspace CMMC implementation guide (page 18)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=18"
+  - source: "Google Workspace CMMC implementation guide (page 24)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=24"
+narrative: >-
+  Admin console access uses custom admin roles scoped to the task
+  (user management, security reader, audit) instead of super admin.
+  User functions are limited per organizational unit by turning
+  services on or off, restricting external sharing and third-party
+  app access, so CUI users only run approved FedRAMP High services.
+  Tested by reading drive_and_docs.external_sharing and
+  api_controls.* through the Policy API and by exporting the admin
+  role assignment list as manual evidence. The service on/off state
+  per OU has no Policy API read and is a runbook step with
+  screenshot evidence.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

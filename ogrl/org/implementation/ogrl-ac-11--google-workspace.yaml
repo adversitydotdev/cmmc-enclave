@@ -1,0 +1,31 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-ac-11
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-ac-11
+external_references:
+  - source: Context-Aware Access
+    url: "https://support.google.com/a/answer/9275380"
+  - source: "Google Workspace CMMC implementation guide (page 30)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=30"
+  - source: "Google Workspace CMMC implementation guide (page 32)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=32"
+  - source: "Google Workspace CMMC implementation guide (page 85)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=85"
+  - source: "Google Workspace CMMC implementation guide (page 86)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=86"
+narrative: >-
+  Workspace is browser access over Google-managed TLS; the Workspace
+  guide marks 3.1.13 and 3.1.14 as native to Google. Context-aware
+  access can require a managed device and a trusted network posture
+  for CUI apps. Sign-in and admin actions are logged in the Reports
+  API (Admin SDK) and reviewed in the security investigation tool
+  and Alert Center (3.1.12). Google routes remote access through its
+  own managed access control points (3.1.14). Context-aware access
+  has no Policy API read; evidence is the access level and
+  assignment screenshots.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

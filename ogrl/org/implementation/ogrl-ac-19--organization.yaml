@@ -1,0 +1,20 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ac-19
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ac-19
+external_references:
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  {{ company_name }} keeps the roster of people allowed to post
+  publicly (website, social media, public repositories), trains them
+  to recognize CUI, requires approval before posting, reviews public
+  content quarterly, and removes improperly posted CUI within 24
+  hours and reports it as an incident. Policy template comes with
+  #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned
