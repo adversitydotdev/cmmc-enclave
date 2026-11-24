@@ -10,8 +10,11 @@ Usage: scripts/bootstrap --config <dir|zip> [--stage NAME] [--resume]
                     collector builds, config validity; prints a PASS/FAIL table
   org               terraform stacks/org; then writes baseline.org-outputs.auto.tfvars.json
   baseline-1        terraform stacks/baseline with fathom_enable_services=false
-  manual-workspace  prints the manual Workspace and Fathom steps; waits for you
-  workspace         terraform stacks/workspace
+  manual-workspace  prints the manual Workspace and Fathom steps; waits for you; prompts for
+                    values the wizard cannot know (Workspace customer_id, Fathom OAuth client ID
+                    and ACM certificate ARN); with --yes it fails instead of prompting
+  workspace         terraform stacks/workspace; then scripts/workspace-policy (Policy API settings;
+                    dry run with --plan-only)
   seed-package      scripts/package-fathom-seed <config>/ogrl -> <config>/fathom-seed.tar.gz
   baseline-2        terraform stacks/baseline with fathom_enable_services=true and the seed bundle
   verify            terraform output, ogrl lint, total time against the one-hour objective (#3)
@@ -19,7 +22,8 @@ Usage: scripts/bootstrap --config <dir|zip> [--stage NAME] [--resume]
 State lives in <config>/.bootstrap-state.json; logs in <config>/logs/<stage>.log.
 --resume skips stages already complete. Without --backend-config, Terraform keeps
 local state in each stack directory (terraform.tfstate); no remote state is built.
-Python 3 standard library only (package-fathom-seed itself needs PyYAML).
+Python 3 standard library only (package-fathom-seed needs PyYAML; workspace-policy needs
+scripts/requirements-workspace.txt).
 """
 
 import argparse
@@ -46,6 +50,20 @@ ORG_OUTPUTS = "baseline.org-outputs.auto.tfvars.json"
 STATE_NAME = ".bootstrap-state.json"
 PLACEHOLDER = "{{"
 REPO = Path(__file__).resolve().parent.parent
+
+# Values the wizard cannot know: (stack, variable) -> (pattern, hint, where to find it).
+CUSTOMER_ID_RE = re.compile(r"^C0[0-9a-z]{6,}$")
+ACM_ARN_RE = re.compile(r"^arn:aws(-[a-z]+)*:acm:[a-z0-9-]+:\d{12}:certificate/[0-9a-f-]{36}$")
+OAUTH_CLIENT_RE = re.compile(r"^[0-9]+-[0-9a-z]+\.apps\.googleusercontent\.com$")
+PROMPTS = {
+    "customer_id": ("workspace", CUSTOMER_ID_RE, "like C0xxxxxxx",
+                    "Admin console > Account > Account settings > Customer ID"),
+    "fathom_oidc_client_id": ("baseline", OAUTH_CLIENT_RE, "ending .apps.googleusercontent.com",
+                              "Google Cloud console > APIs and Services > Credentials > the web client"),
+    "fathom_certificate_arn": ("baseline", ACM_ARN_RE,
+                               "an ACM ARN, arn:aws:acm:<region>:<account>:certificate/<id>",
+                               "ACM in the grc account and home region, for the Fathom domain"),
+}
 
 
 class StageFailure(Exception):
@@ -287,6 +305,12 @@ class Bootstrap:
                  "set in environment" if env else "set via tfvars credentials" if tfv
                  else "not set; export the service account key path")]
 
+    def check_workspace_policy_deps(self):
+        ok = self.run([sys.executable, "-c", "import google.auth, requests"]).returncode == 0
+        return [("workspace: scripts/workspace-policy deps", ok,
+                 "google-auth and requests importable" if ok
+                 else "pip install -r scripts/requirements-workspace.txt")]
+
     def check_collectors(self):
         checks = []
         for script in sorted((self.repo / "collectors").glob("*/build.sh")):
@@ -310,7 +334,7 @@ class Bootstrap:
             checks += self.check_aws()
             checks += self.check_collectors()
         if "workspace" in scope:
-            checks += self.check_workspace()
+            checks += self.check_workspace() + self.check_workspace_policy_deps()
         width = max(len(c[0]) for c in checks)
         lines = [f"{'PASS' if ok else 'FAIL'}  {name.ljust(width)}  {detail}" for name, ok, detail in checks]
         self.say("\n".join(lines))
@@ -336,6 +360,60 @@ class Bootstrap:
             if name in data:
                 return data[name]
         return default
+
+    def tfvar_file(self, stack, name):
+        """File that holds `name`, else the stack's main auto.tfvars.json."""
+        for f in self.var_files(stack):
+            try:
+                if name in json.loads(f.read_text()):
+                    return f
+            except ValueError:
+                continue
+        return self.cfg / "terraform" / f"{stack}.auto.tfvars.json"
+
+    def set_tfvar(self, stack, name, value):
+        f = self.tfvar_file(stack, name)
+        data = json.loads(f.read_text()) if f.is_file() else {}
+        data[name] = value
+        f.write_text(json.dumps(data, indent=2) + "\n")
+
+    def missing_values(self, names):
+        """Names from PROMPTS that are unset or empty. The Fathom values only matter once
+        fathom_domain_name is set (the wizard leaves them out until then)."""
+        out = []
+        for n in names:
+            if n.startswith("fathom_") and not self.tfvar("baseline", "fathom_domain_name", ""):
+                continue
+            if not self.tfvar(PROMPTS[n][0], n, ""):
+                out.append(n)
+        return out
+
+    def ensure_values(self, stage, names):
+        """Prompt for and persist missing wizard-unknowable values. With --yes, fail instead."""
+        missing = self.missing_values(names)
+        if not missing:
+            return
+        if self.yes:
+            lines = [f"{n}: missing in {self.tfvar_file(PROMPTS[n][0], n).name}; find it at "
+                     f"{PROMPTS[n][3]} ({PROMPTS[n][2]}); add it to the config or rerun without --yes"
+                     for n in missing]
+            raise StageFailure(stage, "check required values", str(self.log_path(stage)), 1,
+                               "; ".join(lines))
+        for n in missing:
+            stack, pattern, fmt, where = PROMPTS[n]
+            for _ in range(3):
+                try:
+                    v = input(f"{n} ({fmt}). Find it: {where}\n> ").strip()
+                except EOFError:
+                    v = ""
+                if pattern.match(v):
+                    self.set_tfvar(stack, n, v)
+                    self.say(f"{stage}: wrote {n} to {self.tfvar_file(stack, n)}")
+                    break
+                self.say(f"  not valid: expected {fmt}")
+            else:
+                raise StageFailure(stage, f"prompt for {n}", str(self.log_path(stage)), 1,
+                                   f"no valid {n} entered ({fmt})")
 
     def library_ref(self):
         return (self.library_ref_arg or self.tfvar("baseline", "ogrl_library_ref", None)
@@ -417,6 +495,7 @@ class Bootstrap:
         return self.terraform("baseline-1", [("fathom_enable_services", "false")])
 
     def stage_baseline_2(self):
+        self.ensure_values("baseline-2", ["fathom_oidc_client_id", "fathom_certificate_arn"])
         if not self.seed_path.is_file():
             raise StageFailure("baseline-2", "locate seed bundle", str(self.log_path("baseline-2")), 1,
                                f"{self.seed_path} missing; run --stage seed-package")
@@ -424,7 +503,32 @@ class Bootstrap:
                                              ("fathom_seed_bundle_path", self.seed_path)])
 
     def stage_workspace(self):
-        return self.terraform("workspace")
+        self.ensure_values("workspace", ["customer_id"])
+        status = self.terraform("workspace")
+        if status not in ("complete", "planned"):
+            return status
+        self.workspace_policy(apply=(status == "complete"))
+        return status
+
+    def workspace_policy(self, apply):
+        """scripts/workspace-policy after the OUs exist: apply on a real run, dry run for --plan-only
+        (OUs may not exist yet then; the script prints placeholders). Credentials are the Terraform
+        service account's (GOOGLEWORKSPACE_CREDENTIALS or tfvars credentials), passed by environment
+        so a key never shows in the command line; its delegation needs the
+        cloud-identity.policies scope (runbook section 2.1)."""
+        creds = self.tfvar("workspace", "credentials", None)
+        if creds and not self.env.get("GOOGLEWORKSPACE_CREDENTIALS"):
+            self.env["GOOGLEWORKSPACE_CREDENTIALS"] = str(creds)
+        cmd = [sys.executable, str(self.repo / "scripts/workspace-policy"),
+               "--customer-id", str(self.tfvar("workspace", "customer_id", "")),
+               "--cui-ou", "/" + str(self.tfvar("workspace", "cui_ou_name", "CUI")),
+               "--non-cui-ou", "/" + str(self.tfvar("workspace", "non_cui_ou_name", "Non-CUI"))]
+        subject = self.tfvar("workspace", "impersonated_user_email", None)
+        if subject:
+            cmd += ["--subject", subject]
+        cmd.append("--apply" if apply else "--dry-run")
+        self.say("workspace: Policy API settings (" + ("apply" if apply else "dry run, --plan-only") + ")")
+        self.run_logged("workspace", cmd)
 
     def stage_seed_package(self):
         ref = self.library_ref()
@@ -480,6 +584,7 @@ class Bootstrap:
             self.say("--yes: not waiting for confirmation.")
         elif not self.confirm("Manual steps done?"):
             raise Declined("manual-workspace")
+        self.ensure_values("manual-workspace", list(PROMPTS))
         return "complete"
 
     # ---- verify -----------------------------------------------------------

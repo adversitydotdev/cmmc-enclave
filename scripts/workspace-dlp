@@ -26,12 +26,13 @@ API-shape UNCERTAINTIES are marked "UNVERIFIED" below. Test in a tenant before r
 """
 import argparse
 import json
+import os
 import re
 import sys
-import time
 
-BASE = "https://cloudidentity.googleapis.com/v1beta1"
-SCOPE = "https://www.googleapis.com/auth/cloud-identity.policies"  # [R4]
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+from workspace_common import (BASE, SCOPE, Http, list_policies as _list_policies,  # noqa: E402,F401
+                              policy_body, subset as _subset, wait_operation)
 
 # [R1] setting types. UNVERIFIED: the "settings/" prefix on setting.type; [R3] filter examples
 # use '^settings/gmail\\..*$', so it is used here.
@@ -140,52 +141,9 @@ def rule_specs(refs, customer_id, drive_internal_warn=True):
     return rules
 
 
-def policy_body(customer, org_unit, stype, value):
-    """[R2] Policy: customer, policyQuery.orgUnit (orgUnits/{id}, UNVERIFIED format), setting{type,value}."""
-    return {
-        "customer": customer,
-        "policyQuery": {"orgUnit": org_unit, "group": ""},
-        "setting": {"type": stype, "value": value},
-    }
-
-
-class Http:
-    """Thin authorized HTTP layer (google-auth + requests). Tests substitute a fake with the same
-    request(method, url, params=None, body=None) -> dict signature."""
-
-    def __init__(self, credentials_path=None, subject=None):
-        import google.auth
-        from google.auth.transport.requests import AuthorizedSession
-        from google.oauth2 import service_account
-        if credentials_path:
-            creds = service_account.Credentials.from_service_account_file(credentials_path, scopes=[SCOPE])
-            if subject:
-                creds = creds.with_subject(subject)  # UNVERIFIED: DWD impersonation accepted by Policy API
-        else:
-            creds, _ = google.auth.default(scopes=[SCOPE])
-        self.session = AuthorizedSession(creds)
-
-    def request(self, method, url, params=None, body=None):
-        r = self.session.request(method, url, params=params, json=body, timeout=60)
-        if r.status_code >= 300:
-            raise RuntimeError(f"{method} {url} -> {r.status_code}: {r.text[:500]}")
-        return r.json() if r.text else {}
-
-
 def list_policies(http, customer):
-    """[R3] filter is a CEL expression; we narrow to rule.dlp and detector.* for this customer."""
-    flt = (f'customer == "{customer}" && '
-           "setting.type.matches('^settings/(rule\\\\.dlp|detector\\\\..*)$')")
-    out, token = [], None
-    while True:
-        params = {"filter": flt, "pageSize": 100}
-        if token:
-            params["pageToken"] = token
-        page = http.request("GET", f"{BASE}/policies", params=params)
-        out += page.get("policies", [])
-        token = page.get("nextPageToken")
-        if not token:
-            return out
+    """Narrow to rule.dlp and detector.* for this customer."""
+    return _list_policies(http, customer, r"settings/(rule\.dlp|detector\..*)")
 
 
 def find_existing(existing, stype, org_unit, display_name):
@@ -196,13 +154,6 @@ def find_existing(existing, stype, org_unit, display_name):
                 and p.get("policyQuery", {}).get("orgUnit") == org_unit):
             return p
     return None
-
-
-def _subset(want, have):
-    """True when every field we set already has that value (server adds timestamps etc.)."""
-    if isinstance(want, dict):
-        return isinstance(have, dict) and all(k in have and _subset(v, have[k]) for k, v in want.items())
-    return want == have
 
 
 def upsert(http, plan, existing, customer, org_unit, apply):
@@ -229,17 +180,6 @@ def upsert(http, plan, existing, customer, org_unit, apply):
                               "body": req[3]}, indent=2, sort_keys=True))
         log.append((act, name))
     return log
-
-
-def wait_operation(http, op, tries=10):
-    """[R4] create returns an Operation; poll GET /v1beta1/{operation.name} until done."""
-    for _ in range(tries):
-        if not op or op.get("done", True) or "name" not in op:
-            break
-        time.sleep(1)
-        op = http.request("GET", f"{BASE}/{op['name']}")
-    if op and op.get("error"):
-        raise RuntimeError(f"operation failed: {op['error']}")
 
 
 def run(http, customer_id, org_unit, categories, dissemination, apply, drive_internal_warn=True):

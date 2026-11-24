@@ -12,7 +12,7 @@ Each step lists what to set (Admin console path), the expected value, the OU, th
 Rules of the road:
 
 - "CUI OU" and "non-CUI OU" are the OUs from `terraform/stacks/workspace`. Settings marked "CUI and non-CUI OUs" are applied at both.
-- Some Policy API settings are writable (DLP, Drive general access default, multi-party approval, passkeys). Only DLP is scripted (`scripts/workspace-dlp`); the others are set in the console here and read back.
+- Some Policy API settings are writable and scripted: DLP (`scripts/workspace-dlp`, section 8.3) and Drive general access default, multi-party approval and the passkeys restriction (`scripts/workspace-policy`, run by the bootstrap workspace stage after the Terraform apply; its dry run shows in `--plan-only`). Those steps below are verify only. `service_status` (section 7) is not scripted: the Policy API page does not state that it is writable. No `meet.*` setting is set by this runbook, so none is scripted.
 - The OGRL tests for the Policy API reads (`ogrl/org/test/workspace-*.yaml`) have no `run` block yet and are `required: false` until the fathom-google-workspace integration (#33) supplies it.
 - Edition support per feature is not verified in `settings.yaml`; confirm in the tenant.
 
@@ -26,19 +26,19 @@ Estimates are unmeasured; #39 records real times. Per SCOPE section 1, manual ru
 | 2 | Service accounts and domain-wide delegation | before workspace stage | 25 |
 | 3 | Bootstrap workspace stage (Terraform) | the stage itself | on the clock |
 | 4 | Assured Controls Plus (skip on plain Assured Controls) | after | 15 |
-| 5 | Authentication | after | 25 |
+| 5 | Authentication | after | 21 |
 | 6 | Session and API controls | after | 8 |
 | 7 | Service status and Marketplace | after | 20 |
-| 8 | Drive and DLP | after | 15 |
+| 8 | Drive and DLP | after | 13 |
 | 9 | Gmail and DNS | after | 25 |
 | 10 | AWS IAM Identity Center SAML app and SCIM | after (needs the AWS org stack) | 30 |
 | 11 | Fathom Google OAuth client | after the AWS org stack, before the Fathom apply | 10 |
 | 12 | Devices | after | 10 |
 | 13 | Alert Center, rules and monitoring | after | 25 |
 | 14 | Evidence pass | last | 20 |
-| | **Total** | before: 45, after: 203 | **248** |
+| | **Total** | before: 45, after: 197 | **242** |
 
-Read against #3: the wizard-plus-Terraform path can meet the objective only because these 248 minutes (about 4 hours; 233 on plain Assured Controls) are off its clock. If the runbook were counted, it would miss "a couple of hours at most" by roughly two hours. The sections that could shrink: skip optional steps (marked), pre-create the service accounts while waiting on licenses, and batch the screenshots into the evidence pass.
+Read against #3: the wizard-plus-Terraform path can meet the objective only because these 242 minutes (about 4 hours; 227 on plain Assured Controls) are off its clock. If the runbook were counted, it would miss "a couple of hours at most" by roughly two hours. The sections that could shrink: skip optional steps (marked), pre-create the service accounts while waiting on licenses, and batch the screenshots into the evidence pass.
 
 
 ## 1. Tenant prerequisites
@@ -80,11 +80,11 @@ Three separate service accounts, one per scope set, so each key can be rotated o
 
 | Service account | Used by | DWD scopes (exact) | Key goes to |
 |---|---|---|---|
-| `enclave-workspace-terraform` | `terraform/stacks/workspace` (macadmins provider) | `https://www.googleapis.com/auth/admin.directory.orgunit`, `https://www.googleapis.com/auth/admin.directory.user`, `https://www.googleapis.com/auth/admin.directory.group`, `https://www.googleapis.com/auth/admin.directory.rolemanagement` | `GOOGLEWORKSPACE_CREDENTIALS` on the operator machine (never committed) |
+| `enclave-workspace-terraform` | `terraform/stacks/workspace` (macadmins provider) | `https://www.googleapis.com/auth/admin.directory.orgunit`, `https://www.googleapis.com/auth/admin.directory.user`, `https://www.googleapis.com/auth/admin.directory.group`, `https://www.googleapis.com/auth/admin.directory.rolemanagement`, `https://www.googleapis.com/auth/cloud-identity.policies` | `GOOGLEWORKSPACE_CREDENTIALS` on the operator machine (never committed) |
 | `enclave-workspace-audit` (#30) | `collectors/workspace_audit` | `https://www.googleapis.com/auth/admin.reports.audit.readonly` | Secrets Manager secret `workspace_audit_secret_arn` |
 | `enclave-workspace-idle` | `collectors/workspace_idle` (idle-account job, #51) | report mode (default): `https://www.googleapis.com/auth/admin.directory.user.readonly`; suspend mode: `https://www.googleapis.com/auth/admin.directory.user` | Secrets Manager secret `workspace_idle_secret_arn` |
 
-**2.1 Terraform service account.** Create the service account and a JSON key, add the delegation row above, and set `impersonated_user_email` to a super admin (role management is super-admin only). This one drives the workspace stage.
+**2.1 Terraform service account.** Create the service account and a JSON key, add the delegation row above, and set `impersonated_user_email` to a super admin (role management is super-admin only). This one drives the workspace stage, and `scripts/workspace-policy` (run by the bootstrap right after the apply) uses the same key and impersonated admin. Besides the four Directory scopes in the table, add `https://www.googleapis.com/auth/cloud-identity.policies` to this row (the Policy API write scope; `workspace-policy` also uses the existing `admin.directory.orgunit` to look up the OU ids). Install the script's dependencies first: `pip install -r scripts/requirements-workspace.txt`.
 <!-- screenshot: dwd-terraform-sa -->
 
 **2.2 Audit collector service account (#30).** Run before the first baseline apply.
@@ -152,16 +152,16 @@ Verify the exact console labels in the tenant; Google moves these pages and we c
 
 ## 5. Authentication
 
-*25 min. After the bootstrap workspace stage.*
+*21 min. After the bootstrap workspace stage. 5.1 and 5.4 are verify only (scripted, was 25).*
 
 Order matters: multi-party approval first (it then also protects the next steps, and needs 2 or more super admins), then 2SV methods, enroll admins, then enforce.
 
 **5.1 Multi party approval**
-- Set: Security > Authentication > Multi-party approval settings
+- Set: verify only. Written by `scripts/workspace-policy` (bootstrap workspace stage). Security > Authentication > Multi-party approval settings should show it on.
 - Expected: Require multi-party approval for sensitive admin actions: on (on by default with 2+ super admins)
 - OU: n/a (tenant-wide)
 - Reqs: 3.4.3 ([guide p50](https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=50))
-- Check: Policy API read-back (write is by hand in the console; the script covers DLP only): `multi_party_approval.require_approvals`; OGRL test `workspace-multi-party-approval`
+- Check: Policy API read-back (value written by `scripts/workspace-policy`): `multi_party_approval.require_approvals`; OGRL test `workspace-multi-party-approval`
 <!-- screenshot: multi-party-approval-na -->
 
 **5.2 2SV enrollment**
@@ -181,11 +181,11 @@ Order matters: multi-party approval first (it then also protects the next steps,
 <!-- screenshot: 2sv-methods-all -->
 
 **5.4 Passkeys restriction** (optional)
-- Set: Security > Authentication > Passkeys
+- Set: verify only. Written by `scripts/workspace-policy` (both OUs). Security > Authentication > Passkeys should show security keys only.
 - Expected: Optional. Restrict to security-key bound passkeys
 - OU: CUI and non-CUI OUs
 - Reqs: 3.5.3 (not in the guide (OGRL baseline))
-- Check: Policy API read-back (write is by hand in the console; the script covers DLP only): `security.passkeys_restriction`; OGRL test `workspace-passkeys-restriction`
+- Check: Policy API read-back (value written by `scripts/workspace-policy`): `security.passkeys_restriction`; OGRL test `workspace-passkeys-restriction`
 <!-- screenshot: passkeys-restriction-all -->
 
 **5.5 Enroll admins first.** Every admin registers a security key (Security > 2-step verification, user side). Check: Reports API `user_accounts` (`is_2sv_enrolled`).
@@ -328,9 +328,9 @@ Turn off everything that is not FedRAMP High on the CUI OU, including Sites, add
 
 ## 8. Drive and DLP
 
-*15 min. After the bootstrap workspace stage.*
+*13 min. After the bootstrap workspace stage. 8.2 is verify only (scripted, was 15).*
 
-DLP rules and detectors are created by script, not by hand. Needs a Cloud Identity Policy API scope (`https://www.googleapis.com/auth/cloud-identity.policies`) on the credentials you give the script; use an admin's application default credentials (`gcloud auth application-default login --scopes=https://www.googleapis.com/auth/cloud-identity.policies,https://www.googleapis.com/auth/cloud-platform`) or a delegated service account.
+DLP rules and detectors are created by script, not by hand (8.3), and the Drive general access default is set by `scripts/workspace-policy` in the bootstrap workspace stage (re-run it by hand: `scripts/workspace-policy --customer-id C0xxxxxxx --cui-ou /CUI --non-cui-ou /Non-CUI`, add `--apply` to write). Both need a Cloud Identity Policy API scope (`https://www.googleapis.com/auth/cloud-identity.policies`) on the credentials you give the script; use an admin's application default credentials (`gcloud auth application-default login --scopes=https://www.googleapis.com/auth/cloud-identity.policies,https://www.googleapis.com/auth/cloud-platform`) or a delegated service account.
 
 **8.1 Drive external sharing**
 - Set: Apps > Google Workspace > Drive and Docs > Sharing settings > Sharing options
@@ -341,11 +341,11 @@ DLP rules and detectors are created by script, not by hand. Needs a Cloud Identi
 <!-- screenshot: drive-external-sharing-cui -->
 
 **8.2 Drive general access default**
-- Set: Apps > Google Workspace > Drive and Docs > Sharing settings > General access default
+- Set: verify only. Written by `scripts/workspace-policy` (CUI OU). Apps > Google Workspace > Drive and Docs > Sharing settings > General access default should show Restricted.
 - Expected: Restricted (not Anyone with the link).
 - OU: CUI OU
 - Reqs: 3.1.3, 3.1.22 (not in the guide (OGRL baseline))
-- Check: Policy API read-back (write is by hand in the console; the script covers DLP only): `drive_and_docs.general_access_default`; OGRL test `workspace-drive-general-access-default`
+- Check: Policy API read-back (value written by `scripts/workspace-policy`): `drive_and_docs.general_access_default`; OGRL test `workspace-drive-general-access-default`
 <!-- screenshot: drive-general-access-default-cui -->
 
 **8.3 DLP rules and detectors for CUI markings**

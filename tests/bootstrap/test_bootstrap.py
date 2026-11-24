@@ -285,6 +285,187 @@ class TestStages(Harness):
             self.assertEqual(b.run_all(only="manual-workspace"), 2)
 
 
+class TestWorkspacePolicy(Harness):
+    def policy_calls(self):
+        return [c for c, _ in self.popen_calls if any("workspace-policy" in str(x) for x in c)]
+
+    def test_applies_after_workspace_apply_before_seed_package(self):
+        self.assertEqual(self.make().run_all(), 0, self.out.getvalue())
+        cmds = [c for c, _ in self.popen_calls]
+        (pol,) = self.policy_calls()
+        self.assertIn("--apply", pol)
+        self.assertNotIn("--dry-run", pol)
+        self.assertEqual(pol[pol.index("--customer-id") + 1], "C0123")
+        self.assertEqual(pol[pol.index("--cui-ou") + 1], "/CUI")
+        self.assertEqual(pol[pol.index("--non-cui-ou") + 1], "/Non-CUI")
+        self.assertEqual(pol[pol.index("--subject") + 1], "a@example.com")
+        apply_i = next(i for i, (c, cwd) in enumerate(self.popen_calls)
+                       if cwd and Path(cwd).name == "workspace" and "apply" in c)
+        pol_i = cmds.index(pol)
+        pkg_i = next(i for i, c in enumerate(cmds) if is_pkg(c))
+        self.assertLess(apply_i, pol_i)
+        self.assertLess(pol_i, pkg_i)
+
+    def test_plan_only_runs_dry_run(self):
+        self.assertEqual(self.make(plan_only=True).run_all(), 0, self.out.getvalue())
+        (pol,) = self.policy_calls()
+        self.assertIn("--dry-run", pol)
+        self.assertNotIn("--apply", pol)
+
+    def test_custom_ou_names_from_tfvars(self):
+        f = self.cfg / "terraform/workspace.auto.tfvars.json"
+        d = json.loads(f.read_text())
+        d.update(cui_ou_name="Controlled", non_cui_ou_name="Other")
+        f.write_text(json.dumps(d))
+        self.make().run_all(only="workspace")
+        (pol,) = self.policy_calls()
+        self.assertEqual(pol[pol.index("--cui-ou") + 1], "/Controlled")
+        self.assertEqual(pol[pol.index("--non-cui-ou") + 1], "/Other")
+
+    def test_not_run_when_terraform_apply_declined(self):
+        b = self.make(yes=False)
+        with mock.patch("builtins.input", return_value="n"):
+            self.assertEqual(b.run_all(only="workspace"), 2)
+        self.assertEqual(self.policy_calls(), [])
+
+    def test_policy_failure_fails_workspace_stage(self):
+        self.fail_if = lambda cmd, cwd: any("workspace-policy" in str(x) for x in cmd)
+        self.assertEqual(self.make().run_all(only="workspace"), 1)
+        self.assertEqual(self.state()["stages"]["workspace"]["status"], "failed")
+
+    def test_credentials_by_environment_not_argv(self):
+        f = self.cfg / "terraform/workspace.auto.tfvars.json"
+        d = json.loads(f.read_text())
+        d["credentials"] = '{"private_key": "SECRET"}'
+        f.write_text(json.dumps(d))
+        with mock.patch.dict("os.environ", {}, clear=True):
+            b = self.make()
+            b.run_all(only="workspace")
+        (pol,) = self.policy_calls()
+        self.assertNotIn("SECRET", " ".join(pol))
+        self.assertEqual(b.env["GOOGLEWORKSPACE_CREDENTIALS"], '{"private_key": "SECRET"}')
+
+    def test_preflight_checks_policy_script_deps(self):
+        rc = self.make().run_all(only="preflight")
+        self.assertEqual(rc, 0)
+        self.assertIn("workspace-policy deps", self.out.getvalue())
+
+
+GOOD_ARN = "arn:aws:acm:us-gov-west-1:555555555555:certificate/12345678-abcd-ef01-2345-6789abcdef01"
+GOOD_CLIENT = "1234567890-abc123def456.apps.googleusercontent.com"
+
+
+class TestPrompts(Harness):
+    def set_vars(self, stack, **kw):
+        f = self.cfg / f"terraform/{stack}.auto.tfvars.json"
+        d = json.loads(f.read_text())
+        d.update(kw)
+        for k in [k for k, v in d.items() if v is None]:
+            del d[k]
+        f.write_text(json.dumps(d))
+
+    def tfv(self, stack):
+        return json.loads((self.cfg / f"terraform/{stack}.auto.tfvars.json").read_text())
+
+    def run_manual(self, answers, yes=False):
+        b = self.make(yes=yes)
+        with mock.patch("builtins.input", side_effect=answers) as inp:
+            rc = b.run_all(only="manual-workspace")
+        return rc, inp
+
+    def test_prompts_for_missing_customer_id_and_writes_config(self):
+        self.set_vars("workspace", customer_id=None)
+        rc, inp = self.run_manual(["y", "C01a2b3c4"])
+        self.assertEqual(rc, 0, self.out.getvalue())
+        self.assertEqual(self.tfv("workspace")["customer_id"], "C01a2b3c4")
+        self.assertIn("Account settings > Customer ID", inp.call_args_list[-1].args[0])
+        self.assertEqual(self.tfv("workspace")["domain"], "example.com")  # other keys kept
+
+    def test_no_prompt_when_present(self):
+        rc, inp = self.run_manual(["y"])
+        self.assertEqual(rc, 0)
+        self.assertEqual(inp.call_count, 1)  # only "Manual steps done?"
+
+    def test_invalid_customer_id_reprompts_then_accepts(self):
+        self.set_vars("workspace", customer_id=None)
+        rc, _ = self.run_manual(["y", "not-an-id", "c0123456", "C01a2b3c4"])
+        self.assertEqual(rc, 0)
+        self.assertEqual(self.tfv("workspace")["customer_id"], "C01a2b3c4")
+        self.assertIn("not valid", self.out.getvalue())
+
+    def test_three_invalid_answers_fail_stage(self):
+        self.set_vars("workspace", customer_id=None)
+        rc, _ = self.run_manual(["y", "x", "y", "z"])
+        self.assertEqual(rc, 1)
+        self.assertIn("customer_id", self.out.getvalue())
+        self.assertNotIn("customer_id", self.tfv("workspace"))
+
+    def test_yes_with_missing_customer_id_fails_without_prompt(self):
+        self.set_vars("workspace", customer_id=None)
+        rc, inp = self.run_manual([], yes=True)
+        self.assertEqual(rc, 1)
+        inp.assert_not_called()
+        text = self.out.getvalue()
+        self.assertIn("customer_id: missing", text)
+        self.assertIn("Account settings > Customer ID", text)
+        self.assertEqual(self.state()["stages"]["manual-workspace"]["status"], "failed")
+
+    def test_fathom_values_prompted_when_domain_set(self):
+        self.set_vars("baseline", fathom_domain_name="fathom.example.com", fathom_oidc_client_id=None)
+        rc, _ = self.run_manual(["y", GOOD_CLIENT, GOOD_ARN])
+        self.assertEqual(rc, 0, self.out.getvalue())
+        d = self.tfv("baseline")
+        self.assertEqual((d["fathom_oidc_client_id"], d["fathom_certificate_arn"]), (GOOD_CLIENT, GOOD_ARN))
+
+    def test_fathom_values_not_prompted_without_domain(self):
+        self.set_vars("baseline", fathom_oidc_client_id=None)
+        rc, inp = self.run_manual(["y"])
+        self.assertEqual(rc, 0)
+        self.assertEqual(inp.call_count, 1)
+
+    def test_empty_string_counts_as_missing(self):
+        self.set_vars("baseline", fathom_domain_name="f.example.com", fathom_oidc_client_id="",
+                      fathom_certificate_arn=GOOD_ARN)
+        rc, _ = self.run_manual(["y", GOOD_CLIENT])
+        self.assertEqual(rc, 0)
+        self.assertEqual(self.tfv("baseline")["fathom_oidc_client_id"], GOOD_CLIENT)
+
+    def test_baseline2_prompts_before_terraform(self):
+        self.set_vars("baseline", fathom_domain_name="f.example.com", fathom_oidc_client_id=None)
+        (self.cfg / "terraform/baseline.org-outputs.auto.tfvars.json").write_text("{}")
+        (self.cfg / "fathom-seed.tar.gz").write_bytes(b"seed")
+        b = self.make(yes=False)
+        with mock.patch("builtins.input", side_effect=[GOOD_CLIENT, GOOD_ARN, "n"]):
+            self.assertEqual(b.run_all(only="baseline-2"), 2)  # declined the apply, after prompting
+        self.assertEqual(self.tfv("baseline")["fathom_oidc_client_id"], GOOD_CLIENT)
+        self.assertEqual(self.tfv("baseline")["fathom_certificate_arn"], GOOD_ARN)
+
+    def test_baseline2_yes_fails_before_terraform(self):
+        self.set_vars("baseline", fathom_domain_name="f.example.com", fathom_oidc_client_id=None)
+        (self.cfg / "fathom-seed.tar.gz").write_bytes(b"seed")
+        self.assertEqual(self.make().run_all(only="baseline-2"), 1)
+        self.assertEqual(self.popen_calls, [])
+        self.assertIn("fathom_oidc_client_id: missing", self.out.getvalue())
+
+    def test_workspace_stage_requires_customer_id_in_plan_only(self):
+        self.set_vars("workspace", customer_id=None)
+        self.assertEqual(self.make(plan_only=True).run_all(only="workspace"), 1)
+        self.assertEqual(self.popen_calls, [])
+
+    def test_formats(self):
+        def ok(r, v):
+            return bool(r.match(v))
+        self.assertTrue(ok(bs.CUSTOMER_ID_RE, "C03abcd12"))
+        for bad in ("", "03abcd12", "C1abcd123", "C0", "C0 12345678", "c03abcd12"):
+            self.assertFalse(ok(bs.CUSTOMER_ID_RE, bad), bad)
+        self.assertTrue(ok(bs.ACM_ARN_RE, GOOD_ARN))
+        for bad in ("", GOOD_ARN.replace("acm", "iam"), GOOD_ARN[:-4], "certificate/1234"):
+            self.assertFalse(ok(bs.ACM_ARN_RE, bad), bad)
+        self.assertTrue(ok(bs.OAUTH_CLIENT_RE, GOOD_CLIENT))
+        for bad in ("", "abc.apps.googleusercontent.com", GOOD_CLIENT + "x", "123-abc.example.com"):
+            self.assertFalse(ok(bs.OAUTH_CLIENT_RE, bad), bad)
+
+
 class TestPreflight(Harness):
     def run_preflight(self):
         rc = self.make().run_all(only="preflight")
