@@ -25,9 +25,11 @@ narrative: >
   on-demand query across CloudTrail and Workspace records is the
   evidence. The Workspace table (workspace_audit, partitioned by
   application and dt) is in Terraform next to the CloudTrail table.
-  Planned: the saved queries that join CloudTrail and Workspace on
-  user email are not yet written (small, billed per query).
+  Three saved queries in the audit workgroup join the two on user
+  email (the Identity Center session name):
+  correlate-signins-both-sides, correlate-admin-actions-same-person,
+  and correlate-workspace-login-then-aws-console (billed per query).
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
-status: planned
+status: implemented
 subservice_ref: party--dev.adversity.cmmc-enclave.aws

@@ -20,8 +20,11 @@ narrative: >
   FIPS API endpoints set client-side (use_fips_endpoint; services
   without one are pinned to standard endpoints, see 3.13.11), and
   customer managed KMS keys on S3, EBS (encryption by default), RDS,
-  EFS, SNS, CloudWatch Logs, and CloudTrail (3.13.16). Tested by
-  Config rules alb-http-to-https-redirection-check,
+  EFS, SNS, CloudWatch Logs, and CloudTrail (3.13.16). The keys and
+  EBS default encryption exist in the home region only, so the
+  region allowlist SCP and allowed_regions default to the home
+  region, and Terraform refuses a wider allowlist. Tested by Config
+  rules alb-http-to-https-redirection-check,
   elb-tls-https-listeners-only, a listener TLS policy check (custom
   Config rule or manual evidence; the conformance pack has no ALB
   TLS-policy rule), s3-bucket-ssl-requests-only,

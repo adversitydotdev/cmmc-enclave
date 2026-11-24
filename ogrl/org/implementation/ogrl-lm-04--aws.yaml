@@ -15,14 +15,18 @@ external_references:
 narrative: >
   AWS provides the review data: the org CloudTrail in the Object
   Lock log archive, Security Hub and GuardDuty findings, and Config
-  history for changes to security tooling. {{ company_name }} still
-  has to define the saved weekly review queries (for example Athena
-  or CloudWatch Logs Insights over privileged API calls, break-glass
-  use, and disabled security services). Planned until those queries
-  exist. Test: manual evidence, the weekly review ticket with query
-  output attached. Covers the AWS side of 3.3.5 (correlate audit
-  review) and 3.14.7.
+  history for changes to security tooling. Terraform
+  (modules/logging, athena.tf and athena_correlation.tf) creates the
+  Athena workgroup, the CloudTrail and Workspace audit tables, five
+  saved weekly review queries (privileged API calls, root and
+  break-glass use, security-service and archive tampering, failed
+  authentication, S3 data events) and three CloudTrail/Workspace
+  correlation queries. Running the review each week and recording it
+  is the company's part (ogrl-lm-04--organization). Test: the saved
+  queries exist in the audit workgroup; manual evidence of the
+  weekly review ticket with query output attached. Covers the AWS
+  side of 3.3.5 and 3.14.7.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
-status: planned
+status: implemented
 subservice_ref: party--dev.adversity.cmmc-enclave.aws

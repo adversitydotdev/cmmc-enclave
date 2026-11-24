@@ -20,7 +20,9 @@ narrative: >-
   action. Vault Lock starts in governance mode. Compliance mode is
   set after validation through
   backup_vault_lock_changeable_for_days, which is irreversible. The
-  log_archive copy vault uses its own backup CMK. Status stays
+  log_archive copy vault uses its own backup CMK. Vaults and the
+  plan exist in the home region only; the region allowlist is
+  narrowed to match and Terraform refuses a wider one. Status stays
   planned until applied and verified. Tests: Config rules
   backup-plan-min-frequency-and-min-retention-check,
   rds-in-backup-plan, ebs-in-backup-plan, efs-in-backup-plan,

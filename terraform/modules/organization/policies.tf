@@ -22,23 +22,40 @@ locals {
     }]
   }
 
+  # Every action here supports aws:RequestTag (Service Authorization Reference,
+  # checked 2026-11-23). One statement per key keeps the SCP small.
   tag_resources = {
-    "ec2:RunInstances"     = "arn:${local.partition}:ec2:*:*:instance/*"
-    "ec2:CreateVolume"     = "arn:${local.partition}:ec2:*:*:volume/*"
-    "rds:CreateDBInstance" = "arn:${local.partition}:rds:*:*:db:*"
+    "ec2:RunInstances"            = "arn:${local.partition}:ec2:*:*:instance/*"
+    "ec2:CreateVolume"            = "arn:${local.partition}:ec2:*:*:volume/*"
+    "rds:CreateDBInstance"        = "arn:${local.partition}:rds:*:*:db:*"
+    "lambda:CreateFunction"       = "arn:${local.partition}:lambda:*:*:function:*"
+    "dynamodb:CreateTable"        = "arn:${local.partition}:dynamodb:*:*:table/*"
+    "ecs:CreateCluster"           = "arn:${local.partition}:ecs:*:*:cluster/*"
+    "secretsmanager:CreateSecret" = "arn:${local.partition}:secretsmanager:*:*:secret:*"
+    "sns:CreateTopic"             = "arn:${local.partition}:sns:*:*:*"
+    "sqs:CreateQueue"             = "arn:${local.partition}:sqs:*:*:*"
   }
+
+  # EFS CreateFileSystem supports aws:RequestTag but has no resource type, so
+  # it only matches Resource "*".
+  tag_actions_any_resource = ["elasticfilesystem:CreateFileSystem"]
 
   tag_statements = var.enforce_required_tags ? flatten([
     for key in var.required_tag_keys : [
-      for action, arn in local.tag_resources : {
-        Sid      = "RequireTag${replace(title(replace(key, "-", " ")), " ", "")}${replace(replace(action, ":", ""), "Create", "")}"
-        Effect   = "Deny"
-        Action   = action
-        Resource = arn
-        Condition = {
-          Null = { "aws:RequestTag/${key}" = "true" }
-        }
-      }
+      {
+        Sid       = "RequireTag${replace(title(replace(key, "-", " ")), " ", "")}"
+        Effect    = "Deny"
+        Action    = keys(local.tag_resources)
+        Resource  = tolist(values(local.tag_resources))
+        Condition = { Null = { "aws:RequestTag/${key}" = "true" } }
+      },
+      {
+        Sid       = "RequireTag${replace(title(replace(key, "-", " ")), " ", "")}Efs"
+        Effect    = "Deny"
+        Action    = tolist(local.tag_actions_any_resource)
+        Resource  = ["*"]
+        Condition = { Null = { "aws:RequestTag/${key}" = "true" } }
+      },
     ]
   ]) : []
 

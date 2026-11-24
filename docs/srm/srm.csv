@@ -28,8 +28,8 @@ Requirement,Title,OGRL controls,AWS,Google Workspace,Fathom,Endpoints,Organizati
 3.3.2,"Ensure that the actions of individual system users can be uniquely traced to those users, so they can be held accountable for their actions.",ogrl-ac-13 ogrl-lm-01,Shared,Shared,Customer (planned),Customer (planned),Customer (planned),yes,partial
 3.3.3,Review and update logged events.,ogrl-lm-01,Shared,Shared,—,Customer (planned),Customer (planned),yes,partial
 3.3.4,Alert in the event of an audit logging process failure.,ogrl-lm-06,Shared,Shared,—,—,Customer (planned),yes,partial
-3.3.5,"Correlate audit record review, analysis, and reporting processes for investigation and response to indications of unlawful, unauthorized, suspicious, or unusual activity.",ogrl-lm-04 ogrl-lm-08,Shared (planned),Shared (partial),—,—,Customer (planned),yes,partial
-3.3.6,Provide audit record reduction and report generation to support on-demand analysis and reporting.,ogrl-lm-08,Shared (planned),Shared,—,—,Customer (planned),yes,partial
+3.3.5,"Correlate audit record review, analysis, and reporting processes for investigation and response to indications of unlawful, unauthorized, suspicious, or unusual activity.",ogrl-lm-04 ogrl-lm-08,Shared,Shared (partial),—,—,Customer (planned),yes,partial
+3.3.6,Provide audit record reduction and report generation to support on-demand analysis and reporting.,ogrl-lm-08,Shared,Shared,—,—,Customer (planned),yes,partial
 3.3.7,Provide a system capability that compares and synchronizes internal system clocks with an authoritative source to generate time stamps for audit records.,ogrl-lm-07,Inherited (AWS),Inherited (Google),—,Customer (planned),Customer (planned),yes,partial
 3.3.8,"Protect audit information and audit logging tools from unauthorized access, modification, and deletion.",ogrl-lm-03,Shared,Shared,—,—,Customer (planned),yes,partial
 3.3.9,Limit management of audit logging functionality to a subset of privileged users.,ogrl-lm-03,Shared,Shared,—,—,Customer (planned),yes,partial
@@ -108,4 +108,4 @@ Requirement,Title,OGRL controls,AWS,Google Workspace,Fathom,Endpoints,Organizati
 3.14.4,Update malicious code protection mechanisms when new releases are available.,ogrl-vm-03,Shared,Shared,—,Customer (planned),Customer (planned),yes,partial
 3.14.5,"Perform periodic scans of organizational systems and real-time scans of files from external sources as files are downloaded, opened, or executed.",ogrl-vm-03,Shared,Shared,—,Customer (planned),Customer (planned),yes,partial
 3.14.6,"Monitor organizational systems, including inbound and outbound communications traffic, to detect attacks and indicators of potential attacks.",ogrl-lm-02,Shared,Shared,—,Customer (planned),Customer (planned),yes,partial
-3.14.7,Identify unauthorized use of organizational systems.,ogrl-lm-02 ogrl-lm-04,Shared (partial),Shared (partial),—,Customer (planned),Customer (planned),yes,partial
+3.14.7,Identify unauthorized use of organizational systems.,ogrl-lm-02 ogrl-lm-04,Shared,Shared (partial),—,Customer (planned),Customer (planned),yes,partial

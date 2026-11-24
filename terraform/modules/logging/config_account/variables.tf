@@ -28,3 +28,8 @@ variable "create_service_linked_role" {
   type        = bool
   default     = true
 }
+
+variable "findings_topic_arns" {
+  description = "Security findings SNS topic ARN by region. Config delivery failures in this account are published there."
+  type        = map(string)
+}
