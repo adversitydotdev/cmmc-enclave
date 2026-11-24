@@ -1,0 +1,19 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.fathom.ogrl-gv-10
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.fathom
+control_ref: control--ogrl-gv-10
+external_references:
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  Fathom records assessment results and findings against each
+  800-171A objective and links them to implementations, tests, and
+  evidence, so the assessor works from current data. Fathom does not
+  perform the assessment. Test: manual evidence, results and
+  findings exported from Fathom for the assessment period.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: implemented

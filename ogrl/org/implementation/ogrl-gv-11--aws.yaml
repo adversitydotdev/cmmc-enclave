@@ -1,0 +1,25 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-gv-11
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-gv-11
+external_references:
+  - source: >-
+      AWS Config conformance pack, Operational Best Practices for
+      CMMC 2.0 Level 2
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: AWS Config rule securityhub-enabled
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/securityhub-enabled.html"
+  - source: AWS Security Hub User Guide
+    url: "https://docs.aws.amazon.com/securityhub/latest/userguide/what-is-securityhub.html"
+narrative: >-
+  Terraform enables Security Hub, GuardDuty, and the AWS Config CMMC
+  2.0 Level 2 conformance pack in every account, so AWS control
+  drift is detected continuously and raised as findings. Test:
+  Config rules securityhub-enabled and guardduty-enabled-centralized
+  (both listed against CA.L2-3.12.3 in the conformance pack).
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: implemented

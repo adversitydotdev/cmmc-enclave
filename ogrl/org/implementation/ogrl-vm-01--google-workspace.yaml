@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-vm-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-vm-01
+external_references:
+  - source: >-
+      Google Workspace CMMC implementation guide (2025), page 103
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=103"
+  - source: >-
+      Google Workspace CMMC implementation guide (2025), page 104
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=104"
+narrative: >-
+  Google scans Workspace systems and applications and remediates in
+  line with risk (guide: responsibility Google, no customer
+  configuration for 3.11.2 or 3.11.3). Test: manual evidence,
+  Google's FedRAMP High authorization; no Policy API setting exists.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

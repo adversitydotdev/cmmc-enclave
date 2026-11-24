@@ -1,0 +1,19 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.fathom.ogrl-gv-11
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.fathom
+control_ref: control--ogrl-gv-11
+external_references:
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  Fathom runs the library tests on their schedule (AWS Config and
+  Security Hub reads, Cloud Identity Policy API reads for Workspace
+  settings), stores the results, and shows current control health
+  with a failing-check list. Test: manual evidence, Fathom results
+  for the period with timestamps.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: implemented

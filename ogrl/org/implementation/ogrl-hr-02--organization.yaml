@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-hr-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-hr-02
+external_references:
+  - source: >-
+      Google Workspace CMMC implementation guide (2025), page 72
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=72"
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  Offboarding checklist triggered by the HR event: disable access
+  within 24 hours, revoke keys and tokens, recover devices and CUI,
+  exit interview, and a 5 business day access review on internal
+  transfers. 3.9.2 is also mapped to ogrl-ac-01 (#9). Test: manual
+  evidence, checklists compared with HR termination dates. Policy
+  template arrives with issue #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned
