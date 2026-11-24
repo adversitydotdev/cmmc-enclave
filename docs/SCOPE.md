@@ -123,7 +123,7 @@ That last part matters: even when we can't set it, we can check it, and the chec
 
 Fathom already ships a CloudFormation template (`fathom/deploy/aws/template.yaml`: one Fargate task, single AZ Postgres, private S3, SSM). For the enclave it needs to:
 
-- Run in Terraform (wrap the stack or port it) in the `grc` account. It's a Security Protection Asset, so it's in assessment scope and in assessment scope, so we build it to address all 110 requirements (D6).
+- Run in Terraform (wrap the stack or port it) in the `grc` account. It's a Security Protection Asset, so it's in assessment scope and we build it to address all 110 requirements (D6).
 - Sit behind Identity Center or Workspace SSO, with FIPS endpoints, KMS keys from the enclave, and logs into the log archive. No public task IPs, a CMK on the bucket, partition-aware ARNs, and the AI assistant off by default.
 - Boot with the pinned ogrl-library release, the `baseline--ogrl-cmmc-l2` baseline, and an enclave bundle: one `system`, `component`s for AWS, Workspace, Fathom, and endpoints, `party` objects for AWS and Google with their FedRAMP authorizations, and an `implementation` per control.
 - Run tests: the AWS read-only integration (`fathom-aws`) plus a new Workspace integration that reads the Policy and Reports APIs.

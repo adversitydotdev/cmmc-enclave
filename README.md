@@ -25,7 +25,7 @@ Most small defense contractors handling CUI end up with the same shape of enviro
 Last checked: 2026-11-23. This moves; check the sources.
 
 - DoW suspended the Phase 2 move to C3PAO Level 2 assessments (was due 2026-11-10) on 2026-07-13. Phase 1 self assessments and DFARS 252.204-7012 still apply. ([DoW CIO memo 26-P-1023](https://dowcio.war.gov/Portals/0/Documents/Library/ImplementingSuspensionCMMC-PhaseII.pdf), [DoW CIO](https://dowcio.war.gov/CMMC/About/); both returned 403 to us, so not read directly.)
-- CMMC Level 2 is NIST SP 800-171 Rev 2 ([32 CFR 170.14](https://www.ecfr.gov/current/title-32/subtitle-A/chapter-I/subchapter-G/part-170)). Rev 3 is proposed only for a separate FAR CUI rule ([FAR overhaul NPRM, 2026-06-23](https://www.federalregister.gov/documents/2026/06/23/2026-12559/federal-acquisition-regulation-revolutionary-federal-acquisition-regulation-overhaul-parts-1-2-4-33)).
+- CMMC Level 2 is NIST SP 800-171 Rev 2 ([32 CFR 170.14](https://www.ecfr.gov/current/title-32/subtitle-A/chapter-I/subchapter-G/part-170)). Rev 3 appears in the proposed FAR CUI rule, not in CMMC or DFARS 7012 as far as we found ([FAR overhaul NPRM, 2026-06-23](https://www.federalregister.gov/documents/2026/06/23/2026-12559/federal-acquisition-regulation-revolutionary-federal-acquisition-regulation-overhaul-parts-1-2-4-33)).
 - The reform task force report was due to DoW CIO in September. We found no public release.
 - Nothing here is a certification or a promise of one. Details in [docs/SCOPE.md](docs/SCOPE.md#2-where-cmmc-stands-verified-november-23-2026).
 
