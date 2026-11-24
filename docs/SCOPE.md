@@ -12,7 +12,21 @@ Ship a baseline that a small defense contractor can deploy into their own AWS or
 
 It is a baseline others build on. Each company's contracts, CUI categories, and existing tools will add to it.
 
-Target deploy time: David's note said "under an 100". We read that as **under an hour** from a filled-in wizard to a working enclave, not counting vendor purchasing or waiting on Google to provision add-ons. Confirm in the deploy-time decision issue.
+### Deploy-time objective (D3, [#3](https://github.com/adversitydotdev/cmmc-enclave/issues/3))
+
+**Under an hour, a couple of hours at most,** from no enclave to a baselined one. This is an objective and a proof of concept, not a hard requirement. The clock is wizard fill time plus Terraform provisioning.
+
+Not on the clock: buying Workspace licenses and add-ons, Google provisioning Assured Controls, GovCloud account signup, DNS propagation. Manual runbook steps are timed and reported separately (#39 records time per stage).
+
+"Working" means everything in our baseline is applied and functioning. It does not mean the company is done; their policies, people, endpoints, and any runbook steps they haven't finished remain. The end to end test (M7) checks:
+
+- [ ] Users sign in to Workspace and, through Identity Center, to AWS with security keys
+- [ ] CUI OU locked down: only FedRAMP High services on, sharing restricted
+- [ ] Workspace hardening from the baseline applied and passing its Policy API checks
+- [ ] AWS hardening applied: SCPs, CloudTrail, Config with the CMMC conformance pack, GuardDuty, Security Hub, FIPS endpoints, KMS keys, network boundary
+- [ ] AWS and Workspace logs flowing to the log archive
+- [ ] Fathom up behind SSO with the enclave bundle loaded and the SSP rendered as far as the baseline covers
+- [ ] Fathom's automated tests for baseline controls passing
 
 ## 2. Where CMMC stands (verified November 23, 2026)
 
@@ -199,7 +213,7 @@ Buckets we expect to land in the "still on you" column regardless of tier:
 
 - **D1** ([#1](https://github.com/adversitydotdev/cmmc-enclave/issues/1)) Decided: Enterprise Plus with Assured Controls Plus by default, Assured Controls as fallback. Business and Enterprise Standard unsupported in v0.1.
 - **D2** ([#2](https://github.com/adversitydotdev/cmmc-enclave/issues/2)) Decided: Google Workspace is the IdP in both tiers. Groups managed in Terraform.
-- **D3** Deploy-time target: confirm "under an hour" and what counts as done.
+- **D3** ([#3](https://github.com/adversitydotdev/cmmc-enclave/issues/3)) Decided: under an hour objective (not hard), wizard plus Terraform on the clock, "working" checklist in section 1.
 - **D4** Repo name (`cmmc-enclave` proposed) and whether it sits under the Fathom name.
 - **D5** ([#4](https://github.com/adversitydotdev/cmmc-enclave/issues/4)) Decided: HashiCorp Terraform, `macadmins/googleworkspace`, plain Terraform on AWS Organizations (no LZA, no AFT).
 - **D6** ([#7](https://github.com/adversitydotdev/cmmc-enclave/issues/7)) Decided: Fathom is a Security Protection Asset, in scope, hardened to all 110.
