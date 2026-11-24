@@ -49,7 +49,6 @@ information_types:
     component_refs:
       - component--dev.adversity.cmmc-enclave.aws
       - component--dev.adversity.cmmc-enclave.google-workspace
-      - component--dev.adversity.cmmc-enclave.fathom
       - component--dev.adversity.cmmc-enclave.endpoints
     confidentiality: moderate
     description: >
