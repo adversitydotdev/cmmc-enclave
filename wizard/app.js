@@ -234,9 +234,10 @@
         }
       }
     }
-    const regions = ALLOWED_REGIONS[answers.tier];
-    out.org.allowed_regions = regions.slice();
-    out.baseline.allowed_regions = regions.slice();
+    // Single-region by design (#48): keys, EBS default encryption and backups exist only in
+    // the home region, so the region allowlist is the home region alone.
+    out.org.allowed_regions = [answers.home_region];
+    out.baseline.allowed_regions = [answers.home_region];
     if (answers.fathom_domain) out.baseline.fathom_public_url = "https://" + answers.fathom_domain; // wizard-allow-url
     return out;
   }

@@ -160,7 +160,7 @@ test("tfvars keys are declared; required variables present; bootstrap-owned abse
     }
   }
   assert.equal(tf.org.create_organization, true);
-  assert.deepEqual(tf.baseline.allowed_regions, ["us-east-1", "us-east-2", "us-west-2"]);
+  assert.deepEqual(tf.baseline.allowed_regions, [tf.baseline.home_region]);
   assert.equal(tf.baseline.fathom_public_url, "https://grc.acme-defense.com");
   assert.equal(tf.baseline.workspace_admin_email, "terraform-admin@acme-defense.com", "audit admin falls back");
   assert.deepEqual(tf.workspace.group_members, { "enclave-admins": ["alice@acme-defense.com", "bob@acme-defense.com"], "enclave-auditors": ["bob@acme-defense.com"] });
@@ -187,7 +187,7 @@ test("ITAR: gov regions, GovCloud party kept; standard: removed; enums set", asy
   assert.match(itar["ogrl/org/system/enclave.yaml"], /integrity: high/);
   assert.match(itar["ogrl/org/system/enclave.yaml"], /availability: moderate/);
   assert.match(std["ogrl/org/system/enclave.yaml"], /confidentiality: moderate/);
-  assert.deepEqual(JSON.parse(itar["terraform/org.auto.tfvars.json"]).allowed_regions, ["us-gov-west-1", "us-gov-east-1"]);
+  assert.deepEqual(JSON.parse(itar["terraform/org.auto.tfvars.json"]).allowed_regions, [JSON.parse(itar["terraform/org.auto.tfvars.json"]).home_region]);
   assert.equal(JSON.parse(itar["terraform/baseline.auto.tfvars.json"]).tier, "itar");
 });
 

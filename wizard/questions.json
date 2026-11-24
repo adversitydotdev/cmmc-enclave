@@ -14,7 +14,7 @@
     "checklist": "Drives checklist.md content only; no Terraform variable or OGRL parameter exists for it (name)."
   },
   "derived": [
-    {"kind": "tfvar", "stack": "org", "name": "allowed_regions", "from": "tier", "rule": "standard: us-east-1, us-east-2, us-west-2; itar: us-gov-west-1, us-gov-east-1"},
+    {"kind": "tfvar", "stack": "org", "name": "allowed_regions", "from": "tier", "rule": "[home_region] (single-region by design, #48)"},
     {"kind": "tfvar", "stack": "baseline", "name": "allowed_regions", "from": "tier", "rule": "same as org"},
     {"kind": "tfvar", "stack": "baseline", "name": "fathom_public_url", "from": "fathom_domain", "rule": "https scheme plus fathom_domain, omitted when fathom_domain is empty"}
   ],
