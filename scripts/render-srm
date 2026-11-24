@@ -1,0 +1,348 @@
+#!/usr/bin/env python3
+"""Render the shared responsibility matrix (SRM) from the OGRL bundle.
+
+Usage: scripts/render-srm <outdir> [--ogrl PATH] [--library DIR] [--bundle DIR]
+                                   [--library-ref REF]
+
+Writes <outdir>/srm.csv and <outdir>/srm.md. Output is deterministic: no
+timestamps, sorted, stable. Exits non-zero if any Rev 2 requirement has no
+responsible party.
+
+Data flow:
+  * `ogrl render ssp` gives the implementations of the bundle, grouped by
+    control (ssp.json). Its `at` timestamp is ignored.
+  * The library supplies the requirement list (baseline requirement_refs),
+    requirement titles (requirement/), and control -> requirement
+    mappings (mapping/). `ogrl` has no per-requirement view, so the join is
+    computed here.
+
+RFC 0001 responsibility is author-relative (the company is the author):
+  provider   -> Customer
+  shared     -> Shared
+  subservice -> Inherited (<vendor from subservice_ref>)
+"""
+import argparse
+import csv
+import hashlib
+import io
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+import yaml
+
+REPO = Path(__file__).resolve().parent.parent
+BASELINE = "baseline--ogrl-cmmc-l2"
+REQ_PREFIX = "requirement--nist-sp-800-171-r2-"
+
+# (key = component id suffix, column header), in column order.
+COMPONENTS = [
+    ("aws", "AWS"),
+    ("google-workspace", "Google Workspace"),
+    ("fathom", "Fathom"),
+    ("endpoints", "Endpoints"),
+    ("organization", "Organization"),
+]
+VENDORS = {"aws": "AWS", "google": "Google"}  # party id suffix -> label
+CUSTOMER, SHARED, INHERITED, NONE = "Customer", "Shared", "Inherited", "—"
+STRENGTH = {CUSTOMER: 3, SHARED: 2, INHERITED: 1}  # company burden, high first
+STATUS_ORDER = ["implemented", "partial", "planned"]
+BUCKETS = "policies, people, physical sites, endpoints"
+
+
+def die(msg):
+    print(f"render-srm: error: {msg}", file=sys.stderr)
+    sys.exit(2)
+
+
+def load(path):
+    with open(path, encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+
+def short(ref):
+    """Last dotted/-- segment of an OGRL id."""
+    return ref.split("--")[-1].split(".")[-1]
+
+
+def bundle_digest(bundle):
+    h = hashlib.sha256()
+    for p in sorted(Path(bundle).rglob("*")):
+        if p.is_file():
+            h.update(p.relative_to(bundle).as_posix().encode() + b"\0")
+            h.update(p.read_bytes() + b"\0")
+    return h.hexdigest()[:12]
+
+
+def library_ref(lib, override):
+    if override:
+        return override
+    repo = Path(lib).resolve().parent
+    try:
+        out = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
+                             capture_output=True, text=True, check=True)
+        return out.stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return os.environ.get("OGRL_LIBRARY_REF", "unknown")
+
+
+def render_ssp(ogrl, bundle, lib):
+    tmp = tempfile.mkdtemp(prefix="srm-ssp-")
+    try:
+        r = subprocess.run([ogrl, "render", "ssp", str(bundle), "--library",
+                            str(lib), "--out", tmp],
+                           capture_output=True, text=True)
+        if r.returncode != 0:
+            die(f"ogrl render ssp failed:\n{r.stderr}")
+        with open(Path(tmp) / "ssp.json", encoding="utf-8") as f:
+            return json.load(f)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def cell_of(impls):
+    """Collapse the implementations one component has for a requirement.
+
+    Strongest company burden wins (Customer > Shared > Inherited).
+    Returns (label, statuses).
+    """
+    if not impls:
+        return NONE, []
+    best, vendor = None, None
+    for i in impls:
+        resp = i["responsibility"]
+        kind = {"provider": CUSTOMER, "shared": SHARED,
+                "subservice": INHERITED}.get(resp)
+        if kind is None:
+            die(f"unknown responsibility {resp!r} in {i['id']}")
+        v = None
+        if kind == INHERITED:
+            sub = i.get("subservice_ref")
+            if not sub:
+                die(f"subservice implementation without subservice_ref: {i['id']}")
+            v = VENDORS.get(short(sub), short(sub))
+        if best is None or STRENGTH[kind] > STRENGTH[best]:
+            best, vendor = kind, v
+        elif kind == best == INHERITED and v != vendor:
+            vendor = " + ".join(sorted({vendor, v}))
+    label = f"{best} ({vendor})" if best == INHERITED else best
+    return label, [i["status"] for i in impls]
+
+
+def rollup(statuses):
+    s = set(statuses)
+    if not s:
+        return NONE
+    if s == {"implemented"}:
+        return "implemented"
+    if s == {"planned"}:
+        return "planned"
+    return "partial"
+
+
+def bucket(label):
+    if label == NONE:
+        return NONE
+    return label.split(" ")[0]
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("outdir")
+    ap.add_argument("--ogrl", default=shutil.which("ogrl"),
+                    help="ogrl binary (default: from PATH)")
+    ap.add_argument("--library", default=os.environ.get("OGRL_LIBRARY"),
+                    help="library dir (default: $OGRL_LIBRARY)")
+    ap.add_argument("--bundle", default=str(REPO / "ogrl" / "org"))
+    ap.add_argument("--library-ref", default=None,
+                    help="override the library ref shown in the header")
+    a = ap.parse_args()
+    if not a.ogrl:
+        die("ogrl not found on PATH; use --ogrl")
+    if not a.library or not Path(a.library).is_dir():
+        die("library not found; set $OGRL_LIBRARY or use --library")
+    lib, bundle = Path(a.library), Path(a.bundle)
+
+    # Requirements and titles.
+    base = load(lib / "baseline" / "ogrl-cmmc-l2.yaml")
+    if base["id"] != BASELINE:
+        die(f"unexpected baseline {base['id']}")
+    reqs = list(base["requirement_refs"])
+
+    def key(r):
+        return tuple(int(x) for x in r[len(REQ_PREFIX):].split("-"))
+    reqs.sort(key=key)
+    titles, display = {}, {}
+    for r in reqs:
+        rid = r[len("requirement--"):].replace("nist-sp-800-171-r2-", "")
+        o = load(lib / "requirement" / "nist-sp-800-171-r2" / f"{rid}.yaml")
+        display[r] = o["display_id"]
+        titles[r] = " ".join(str(o["statement"]).split())
+
+    # Implementations per control per component, from the render output.
+    ssp = render_ssp(a.ogrl, bundle, lib)
+    by_ctrl = {}
+    n_impl = 0
+    for c in ssp["controls"]:
+        for i in c["implementations"]:
+            n_impl += 1
+            comp = short(i["component_ref"])
+            if comp not in dict(COMPONENTS):
+                die(f"unknown component {comp!r}")
+            by_ctrl.setdefault(c["control_id"], {}).setdefault(comp, []).append(i)
+
+    # control -> requirements from library mappings.
+    req_set = set(reqs)
+    ctrls_for = {r: set() for r in reqs}
+    for p in sorted((lib / "mapping").glob("*_to_nist-sp-800-171-r2-*.yaml")):
+        m = load(p)
+        if m["target_ref"] in req_set:
+            ctrls_for[m["target_ref"]].add(m["source_ref"])
+
+    rows, failures = [], []
+    for r in reqs:
+        ctrls = sorted(c for c in ctrls_for[r] if c in by_ctrl)
+        cells, statuses = {}, []
+        for comp, _ in COMPONENTS:
+            impls = [i for c in ctrls for i in by_ctrl[c].get(comp, [])]
+            label, st = cell_of(impls)
+            statuses += st
+            cells[comp] = (label, rollup(st))
+        status = rollup(statuses)
+        if all(cells[c][0] == NONE for c, _ in COMPONENTS):
+            failures.append(display[r])
+        rows.append({
+            "id": display[r], "title": titles[r],
+            "controls": [short(c) for c in ctrls],
+            "cells": cells, "status": status,
+            "customer": "yes" if any(bucket(cells[c][0]) == CUSTOMER
+                                     for c, _ in COMPONENTS) else "no",
+        })
+
+    def cell_text(label, st):
+        if label == NONE or st == "implemented":
+            return label
+        return f"{label} ({st})"
+
+    # CSV
+    head = (["Requirement", "Title", "OGRL controls"]
+            + [h for _, h in COMPONENTS] + ["Customer remains", "Status"])
+    buf = io.StringIO()
+    w = csv.writer(buf, lineterminator="\n")
+    w.writerow(head)
+    for x in rows:
+        w.writerow([x["id"], x["title"], " ".join(x["controls"])]
+                   + [cell_text(*x["cells"][c]) for c, _ in COMPONENTS]
+                   + [x["customer"], x["status"]])
+    csv_text = buf.getvalue()
+
+    # Markdown
+    def esc(s):
+        return s.replace("|", "\\|")
+
+    def trunc(s, n=90):
+        if len(s) <= n:
+            return s
+        return s[:n].rsplit(" ", 1)[0].rstrip(",;:") + "…"
+
+    vendors = sorted(VENDORS.values())
+    cats = [f"Inherited ({v})" for v in vendors] + [SHARED, CUSTOMER, NONE]
+    tot = {c: {k: 0 for k in cats} for c, _ in COMPONENTS}
+    for x in rows:
+        for c, _ in COMPONENTS:
+            lab = x["cells"][c][0]
+            k = lab if lab in cats else (
+                bucket(lab) if bucket(lab) in cats else lab)
+            tot[c][k] = tot[c].get(k, 0) + 1
+    extra = sorted({k for c in tot.values() for k in c} - set(cats))
+    cats += extra
+
+    n = len(rows)
+    sc = {s: sum(1 for x in rows if x["status"] == s) for s in STATUS_ORDER}
+    md = []
+    md += [
+        "# Shared responsibility matrix (NIST SP 800-171 Rev 2)",
+        "",
+        "Generated by `scripts/render-srm` from the OGRL bundle. Do not edit by "
+        "hand; rerun `scripts/render-srm docs/srm` and commit. CSV copy: "
+        "[srm.csv](srm.csv).",
+        "",
+        f"- Bundle: `ogrl/org` ({len(by_ctrl)} controls, {n_impl} "
+        f"implementations), content digest `{bundle_digest(bundle)}`",
+        f"- Library: `ogrl-library` at `{library_ref(lib, a.library_ref)}`, "
+        f"baseline `{BASELINE}`",
+        f"- Requirements: {n}",
+        "",
+        "## Legend",
+        "",
+        "Responsibility is from the company's point of view "
+        "(OGRL RFC 0001, the company is the author).",
+        "",
+        "| Cell | OGRL responsibility | Meaning |",
+        "|---|---|---|",
+        "| Inherited (AWS) / (Google) | `subservice` | The vendor carries it; "
+        "the company does nothing beyond choosing the service |",
+        "| Shared | `shared` | The company configures its part; the vendor "
+        "carries the rest |",
+        "| Customer | `provider` | The company does it |",
+        "| — | none | No implementation for this component |",
+        "",
+        "A cell shows the strongest company burden across the mapped controls "
+        "(Customer, then Shared, then Inherited). A suffix (planned) or "
+        "(partial) means at least one contributing implementation is not yet "
+        "`implemented`. Status is the rollup across all components: "
+        "implemented (all implemented), planned (all planned), partial "
+        "(otherwise). Customer remains is yes when any component is Customer.",
+        "",
+        f"Customer buckets that always remain: {BUCKETS}.",
+        "",
+        "## Totals",
+        "",
+        "Requirements per component and responsibility:",
+        "",
+        "| Responsibility | " + " | ".join(h for _, h in COMPONENTS) + " |",
+        "|---|" + "---|" * len(COMPONENTS),
+    ]
+    for k in cats:
+        md.append(f"| {k} | " + " | ".join(
+            str(tot[c].get(k, 0)) for c, _ in COMPONENTS) + " |")
+    md += [
+        "",
+        f"Customer remains: {sum(1 for x in rows if x['customer'] == 'yes')} "
+        f"yes, {sum(1 for x in rows if x['customer'] == 'no')} no. "
+        f"Status: {sc['implemented']} implemented, {sc['partial']} partial, "
+        f"{sc['planned']} planned (of {n}).",
+        "",
+        "## Matrix",
+        "",
+        "| Requirement | Title | OGRL controls | "
+        + " | ".join(h for _, h in COMPONENTS)
+        + " | Customer remains | Status |",
+        "|---|---|---|" + "---|" * (len(COMPONENTS) + 2),
+    ]
+    for x in rows:
+        md.append("| " + " | ".join(
+            [x["id"], esc(trunc(x["title"])), esc(" ".join(x["controls"]))]
+            + [esc(cell_text(*x["cells"][c])) for c, _ in COMPONENTS]
+            + [x["customer"], x["status"]]) + " |")
+    md_text = "\n".join(md) + "\n"
+
+    out = Path(a.outdir)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "srm.csv").write_text(csv_text, encoding="utf-8")
+    (out / "srm.md").write_text(md_text, encoding="utf-8")
+
+    if len(rows) != 110:
+        print(f"render-srm: warning: {len(rows)} requirements, expected 110",
+              file=sys.stderr)
+    if failures:
+        die("requirements with no responsible party: " + ", ".join(failures))
+    print(f"render-srm: wrote {n} rows to {out}")
+
+
+if __name__ == "__main__":
+    main()
