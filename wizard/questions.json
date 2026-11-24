@@ -1,0 +1,358 @@
+{
+  "schema_version": "1",
+  "sections": [
+    {"id": "company", "title": "Company", "intro": "Who owns the enclave and signs the SSP."},
+    {"id": "scope", "title": "Scope and impact", "intro": "Tier, CUI, people and places."},
+    {"id": "workspace", "title": "Google Workspace", "intro": "Tenant, edition and the people in it."},
+    {"id": "endpoints", "title": "Endpoints", "intro": "Existing device management and endpoint protection."},
+    {"id": "aws", "title": "AWS", "intro": "Organization, member accounts, region and tags."},
+    {"id": "fathom", "title": "Fathom", "intro": "The GRC application that runs in the grc account."}
+  ],
+  "maps_to_kinds": {
+    "tfvar": "Writes terraform/<stack>.auto.tfvars.json (stack, name, optional key for map variables).",
+    "ogrl_param": "Fills a placeholder or enum slot in the rendered ogrl/ tree (param).",
+    "checklist": "Drives checklist.md content only; no Terraform variable or OGRL parameter exists for it (name)."
+  },
+  "derived": [
+    {"kind": "tfvar", "stack": "org", "name": "allowed_regions", "from": "tier", "rule": "standard: us-east-1, us-east-2, us-west-2; itar: us-gov-west-1, us-gov-east-1"},
+    {"kind": "tfvar", "stack": "baseline", "name": "allowed_regions", "from": "tier", "rule": "same as org"},
+    {"kind": "tfvar", "stack": "baseline", "name": "fathom_public_url", "from": "fathom_domain", "rule": "https scheme plus fathom_domain, omitted when fathom_domain is empty"}
+  ],
+  "questions": [
+    {
+      "id": "company_name", "section": "company", "label": "Company legal name",
+      "help": "As it should appear in the SSP and policies.",
+      "type": "string", "required": true,
+      "validation": {"max_length": 120, "pattern": "^[\\p{L}\\p{N}][\\p{L}\\p{N} .,&'()/+@_-]*$", "pattern_message": "Letters, digits, spaces and . , & ' ( ) / + @ _ - only; start with a letter or digit."},
+      "example": "Acme Defense LLC",
+      "maps_to": [{"kind": "ogrl_param", "param": "company_name"}]
+    },
+    {
+      "id": "domain", "section": "company", "label": "Primary Google Workspace domain",
+      "help": "The domain your users sign in with.",
+      "type": "domain", "required": true,
+      "example": "acme-defense.com",
+      "maps_to": [
+        {"kind": "ogrl_param", "param": "domain"},
+        {"kind": "tfvar", "stack": "workspace", "name": "domain"}
+      ]
+    },
+    {
+      "id": "ssp_signer_name", "section": "company", "label": "SSP signer, full name",
+      "help": "The person who signs the System Security Plan.",
+      "type": "string", "required": true,
+      "validation": {"max_length": 120, "pattern": "^[\\p{L}\\p{N}][\\p{L}\\p{N} .,&'()/+@_-]*$", "pattern_message": "Letters, digits, spaces and . , & ' ( ) / + @ _ - only; start with a letter or digit."},
+      "example": "Jane Doe",
+      "maps_to": [{"kind": "ogrl_param", "param": "ssp_signer_name"}]
+    },
+    {
+      "id": "ssp_signer_title", "section": "company", "label": "SSP signer, title",
+      "type": "string", "required": true,
+      "validation": {"max_length": 120, "pattern": "^[\\p{L}\\p{N}][\\p{L}\\p{N} .,&'()/+@_-]*$", "pattern_message": "Letters, digits, spaces and . , & ' ( ) / + @ _ - only; start with a letter or digit."},
+      "example": "Chief Information Security Officer",
+      "maps_to": [{"kind": "ogrl_param", "param": "ssp_signer_title"}]
+    },
+
+    {
+      "id": "tier", "section": "scope", "label": "Does the enclave handle ITAR technical data?",
+      "help": "No: standard tier, commercial AWS regions. Yes: ITAR tier, AWS GovCloud (US), client-side encryption in Workspace, and a separate GovCloud signup.",
+      "type": "enum", "required": true, "default": "standard",
+      "options": [
+        {"value": "standard", "label": "No (standard tier)"},
+        {"value": "itar", "label": "Yes (ITAR tier)"}
+      ],
+      "maps_to": [
+        {"kind": "ogrl_param", "param": "tier"},
+        {"kind": "tfvar", "stack": "org", "name": "tier"},
+        {"kind": "tfvar", "stack": "baseline", "name": "tier"}
+      ]
+    },
+    {
+      "id": "cui_categories", "section": "scope", "label": "CUI categories handled",
+      "help": "Comma separated CUI Registry category names.",
+      "type": "string", "required": true,
+      "validation": {"max_length": 200, "pattern": "^[\\p{L}\\p{N}][\\p{L}\\p{N} .,&'()/+@_-]*$", "pattern_message": "Letters, digits, spaces and . , & ' ( ) / + @ _ - only; start with a letter or digit."},
+      "example": "CTI, Export Controlled",
+      "maps_to": [{"kind": "ogrl_param", "param": "cui_categories"}]
+    },
+    {
+      "id": "cui_confidentiality", "section": "scope", "label": "CUI confidentiality impact (FIPS 199)",
+      "help": "32 CFR 2002 requires CUI to be protected at no less than moderate confidentiality.",
+      "type": "enum", "required": true, "default": "moderate",
+      "options": [{"value": "moderate", "label": "Moderate"}, {"value": "high", "label": "High"}],
+      "maps_to": [{"kind": "ogrl_param", "param": "cui_confidentiality"}]
+    },
+    {
+      "id": "cui_integrity", "section": "scope", "label": "CUI integrity impact (FIPS 199)",
+      "help": "Not set by CUI rules. How much harm would unauthorized changes to this CUI cause?",
+      "type": "enum", "required": true, "default": "moderate",
+      "options": [{"value": "low", "label": "Low"}, {"value": "moderate", "label": "Moderate"}, {"value": "high", "label": "High"}],
+      "maps_to": [{"kind": "ogrl_param", "param": "cui_integrity"}]
+    },
+    {
+      "id": "cui_availability", "section": "scope", "label": "CUI availability impact (FIPS 199)",
+      "help": "Not set by CUI rules. How much harm would losing access to this CUI cause?",
+      "type": "enum", "required": true, "default": "low",
+      "options": [{"value": "low", "label": "Low"}, {"value": "moderate", "label": "Moderate"}, {"value": "high", "label": "High"}],
+      "maps_to": [{"kind": "ogrl_param", "param": "cui_availability"}]
+    },
+    {
+      "id": "user_count", "section": "scope", "label": "Number of enclave users",
+      "help": "People with access to CUI. Used for the license estimate and the SSP.",
+      "type": "integer", "required": true,
+      "validation": {"min": 1, "max": 100000},
+      "example": "25",
+      "maps_to": [{"kind": "ogrl_param", "param": "user_count"}]
+    },
+    {
+      "id": "sites", "section": "scope", "label": "Offices and alternate work sites",
+      "help": "Comma separated. Write \"remote only\" if there are no offices.",
+      "type": "string", "required": true,
+      "validation": {"max_length": 300, "pattern": "^[\\p{L}\\p{N}][\\p{L}\\p{N} .,&'()/+@_-]*$", "pattern_message": "Letters, digits, spaces and . , & ' ( ) / + @ _ - only; start with a letter or digit."},
+      "example": "Huntsville AL office, remote",
+      "maps_to": [{"kind": "ogrl_param", "param": "sites"}]
+    },
+
+    {
+      "id": "workspace_tenant", "section": "workspace", "label": "Google Workspace tenant",
+      "help": "New: the checklist starts with creating and verifying the tenant.",
+      "type": "enum", "required": true, "default": "existing",
+      "options": [{"value": "existing", "label": "I already have a Workspace tenant"}, {"value": "new", "label": "New tenant"}],
+      "maps_to": [{"kind": "checklist", "name": "workspace_tenant"}]
+    },
+    {
+      "id": "workspace_edition", "section": "workspace", "label": "Workspace edition",
+      "help": "Default: Enterprise Plus with Assured Controls Plus. Assured Controls without Plus is a documented fallback. Anything else is unsupported and generates POA&M items.",
+      "type": "enum", "required": true, "default": "acp",
+      "options": [
+        {"value": "acp", "label": "Enterprise Plus with Assured Controls Plus (default)"},
+        {"value": "ac", "label": "Enterprise Plus with Assured Controls (fallback)"},
+        {"value": "unsupported", "label": "Another edition (unsupported; generates POA&M items)"}
+      ],
+      "maps_to": [{"kind": "checklist", "name": "workspace_edition"}]
+    },
+    {
+      "id": "workspace_customer_id", "section": "workspace", "label": "Workspace customer ID",
+      "help": "Admin console, Account settings. For a new tenant, leave blank and set customer_id in terraform/workspace.auto.tfvars.json after the tenant exists.",
+      "type": "string", "required": false, "required_if": {"id": "workspace_tenant", "equals": "existing"},
+      "validation": {"pattern": "^C[0-9A-Za-z]{5,15}$", "pattern_message": "Starts with C followed by letters and digits, such as C03abc123."},
+      "example": "C03abc123",
+      "maps_to": [{"kind": "tfvar", "stack": "workspace", "name": "customer_id"}]
+    },
+    {
+      "id": "workspace_admin_email", "section": "workspace", "label": "Terraform admin email",
+      "help": "A super admin that the Terraform service account impersonates. For a new tenant, the address you will create.",
+      "type": "email", "required": true,
+      "example": "terraform-admin@acme-defense.com",
+      "maps_to": [{"kind": "tfvar", "stack": "workspace", "name": "impersonated_user_email"}]
+    },
+    {
+      "id": "workspace_audit_admin_email", "section": "workspace", "label": "Audit collector admin email",
+      "help": "Admin the Workspace audit collector impersonates. Blank: same as the Terraform admin.",
+      "type": "email", "required": false, "fallback_to": "workspace_admin_email",
+      "maps_to": [{"kind": "tfvar", "stack": "baseline", "name": "workspace_admin_email"}]
+    },
+    {
+      "id": "users", "section": "workspace", "label": "Users to create (optional)",
+      "help": "One per line: email, given name, family name, cui or non_cui. Leave blank to leave existing users untouched (the default).",
+      "type": "user_list", "required": false,
+      "example": "carol@acme-defense.com, Carol, Lee, cui",
+      "maps_to": [{"kind": "tfvar", "stack": "workspace", "name": "users"}]
+    },
+    {
+      "id": "group_enclave_admins", "section": "workspace", "label": "Group enclave-admins: members",
+      "help": "Administrators of the workload and grc accounts. Emails, one per line or comma separated. They are also Identity Center group members in AWS.",
+      "type": "email_list", "required": false,
+      "maps_to": [
+        {"kind": "tfvar", "stack": "workspace", "name": "group_members", "key": "enclave-admins"},
+        {"kind": "tfvar", "stack": "baseline", "name": "group_members", "key": "enclave-admins"}
+      ]
+    },
+    {
+      "id": "group_enclave_auditors", "section": "workspace", "label": "Group enclave-auditors: members",
+      "help": "Read-only auditors across all accounts.",
+      "type": "email_list", "required": false,
+      "maps_to": [
+        {"kind": "tfvar", "stack": "workspace", "name": "group_members", "key": "enclave-auditors"},
+        {"kind": "tfvar", "stack": "baseline", "name": "group_members", "key": "enclave-auditors"}
+      ]
+    },
+    {
+      "id": "group_fathom_operators", "section": "workspace", "label": "Group fathom-operators: members",
+      "help": "People who operate Fathom in the grc account.",
+      "type": "email_list", "required": false,
+      "maps_to": [
+        {"kind": "tfvar", "stack": "workspace", "name": "group_members", "key": "fathom-operators"},
+        {"kind": "tfvar", "stack": "baseline", "name": "group_members", "key": "fathom-operators"}
+      ]
+    },
+    {
+      "id": "group_logging_admins", "section": "workspace", "label": "Group logging-admins: members",
+      "help": "People who administer the log archive.",
+      "type": "email_list", "required": false,
+      "maps_to": [
+        {"kind": "tfvar", "stack": "workspace", "name": "group_members", "key": "logging-admins"},
+        {"kind": "tfvar", "stack": "baseline", "name": "group_members", "key": "logging-admins"}
+      ]
+    },
+
+    {
+      "id": "mdm", "section": "endpoints", "label": "Do you already run MDM (mobile device management) on enclave devices?",
+      "help": "No: the checklist adds a purchase item and POA&M items for device controls (gaps #43).",
+      "type": "enum", "required": true, "default": "none",
+      "options": [{"value": "none", "label": "No MDM"}, {"value": "existing", "label": "Yes, existing MDM"}],
+      "maps_to": [{"kind": "checklist", "name": "mdm"}]
+    },
+    {
+      "id": "mdm_product", "section": "endpoints", "label": "MDM product",
+      "type": "string", "required": false, "show_if": {"id": "mdm", "equals": "existing"},
+      "validation": {"max_length": 80},
+      "maps_to": [{"kind": "checklist", "name": "mdm_product"}]
+    },
+    {
+      "id": "edr", "section": "endpoints", "label": "Do you already run EDR (endpoint detection and response)?",
+      "help": "No: the checklist adds a purchase item and POA&M items for malicious code protection.",
+      "type": "enum", "required": true, "default": "none",
+      "options": [{"value": "none", "label": "No EDR"}, {"value": "existing", "label": "Yes, existing EDR"}],
+      "maps_to": [{"kind": "checklist", "name": "edr"}]
+    },
+    {
+      "id": "edr_product", "section": "endpoints", "label": "EDR product",
+      "type": "string", "required": false, "show_if": {"id": "edr", "equals": "existing"},
+      "validation": {"max_length": 80},
+      "maps_to": [{"kind": "checklist", "name": "edr_product"}]
+    },
+
+    {
+      "id": "existing_organization", "section": "aws", "label": "Do you already have an AWS Organization?",
+      "help": "No: the org stack creates it from the management account you run Terraform in. Yes: it reads the existing one (all features, policy types and trusted access must already be enabled), and you can list member accounts that already exist.",
+      "type": "boolean", "required": true, "default": false,
+      "maps_to": [{"kind": "tfvar", "stack": "org", "name": "create_organization", "invert": true}]
+    },
+    {
+      "id": "account_email_log_archive", "section": "aws", "label": "Root email: log archive account",
+      "help": "Four distinct addresses never used for another AWS account, at mailboxes you control.",
+      "type": "email", "required": true,
+      "maps_to": [{"kind": "tfvar", "stack": "org", "name": "account_emails", "key": "log_archive"}]
+    },
+    {
+      "id": "account_email_security", "section": "aws", "label": "Root email: security account",
+      "type": "email", "required": true,
+      "maps_to": [{"kind": "tfvar", "stack": "org", "name": "account_emails", "key": "security"}]
+    },
+    {
+      "id": "account_email_workload", "section": "aws", "label": "Root email: workload account",
+      "type": "email", "required": true,
+      "maps_to": [{"kind": "tfvar", "stack": "org", "name": "account_emails", "key": "workload"}]
+    },
+    {
+      "id": "account_email_grc", "section": "aws", "label": "Root email: grc account",
+      "type": "email", "required": true,
+      "maps_to": [{"kind": "tfvar", "stack": "org", "name": "account_emails", "key": "grc"}]
+    },
+    {
+      "id": "existing_account_id_log_archive", "section": "aws", "label": "Existing account ID: log archive (optional)",
+      "help": "Only if this member account already exists; it is not created or moved. Place it in the right OU by hand or import it.",
+      "type": "string", "required": false, "show_if": {"id": "existing_organization", "equals": true},
+      "validation": {"pattern": "^[0-9]{12}$", "pattern_message": "A 12-digit AWS account ID."},
+      "maps_to": [{"kind": "tfvar", "stack": "org", "name": "existing_account_ids", "key": "log_archive"}]
+    },
+    {
+      "id": "existing_account_id_security", "section": "aws", "label": "Existing account ID: security (optional)",
+      "type": "string", "required": false, "show_if": {"id": "existing_organization", "equals": true},
+      "validation": {"pattern": "^[0-9]{12}$", "pattern_message": "A 12-digit AWS account ID."},
+      "maps_to": [{"kind": "tfvar", "stack": "org", "name": "existing_account_ids", "key": "security"}]
+    },
+    {
+      "id": "existing_account_id_workload", "section": "aws", "label": "Existing account ID: workload (optional)",
+      "type": "string", "required": false, "show_if": {"id": "existing_organization", "equals": true},
+      "validation": {"pattern": "^[0-9]{12}$", "pattern_message": "A 12-digit AWS account ID."},
+      "maps_to": [{"kind": "tfvar", "stack": "org", "name": "existing_account_ids", "key": "workload"}]
+    },
+    {
+      "id": "existing_account_id_grc", "section": "aws", "label": "Existing account ID: grc (optional)",
+      "type": "string", "required": false, "show_if": {"id": "existing_organization", "equals": true},
+      "validation": {"pattern": "^[0-9]{12}$", "pattern_message": "A 12-digit AWS account ID."},
+      "maps_to": [{"kind": "tfvar", "stack": "org", "name": "existing_account_ids", "key": "grc"}]
+    },
+    {
+      "id": "home_region", "section": "aws", "label": "Home region",
+      "help": "Standard tier: commercial US regions. ITAR tier: GovCloud regions.",
+      "type": "enum", "required": true,
+      "options_by": {
+        "question": "tier",
+        "values": {
+          "standard": [{"value": "us-east-1", "label": "us-east-1"}, {"value": "us-east-2", "label": "us-east-2"}, {"value": "us-west-2", "label": "us-west-2"}],
+          "itar": [{"value": "us-gov-west-1", "label": "us-gov-west-1"}, {"value": "us-gov-east-1", "label": "us-gov-east-1"}]
+        }
+      },
+      "maps_to": [
+        {"kind": "tfvar", "stack": "org", "name": "home_region"},
+        {"kind": "tfvar", "stack": "baseline", "name": "home_region"}
+      ]
+    },
+    {
+      "id": "tag_owner", "section": "aws", "label": "Tag owner",
+      "help": "Required by the tag SCP: EC2, EBS and RDS creates are denied without owner, environment and data-classification.",
+      "type": "string", "required": true,
+      "validation": {"max_length": 120, "pattern": "^[A-Za-z0-9@._ -]+$", "pattern_message": "Letters, digits, space and @ . _ - only."},
+      "example": "it@acme-defense.com",
+      "maps_to": [
+        {"kind": "tfvar", "stack": "org", "name": "tags", "key": "owner"},
+        {"kind": "tfvar", "stack": "baseline", "name": "tags", "key": "owner"}
+      ]
+    },
+    {
+      "id": "tag_environment", "section": "aws", "label": "Tag environment",
+      "type": "string", "required": true, "default": "prod",
+      "validation": {"max_length": 60, "pattern": "^[A-Za-z0-9._-]+$", "pattern_message": "Letters, digits, . _ - only."},
+      "maps_to": [
+        {"kind": "tfvar", "stack": "org", "name": "tags", "key": "environment"},
+        {"kind": "tfvar", "stack": "baseline", "name": "tags", "key": "environment"}
+      ]
+    },
+    {
+      "id": "tag_data_classification", "section": "aws", "label": "Tag data-classification",
+      "type": "string", "required": true, "default": "cui",
+      "validation": {"max_length": 60, "pattern": "^[A-Za-z0-9._-]+$", "pattern_message": "Letters, digits, . _ - only."},
+      "maps_to": [
+        {"kind": "tfvar", "stack": "org", "name": "tags", "key": "data-classification"},
+        {"kind": "tfvar", "stack": "baseline", "name": "tags", "key": "data-classification"}
+      ]
+    },
+    {
+      "id": "notification_emails", "section": "aws", "label": "Security notification emails",
+      "help": "Receive security findings and alarms. One per line or comma separated.",
+      "type": "email_list", "required": false,
+      "maps_to": [{"kind": "tfvar", "stack": "baseline", "name": "notification_emails"}]
+    },
+
+    {
+      "id": "fathom_domain", "section": "fathom", "label": "Fathom domain (optional)",
+      "help": "Hostname for Fathom, such as grc.acme-defense.com. Blank: set it later; Fathom is reachable only after DNS and a certificate exist.",
+      "type": "domain", "required": false,
+      "maps_to": [{"kind": "tfvar", "stack": "baseline", "name": "fathom_domain_name"}]
+    },
+    {
+      "id": "fathom_certificate_arn", "section": "fathom", "label": "Fathom ACM certificate ARN (optional)",
+      "help": "Certificate in the grc account and home region, if you already have one.",
+      "type": "string", "required": false,
+      "validation": {"pattern": "^arn:aws(-us-gov)?:acm:[a-z0-9-]+:[0-9]{12}:certificate/[A-Za-z0-9-]+$", "pattern_message": "An ACM certificate ARN."},
+      "maps_to": [{"kind": "tfvar", "stack": "baseline", "name": "fathom_certificate_arn"}]
+    },
+    {
+      "id": "fathom_oidc_client_id", "section": "fathom", "label": "Fathom Google OAuth client ID (optional)",
+      "help": "Client ID only. Never enter the client secret here: it goes into AWS SSM by hand (see the checklist).",
+      "type": "string", "required": false,
+      "validation": {"pattern": "^[0-9]+-[A-Za-z0-9_-]+\\.apps\\.googleusercontent\\.com$", "pattern_message": "Ends with .apps.googleusercontent.com."},
+      "example": "1234567890-abc.apps.googleusercontent.com",
+      "maps_to": [{"kind": "tfvar", "stack": "baseline", "name": "fathom_oidc_client_id"}]
+    },
+    {
+      "id": "fathom_bootstrap_admin_emails", "section": "fathom", "label": "Fathom bootstrap admin emails",
+      "help": "Workspace accounts that become Fathom administrators on first sign-in.",
+      "type": "email_list", "required": true,
+      "maps_to": [{"kind": "tfvar", "stack": "baseline", "name": "fathom_bootstrap_admin_emails"}]
+    }
+  ]
+}

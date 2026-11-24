@@ -1,0 +1,76 @@
+name: wizard
+
+on:
+  pull_request:
+    paths:
+      - "wizard/**"
+      - "ogrl/**"
+      - "terraform/stacks/**"
+      - "scripts/build-wizard"
+      - ".github/workflows/wizard.yml"
+  push:
+    branches: [main]
+    paths:
+      - "wizard/**"
+      - "ogrl/**"
+      - "terraform/stacks/**"
+      - "scripts/build-wizard"
+      - ".github/workflows/wizard.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  wizard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Tool versions
+        run: |
+          node --version
+          python3 --version
+          python3 -m pip install --quiet pyyaml
+
+      # bundle-data.js is generated from ogrl/, wizard/questions.json and the
+      # stacks' variables.
+      - name: bundle-data.js is current
+        run: scripts/build-wizard --check
+
+      # Rendering, digests, tfvars against declared variables, determinism, and
+      # the zip opened with Python's zipfile (wizard/test/check_zip.py).
+      - name: node --test
+        run: node --test
+
+      # The wizard must run offline. Hand-written files may not contain any URL
+      # except lines marked wizard-allow-url (a derived value, not a request).
+      # bundle-data.js inlines repo documents that carry reference links as
+      # data, so it is exempt from the URL scan but not from the code scan.
+      - name: No outbound network (URLs)
+        run: |
+          set -euo pipefail
+          hits="$(grep -rnE 'https?://' wizard --exclude=bundle-data.js --exclude-dir=test | grep -v 'wizard-allow-url' || true)"
+          if [ -n "${hits}" ]; then
+            echo "::error::URL in wizard/ (mark a deliberate one with wizard-allow-url):"
+            echo "${hits}"
+            exit 1
+          fi
+
+      - name: No outbound network (code)
+        run: |
+          set -euo pipefail
+          hits="$(grep -rnE 'fetch\(|XMLHttpRequest|WebSocket|EventSource|sendBeacon|importScripts|import\(|import .* from .https?:|<script[^>]*src=.?(https?:)?//|<link[^>]*href=.?(https?:)?//' wizard --exclude-dir=test || true)"
+          if [ -n "${hits}" ]; then
+            echo "::error::network-capable code in wizard/:"
+            echo "${hits}"
+            exit 1
+          fi
+          # Belt and braces: the page forbids connections itself.
+          grep -q "connect-src 'none'" wizard/index.html
