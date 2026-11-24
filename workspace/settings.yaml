@@ -489,7 +489,7 @@ settings:
   method: manual
   terraform_resource: null
   policy_api_setting: null
-  check: policy_api_read
+  check: manual_evidence
   ou_scope: n/a
   edition_required: null
   notes: Security health itself has no API; Fathom's check is the per-setting Policy API compare of rows
