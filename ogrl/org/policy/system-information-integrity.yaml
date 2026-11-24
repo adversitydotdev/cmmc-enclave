@@ -1,0 +1,21 @@
+type: policy
+id: policy--dev.adversity.cmmc-enclave.system-information-integrity
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: System and Information Integrity Policy
+control_refs:
+  - control--ogrl-lm-02
+  - control--ogrl-vm-02
+  - control--ogrl-vm-03
+  - control--ogrl-vm-04
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+resource:
+  digest:
+    algorithm: sha-256
+    value: c4661b5e4bd03f799afc2ac6f5adb3b705e6b99f3433ca494bf92a3a0ea547af
+  media_type: text/markdown
+  uri: ../policy/system-information-integrity.md
+review_interval: annual
+status: draft
+version: "0.1"

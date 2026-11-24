@@ -1,0 +1,24 @@
+type: policy
+id: policy--dev.adversity.cmmc-enclave.audit-accountability
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Audit and Accountability Policy
+control_refs:
+  - control--ogrl-lm-01
+  - control--ogrl-lm-03
+  - control--ogrl-lm-04
+  - control--ogrl-lm-06
+  - control--ogrl-lm-07
+  - control--ogrl-lm-08
+  - control--ogrl-cr-06
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+resource:
+  digest:
+    algorithm: sha-256
+    value: d0c818adddac387e3d592fc8cd6f807204988b53ecc251151e5ff7f560000823
+  media_type: text/markdown
+  uri: ../policy/audit-accountability.md
+review_interval: annual
+status: draft
+version: "0.1"

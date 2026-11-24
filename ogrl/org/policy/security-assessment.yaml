@@ -1,0 +1,22 @@
+type: policy
+id: policy--dev.adversity.cmmc-enclave.security-assessment
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Security Assessment Policy
+control_refs:
+  - control--ogrl-gv-08
+  - control--ogrl-gv-10
+  - control--ogrl-gv-11
+  - control--ogrl-gv-12
+  - control--ogrl-gv-13
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+resource:
+  digest:
+    algorithm: sha-256
+    value: "919dc8f38d3f91f1b20b6ee8313b023eb1b8473b41959d47cd1a1b9ee606cd3f"
+  media_type: text/markdown
+  uri: ../policy/security-assessment.md
+review_interval: annual
+status: draft
+version: "0.1"

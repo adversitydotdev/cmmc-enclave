@@ -1,0 +1,31 @@
+type: policy
+id: policy--dev.adversity.cmmc-enclave.access-control
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Access Control and Acceptable Use Policy
+control_refs:
+  - control--ogrl-ac-01
+  - control--ogrl-ac-03
+  - control--ogrl-ac-07
+  - control--ogrl-ac-08
+  - control--ogrl-ac-11
+  - control--ogrl-ac-12
+  - control--ogrl-ac-16
+  - control--ogrl-ac-17
+  - control--ogrl-ac-18
+  - control--ogrl-ac-19
+  - control--ogrl-gv-09
+  - control--ogrl-ps-08
+  - control--ogrl-vm-06
+  - control--ogrl-vm-07
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+resource:
+  digest:
+    algorithm: sha-256
+    value: "804d2ecd37c6a33db1f06cdd09cfcb8b2edf17a4fbaf8671bcb3cd82a9f68487"
+  media_type: text/markdown
+  uri: ../policy/access-control.md
+review_interval: annual
+status: draft
+version: "0.1"

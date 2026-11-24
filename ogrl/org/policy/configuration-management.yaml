@@ -1,0 +1,24 @@
+type: policy
+id: policy--dev.adversity.cmmc-enclave.configuration-management
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Configuration and Change Management Policy
+control_refs:
+  - control--ogrl-am-01
+  - control--ogrl-cm-01
+  - control--ogrl-cm-02
+  - control--ogrl-cm-03
+  - control--ogrl-cm-04
+  - control--ogrl-cm-05
+  - control--ogrl-cm-08
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+resource:
+  digest:
+    algorithm: sha-256
+    value: "93dcad6bb36fb302b208877223bbdb666ce4d9e841906f393a880a6a196ae64d"
+  media_type: text/markdown
+  uri: ../policy/configuration-management.md
+review_interval: annual
+status: draft
+version: "0.1"

@@ -1,0 +1,22 @@
+type: policy
+id: policy--dev.adversity.cmmc-enclave.maintenance
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Maintenance Policy
+control_refs:
+  - control--ogrl-cm-10
+  - control--ogrl-cm-11
+  - control--ogrl-cm-12
+  - control--ogrl-cm-13
+  - control--ogrl-cm-14
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+resource:
+  digest:
+    algorithm: sha-256
+    value: "7b758830212c9d89bbad788c75cbf6c31a1b8777f36349edc32841293ef0cafe"
+  media_type: text/markdown
+  uri: ../policy/maintenance.md
+review_interval: annual
+status: draft
+version: "0.1"

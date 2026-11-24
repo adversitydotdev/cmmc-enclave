@@ -1,0 +1,28 @@
+type: policy
+id: policy--dev.adversity.cmmc-enclave.system-communications-protection
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: System and Communications Protection Policy
+control_refs:
+  - control--ogrl-ac-04
+  - control--ogrl-ac-10
+  - control--ogrl-ac-21
+  - control--ogrl-ac-22
+  - control--ogrl-cr-01
+  - control--ogrl-cr-02
+  - control--ogrl-cr-06
+  - control--ogrl-sd-01
+  - control--ogrl-vm-07
+  - control--ogrl-vm-08
+  - control--ogrl-vm-09
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+resource:
+  digest:
+    algorithm: sha-256
+    value: e487256d6a6b8d2bf0789b5a749a09ed1e2729552c9808a904d826c248f6bdf3
+  media_type: text/markdown
+  uri: ../policy/system-communications-protection.md
+review_interval: annual
+status: draft
+version: "0.1"
