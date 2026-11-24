@@ -64,7 +64,7 @@ variable "fips_interface_endpoint_services" {
     resolve privately (3.13.11). Only sts-fips and kms-fips exist among our services; ssm,
     logs, ecr and secretsmanager have no FIPS PrivateLink service, so in a no-egress VPC
     their clients must use the standard endpoint (documented gap, SCOPE section 9).
-    s3-fips and dynamodb-fips go through the gateway endpoints. GovCloud endpoints are
+    s3-fips/dynamodb-fips via the gateway endpoints is undocumented (test it, #46); AWS documents s3-fips only as an interface endpoint. GovCloud endpoints are
     FIPS already, so this list is ignored for tier itar.
   EOT
   type        = list(string)

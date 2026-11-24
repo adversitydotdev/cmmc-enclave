@@ -23,7 +23,7 @@ external_references:
     url: "https://github.com/aws/aws-lc/blob/main/crypto/fipsmodule/FIPS.md"
   - source: "AWS PrivateLink services (FIPS endpoint services)"
     url: "https://docs.aws.amazon.com/vpc/latest/privatelink/aws-services-privatelink-support.html"
-narrative: >-
+narrative: >
   FIPS-validated cryptography is required where it protects CUI, so
   it is scoped to the CUI data path: S3, EBS, RDS and Backup data
   encrypted with our KMS keys (FIPS 140 validated HSMs), CUI in
@@ -36,9 +36,10 @@ narrative: >-
   so FIPS is enforced client-side: every Terraform AWS provider sets
   use_fips_endpoint, with standard endpoints pinned only where no
   FIPS endpoint exists (Backup everywhere; sso-admin and
-  identitystore in commercial). Standard-tier VPCs add sts-fips and
-  kms-fips PrivateLink endpoints; S3 and DynamoDB reach FIPS through
-  the gateway endpoints. ECR and Secrets Manager have no FIPS
+  identitystore in commercial). S3 offers a FIPS PrivateLink
+  interface endpoint (s3-fips); whether the S3 and DynamoDB gateway
+  endpoints carry FIPS traffic is undocumented and is tested before
+  relying on it (#46). ECR and Secrets Manager have no FIPS
   PrivateLink service but carry no CUI. CloudWatch Logs and SSM
   Session Manager also lack one and can carry CUI if applications
   log it or admins open sessions on CUI hosts; that is the remaining
