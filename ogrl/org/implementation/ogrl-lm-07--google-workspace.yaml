@@ -8,7 +8,7 @@ control_ref: control--ogrl-lm-07
 external_references:
   - source: >-
       Google Workspace CMMC L2 guide, AU.L2-3.3.7 (Google, p.89)
-    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=89"
   - source: Google Public NTP
     url: "https://developers.google.com/time"
 narrative: >

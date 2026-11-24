@@ -7,9 +7,9 @@ component_ref: component--dev.adversity.cmmc-enclave.google-workspace
 control_ref: control--ogrl-lm-06
 external_references:
   - source: >-
-      Google Workspace CMMC L2 guide, AU.L2-3.3.4 (Google, p.88) and
+      Google Workspace CMMC L2 guide, AU.L2-3.3.4 (Google, p.89) and
       Chrome section (Customer, p.145)
-    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=89"
   - source: Alert center
     url: "https://support.google.com/a/answer/9104586"
 narrative: >

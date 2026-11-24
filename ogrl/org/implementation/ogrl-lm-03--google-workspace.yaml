@@ -7,9 +7,9 @@ component_ref: component--dev.adversity.cmmc-enclave.google-workspace
 control_ref: control--ogrl-lm-03
 external_references:
   - source: >-
-      Google Workspace CMMC L2 guide, AU.L2-3.3.8 and 3.3.9 (Shared;
-      Admin roles)
-    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+      Google Workspace CMMC L2 guide, AU.L2-3.3.8 (Shared, p.44) and
+      3.3.9 (Shared, p.46); Admin roles
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=44"
   - source: Cloud Identity Policy API supported settings
     url: "https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings"
 narrative: >

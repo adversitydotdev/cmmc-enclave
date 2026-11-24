@@ -8,8 +8,8 @@ control_ref: control--ogrl-lm-01
 external_references:
   - source: >-
       Google Workspace CMMC L2 guide, AU.L2-3.3.1 (Shared; Reports
-      API) and 3.3.2 (Google)
-    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+      API, p.40), 3.3.3 (p.41), 3.3.2 (Google, p.88)
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=40"
   - source: Reports API
     url: "https://developers.google.com/admin-sdk/reports/v1/get-start/getting-started"
   - source: Security investigation tool data sources
