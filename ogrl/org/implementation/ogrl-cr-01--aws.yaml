@@ -22,9 +22,9 @@ narrative: >
   customer managed KMS keys on S3, EBS (encryption by default), RDS,
   EFS, SNS, CloudWatch Logs, and CloudTrail (3.13.16). Tested by
   Config rules alb-http-to-https-redirection-check,
-  elb-tls-https-listeners-only, a listener TLS policy check (the
-  conformance pack has no ALB TLS-policy rule, so this is a custom
-  rule or manual evidence), s3-bucket-ssl-requests-only,
+  elb-tls-https-listeners-only, a listener TLS policy check (custom
+  Config rule or manual evidence; the conformance pack has no ALB
+  TLS-policy rule), s3-bucket-ssl-requests-only,
   acm-certificate-expiration-check, ec2-ebs-encryption-by-default,
   encrypted-volumes, rds-storage-encrypted,
   s3-default-encryption-kms, cloud-trail-encryption-enabled,
