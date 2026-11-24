@@ -62,7 +62,7 @@ These are the documents the mapping and the shared responsibility matrix are bui
 | Data | CUI, no export controlled technical data | CUI including ITAR or EAR technical data |
 | AWS | Commercial `us-east-1`/`us-east-2`/`us-west-2`, FedRAMP Moderate, FIPS endpoints forced on | AWS GovCloud (US), FedRAMP High, US citizen operated, FIPS by default |
 | Google Workspace | Enterprise Plus with Assured Controls Plus (D1). Assured Controls without Plus as a documented fallback. Only FedRAMP High services on for CUI users. | Enterprise Plus plus Assured Controls Plus (US person support access), plus client-side encryption with a customer held key service |
-| Fathom | Dedicated `grc` account, commercial | Dedicated `grc` account, commercial (an SPA, holds no ITAR data) |
+| Fathom | Dedicated `grc` account, commercial | Dedicated `grc` account, commercial (an SPA, holds no ITAR data). Reads GovCloud accounts via IAM Roles Anywhere. ITAR kept out of uploads by policy |
 | Rough sign | Cheapest path that still meets 7012 | More expensive, and GovCloud needs its own account signup tied to a commercial account |
 
 Facts behind the table:
