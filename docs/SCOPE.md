@@ -69,7 +69,7 @@ These are the documents the mapping and the shared responsibility matrix are bui
 | [Assured Controls and Assured Controls Plus](https://knowledge.workspace.google.com/admin/security/about-assured-controls-and-assured-controls-plus) | Paid add-ons on Enterprise Plus or Frontline Plus. Plus adds Access Management, which can limit Google support access to US based personnel. | |
 | [Google ITAR page](https://cloud.google.com/security/compliance/itar) | Workspace supports ITAR data through client-side encryption, which can meet the ITAR end-to-end encryption carve-out at 22 CFR 120.54(a)(5). | |
 | [Google FIPS 140 page](https://cloud.google.com/security/compliance/fips-140-validated) | BoringCrypto is FIPS 140-3 validated and used for encryption in transit and at rest. | Page covers Google Cloud and doesn't mention Workspace. For Workspace we rely on the CMMC guide marking 3.13.11 Google implemented. |
-| [Cloud Identity Policy API, supported settings](https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings) | Read access to most Admin console settings. Writes are limited to data protection (DLP) rules as of mid 2026. | Drives the manual runbook. |
+| [Cloud Identity Policy API, supported settings](https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings) | Read access to most Admin console settings, and writes for a growing subset (DLP rules and detectors, Drive general access default, multi-party approval, passkeys restriction, some Meet settings). | `scripts/workspace-dlp` and `scripts/workspace-policy` set the writable ones; the rest are runbook steps (`docs/runbook/workspace.md`). |
 
 ## 4. Impact tiers
 
