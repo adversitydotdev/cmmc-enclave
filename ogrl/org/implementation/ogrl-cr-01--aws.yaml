@@ -1,0 +1,32 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-cr-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-cr-01
+external_references:
+  - source: AWS Config CMMC 2.0 Level 2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: AWS ALB security policies
+    url: "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html"
+  - source: AWS FIPS 140-3 compliance
+    url: "https://aws.amazon.com/compliance/fips/"
+narrative: >
+  AWS provides the FIPS-validated TLS and storage modules. Our
+  Terraform enforces: HTTPS-only ALB listeners with the FIPS TLS
+  1.2/1.3 policy ELBSecurityPolicy-TLS13-1-2-FIPS-2023-04 and HTTP
+  redirect (3.13.8, 3.13.15, 3.1.13), TLS-only S3 bucket policies,
+  FIPS API endpoints (use_fips_endpoint), and customer managed KMS
+  keys on S3, EBS (encryption by default), RDS, EFS, SNS, CloudWatch
+  Logs, and CloudTrail (3.13.16). Tested by Config rules alb-http-
+  to-https-redirection-check, elb-tls-https-listeners-only, elb-
+  predefined-security-policy-ssl-check, s3-bucket-ssl-requests-only,
+  acm-certificate-expiration-check, ec2-ebs-encryption-by-default,
+  encrypted-volumes, rds-storage-encrypted, s3-default-encryption-
+  kms, cloud-trail-encryption-enabled, cloudwatch-log-group-
+  encrypted.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

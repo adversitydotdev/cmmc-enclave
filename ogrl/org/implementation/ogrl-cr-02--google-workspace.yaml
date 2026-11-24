@@ -1,0 +1,25 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-cr-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-cr-02
+external_references:
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - source: Workspace client-side encryption
+    url: "https://support.google.com/a/answer/10743588"
+narrative: >
+  Google establishes and manages the keys behind default Workspace
+  encryption (Google guide: native). If CSE is enabled for the CUI
+  OU (required for the ITAR tier), the keys move to the customer's
+  external key service and the customer manages them, so the guide
+  says this control then enters the CUI boundary. Sources agree; we
+  record the CSE exception and put those keys in the Organization
+  key inventory. Test: manual evidence of Google FedRAMP High;
+  Policy API read of CSE settings if enabled.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

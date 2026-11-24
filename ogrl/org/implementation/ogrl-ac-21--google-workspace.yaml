@@ -1,0 +1,24 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-ac-21
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-ac-21
+external_references:
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - source: Workspace admin roles
+    url: "https://support.google.com/a/answer/9807615"
+narrative: >
+  Workspace separates user functionality from the Admin console
+  through admin roles. Our runbook assigns least-privilege prebuilt
+  or custom roles to a small set of dedicated admin accounts
+  (security key 2SV), and admins use separate accounts from daily
+  mailboxes. Google is responsible for the service. Tested by a
+  Policy API/Admin SDK role assignment read and manual evidence of
+  the admin list.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

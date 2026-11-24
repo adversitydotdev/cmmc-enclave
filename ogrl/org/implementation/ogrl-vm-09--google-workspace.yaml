@@ -1,0 +1,24 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-vm-09
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-vm-09
+external_references:
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - source: Google Meet security and privacy
+    url: "https://support.google.com/meet/answer/9852160"
+narrative: >
+  Subservice for Google Meet only. Meet media and signaling are
+  encrypted in transit by default, Meet audit logs and usage reports
+  are in Admin console and the Reports API (pulled into the log
+  archive), and our runbook restricts external participants on the
+  CUI OU. Google Voice is not used unless added later. AWS lists
+  this customer only; Google lists it native (SCOPE section 9, item
+  3). Test: Policy API read of Meet settings and manual evidence.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

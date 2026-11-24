@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-vm-08
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-vm-08
+external_references:
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+narrative: >
+  Endpoints are outside this repo; the customer brings its own
+  managed devices. Browser and Office settings block unsigned macros
+  and legacy plug-ins, and allow only approved browser extensions
+  (Chrome Browser Cloud Management or MDM). Monitoring comes from
+  EDR and web filtering telemetry. Evidence is the policy export.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned
