@@ -1,0 +1,22 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-lm-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-lm-01
+external_references:
+  - source: "NIST SP 800-171 Rev 2, 3.3.1 to 3.3.3"
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  {{ company_name }} owns the logging scope: the written list of
+  auditable events (authentication, privilege changes, privileged
+  function execution, configuration changes, CUI access), the 365
+  day retention rule, and an audit event review at least annually
+  and after significant changes or incidents, which updates the list
+  (3.3.3). Evidence is the logged-events standard, the dated review
+  record, and the resulting Terraform or runbook change. Policy
+  templates come with issue #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

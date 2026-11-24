@@ -1,0 +1,33 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-lm-06
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-lm-06
+external_references:
+  - source: Monitoring CloudTrail log files with CloudWatch Logs
+    url: "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/monitor-cloudtrail-with-cloudwatch-logs.html"
+  - source: AWS Config CMMC 2.0 Level 2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: AWS Security Hub
+    url: "https://docs.aws.amazon.com/securityhub/latest/userguide/what-is-securityhub.html"
+narrative: >
+  Terraform sets: CloudTrail delivery to CloudWatch Logs with metric
+  filters and alarms, and EventBridge rules for StopLogging,
+  DeleteTrail, UpdateTrail, PutEventSelectors, and Object Lock or
+  bucket policy changes on the log bucket, all notifying an SNS
+  topic to the security on-call team and the logging platform owner,
+  target under 1 hour. Also alarms on the Workspace collector Lambda
+  (errors, no successful run in 15 minutes) and a no-new-objects
+  alarm on the log bucket. GuardDuty and Security Hub are on in
+  every account. Tests: Config rules cloud-trail-cloud-watch-
+  logs-enabled, cloudwatch-alarm-action-check, guardduty-enabled-
+  centralized, securityhub-enabled, plus a periodic test alert whose
+  ticket is the evidence. AWS does not alert customers on their own
+  trail failures, so this is ours. The collector alarms arrive with
+  issue #30.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

@@ -1,0 +1,29 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-lm-06
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-lm-06
+external_references:
+  - source: >-
+      Google Workspace CMMC L2 guide, AU.L2-3.3.4 (Google, p.88) and
+      Chrome section (Customer, p.145)
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - source: Alert center
+    url: "https://support.google.com/a/answer/9104586"
+narrative: >
+  Google defines the failure types and alerts for Workspace's own
+  audit pipeline (guide: Google responsible for 3.3.4 on Workspace
+  audit data). {{ company_name }} covers the leg Google cannot: the
+  Reports API collector into AWS, alarmed in the AWS row. Baseline:
+  alert center notifications for system-defined alerts go to the
+  security on-call team. The guide's Chrome section marks 3.3.4 as
+  customer configured (investigation tool activity rule, Telemetry
+  API notifications), which we treat as out of scope because Chrome
+  telemetry is not collected. Test: manual evidence (alert center
+  notification settings export and a test notification).
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

@@ -1,0 +1,29 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-lm-03
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-lm-03
+external_references:
+  - source: >-
+      Google Workspace CMMC L2 guide, AU.L2-3.3.8 and 3.3.9 (Shared;
+      Admin roles)
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - source: Cloud Identity Policy API supported settings
+    url: "https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings"
+narrative: >
+  Per the Google guide, Google carries protection of Workspace audit
+  records and tooling from modification and deletion;
+  {{ company_name }} limits access. Runbook baseline: Admin console
+  audit data (Audit and investigation, Reports API) is limited to a
+  custom admin role held by the security team, and the super admin
+  count is kept minimal (3.3.9). The collected copy sits under
+  Object Lock in AWS (see the AWS row), so a Workspace admin cannot
+  alter the retained record. Test: manual evidence (admin role
+  assignment export), because admin role privileges are not a
+  supported Policy API setting we rely on.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

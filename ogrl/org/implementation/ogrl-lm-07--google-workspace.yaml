@@ -1,0 +1,26 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-lm-07
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-lm-07
+external_references:
+  - source: >-
+      Google Workspace CMMC L2 guide, AU.L2-3.3.7 (Google, p.89)
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - source: Google Public NTP
+    url: "https://developers.google.com/time"
+narrative: >
+  Google generates Workspace audit record timestamps from its own
+  clocks synchronized to Google's time service (guide: Google
+  responsible for all three 3.3.7 parts; no Workspace feature to
+  configure). Reports API events carry UTC timestamps and the
+  collector archives them unchanged. Test: manual evidence (sample
+  archived Reports record with a UTC time). The guide does not name
+  the time source; Google's public time service is documented
+  separately.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

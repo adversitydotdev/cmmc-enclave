@@ -1,0 +1,20 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-lm-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-lm-01
+external_references:
+  - source: "NIST SP 800-171 Rev 2, 3.3.1"
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  Endpoints are out of scope for this repository. {{ company_name }}
+  must enable OS audit logging on endpoints that handle CUI and keep
+  those records, or document that CUI is only handled in Workspace
+  and AWS sessions so endpoints hold no relevant audit activity.
+  Evidence is manual: the endpoint logging standard and a sample
+  record.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned
