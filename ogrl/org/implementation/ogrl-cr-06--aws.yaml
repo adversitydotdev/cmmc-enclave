@@ -36,7 +36,8 @@ narrative: >
   so FIPS is enforced client-side: every Terraform AWS provider sets
   use_fips_endpoint, with standard endpoints pinned only where no
   FIPS endpoint exists (Backup everywhere; sso-admin and
-  identitystore in commercial). S3 offers a FIPS PrivateLink
+  identitystore in commercial). Standard-tier VPCs add sts-fips and
+  kms-fips PrivateLink endpoints. S3 offers a FIPS PrivateLink
   interface endpoint (s3-fips); whether the S3 and DynamoDB gateway
   endpoints carry FIPS traffic is undocumented and is tested before
   relying on it (#46). ECR and Secrets Manager have no FIPS
