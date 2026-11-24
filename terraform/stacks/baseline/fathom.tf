@@ -1,13 +1,37 @@
+variable "fathom_oidc_issuer" {
+  description = "Set to https://accounts.google.com to sign in through Google Workspace."
+  type        = string
+  default     = "https://accounts.google.com"
+}
+
+variable "fathom_oidc_client_id" {
+  description = "Google OAuth web client ID (created by hand; runbook #29)."
+  type        = string
+  default     = ""
+}
+
+variable "fathom_oidc_client_secret_parameter" {
+  description = "SSM SecureString in grc holding the OAuth client secret."
+  type        = string
+  default     = "/fathom/oidc/client-secret"
+}
+
+variable "fathom_bootstrap_admin_emails" {
+  description = "Workspace accounts that become Fathom administrators on first sign-in."
+  type        = list(string)
+  default     = []
+}
+
 variable "fathom_ref" {
   description = "Fathom commit SHA for deploy/aws/template.yaml."
   type        = string
-  default     = "cbda9a45d4feed947d64b3b7796d1ddf4dd4d90c"
+  default     = "10375ebafb0a59ac10824c12e144862151d1a1b4"
 }
 
 variable "fathom_template_sha256" {
   description = "sha256 of the template at fathom_ref."
   type        = string
-  default     = "56f388de23538f9dbf4d50bb746f10b85aefe414ef4897a35eb7c2ab99e0c9e3"
+  default     = "912c7973f062f1ab86e049bfa509defaae7a6f65136ed018cdfe534d7fe4a7cc"
 }
 
 variable "fathom_enable_services" {
@@ -74,6 +98,11 @@ module "fathom" {
   public_url              = var.fathom_public_url
   task_size               = var.fathom_task_size
   database_instance_class = var.fathom_database_instance_class
+
+  oidc_issuer                  = var.fathom_oidc_issuer
+  oidc_client_id               = var.fathom_oidc_client_id
+  oidc_client_secret_parameter = var.fathom_oidc_client_secret_parameter
+  bootstrap_admin_emails       = var.fathom_bootstrap_admin_emails
 }
 
 output "fathom_vpc_id" {

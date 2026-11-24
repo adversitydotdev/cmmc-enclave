@@ -24,3 +24,11 @@ tags = {
 
 # enclave_bucket_arns = ["arn:aws:s3:::example-enclave-bucket"]
 # notification_emails = ["security@example.com"]
+
+# Fathom sign-in through Google Workspace (#31). Create the OAuth web client by hand
+# (redirect https://<fathom-domain>/v1/auth/oidc/google/callback) and store its
+# secret as an SSM SecureString in grc at fathom_oidc_client_secret_parameter.
+fathom_oidc_client_id         = "1234567890-abc.apps.googleusercontent.com"
+fathom_bootstrap_admin_emails = ["admin@example.com"]
+# fathom_certificate_arn = "arn:aws:acm:us-east-1:555555555555:certificate/..."
+# fathom_public_url      = "https://fathom.example.com"

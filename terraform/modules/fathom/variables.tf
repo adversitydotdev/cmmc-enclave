@@ -148,3 +148,45 @@ variable "database_password_version" {
     error_message = "database_password_version must be a positive integer."
   }
 }
+
+variable "oidc_provider_name" {
+  description = "Provider key in Fathom's OIDC config; part of the callback path /v1/auth/oidc/<name>/callback."
+  type        = string
+  default     = "google"
+}
+
+variable "oidc_issuer" {
+  description = "OIDC issuer. Google Workspace: https://accounts.google.com. Empty leaves sign-in off."
+  type        = string
+  default     = ""
+}
+
+variable "oidc_client_id" {
+  description = "OAuth client ID of the Google Cloud web client (created by hand)."
+  type        = string
+  default     = ""
+}
+
+variable "oidc_client_secret_parameter" {
+  description = "Name of the SSM SecureString in grc holding the OAuth client secret (created by hand), e.g. /fathom/oidc/client-secret."
+  type        = string
+  default     = ""
+}
+
+variable "oidc_redirect_uri" {
+  description = "Override for the callback URL. Empty derives it from public_url."
+  type        = string
+  default     = ""
+}
+
+variable "bootstrap_admin_emails" {
+  description = "Workspace accounts made Fathom administrators on first sign-in."
+  type        = list(string)
+  default     = []
+}
+
+variable "disable_api_token_minting" {
+  description = "Refuse API token minting for people so sign-in is IdP-only (3.5.3 rides on Workspace 2SV). Agents and services can still mint."
+  type        = bool
+  default     = true
+}

@@ -46,11 +46,107 @@ resource "aws_ssm_parameter" "database_password" {
   tier             = "Standard"
 }
 
+# CloudFormation caps inline template bodies at 51,200 bytes and Fathom's template
+# is larger, so it is staged in a private bucket in grc and deployed by URL.
+data "aws_caller_identity" "current" {}
+
+resource "aws_s3_bucket" "templates" {
+  #checkov:skip=CKV_AWS_144:Holds only a copy of a public template; cross-region replication adds nothing
+  #checkov:skip=CKV2_AWS_62:No consumers need event notifications for template uploads
+  #checkov:skip=CKV_AWS_18:Access to a public template copy needs no access logging; writes are in the org CloudTrail
+  bucket        = "${var.name_prefix}-fathom-cfn-${data.aws_caller_identity.current.account_id}"
+  force_destroy = true
+  tags          = var.tags
+}
+
+resource "aws_s3_bucket_public_access_block" "templates" {
+  bucket                  = aws_s3_bucket.templates.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_ownership_controls" "templates" {
+  bucket = aws_s3_bucket.templates.id
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
+resource "aws_s3_bucket_versioning" "templates" {
+  bucket = aws_s3_bucket.templates.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "templates" {
+  bucket = aws_s3_bucket.templates.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm     = "aws:kms"
+      kms_master_key_id = var.kms_key_arn
+    }
+    bucket_key_enabled = true
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "templates" {
+  bucket = aws_s3_bucket.templates.id
+  rule {
+    id     = "expire-old-template-versions"
+    status = "Enabled"
+    filter {}
+    noncurrent_version_expiration {
+      noncurrent_days = 30
+    }
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 1
+    }
+  }
+}
+
+data "aws_iam_policy_document" "templates" {
+  statement {
+    sid       = "DenyInsecureTransport"
+    effect    = "Deny"
+    actions   = ["s3:*"]
+    resources = [aws_s3_bucket.templates.arn, "${aws_s3_bucket.templates.arn}/*"]
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "templates" {
+  bucket = aws_s3_bucket.templates.id
+  policy = data.aws_iam_policy_document.templates.json
+}
+
+resource "aws_s3_object" "template" {
+  bucket                 = aws_s3_bucket.templates.id
+  key                    = "fathom/${var.fathom_ref}/template.yaml"
+  content                = data.http.template.response_body
+  content_type           = "application/x-yaml"
+  server_side_encryption = "aws:kms"
+  kms_key_id             = var.kms_key_arn
+  tags                   = var.tags
+
+  depends_on = [aws_s3_bucket_server_side_encryption_configuration.templates]
+}
+
 resource "aws_cloudformation_stack" "fathom" {
   #checkov:skip=CKV_AWS_124:Topic is optional (notification_arns); stack changes are in the org CloudTrail, and the findings topic lives in another account
-  name          = var.stack_name
-  template_body = data.http.template.response_body
-  capabilities  = ["CAPABILITY_IAM"] # template roles are unnamed
+  name         = var.stack_name
+  template_url = "https://${aws_s3_bucket.templates.bucket_regional_domain_name}/${aws_s3_object.template.key}"
+  capabilities = ["CAPABILITY_IAM"] # template roles are unnamed
 
   parameters = {
     EnableServices          = local.bool[var.enable_services]
@@ -66,6 +162,15 @@ resource "aws_cloudformation_stack" "fathom" {
     PublicUrl               = var.public_url
     ApiImageTag             = var.api_image_tag
     WebImageTag             = var.web_image_tag
+
+    # Sign-in through Google Workspace (fathom#22); empty issuer leaves OIDC off.
+    OidcProviderName          = var.oidc_provider_name
+    OidcIssuer                = var.oidc_issuer
+    OidcClientId              = var.oidc_client_id
+    OidcClientSecretParameter = var.oidc_client_secret_parameter
+    OidcRedirectUri           = var.oidc_redirect_uri
+    BootstrapAdminEmails      = join(",", var.bootstrap_admin_emails)
+    DisableApiTokenMinting    = local.bool[var.disable_api_token_minting]
   }
 
   notification_arns = var.notification_arns
@@ -81,6 +186,10 @@ resource "aws_cloudformation_stack" "fathom" {
     precondition {
       condition     = contains(var.allowed_regions, data.aws_region.current.region)
       error_message = "Region is not in allowed_regions."
+    }
+    precondition {
+      condition     = var.oidc_issuer == "" || (var.oidc_client_id != "" && var.oidc_client_secret_parameter != "" && length(var.bootstrap_admin_emails) > 0)
+      error_message = "OIDC needs oidc_client_id, oidc_client_secret_parameter, and at least one bootstrap_admin_emails entry (otherwise nobody is an administrator, fathom#23)."
     }
     precondition {
       condition     = !var.enable_services || var.certificate_arn != ""
