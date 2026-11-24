@@ -1,0 +1,22 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ir-03
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ir-03
+external_references:
+  - source: public
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=120"
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  Every incident is recorded in one ticket queue with mandatory
+  fields (source, timeline, severity, affected systems and data,
+  actions, owner, resolution) and kept at least 3 years. Neither
+  Workspace nor AWS offers a case-tracking tool for customer
+  incidents (Workspace guide, IR.L2-3.6.2: customer). Test: manual
+  evidence, ticket sample review.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ir-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ir-01
+external_references:
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+  - source: public
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+narrative: >-
+  {{ company_name }} writes the incident response plan (roles,
+  escalation, DIBNet reporting, customer notice) and runs a tabletop
+  exercise at least annually, with an after-action report and
+  tracked follow-ups. Policy templates arrive with #20. Test:
+  library test test--ogrl-ir-01-ir-testing (manual, annual); Config
+  pack process check response-plan-tested (IR.L2-3.6.3) has no
+  AWS-side evidence and stays manual.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

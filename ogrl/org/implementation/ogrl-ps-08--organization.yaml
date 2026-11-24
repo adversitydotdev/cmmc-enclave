@@ -1,0 +1,20 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ps-08
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ps-08
+external_references:
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  {{ company_name }} prohibits unapproved removable media and
+  ownerless portable storage (3.8.7, 3.8.8), allows only issued,
+  inventoried devices on an allow-list reviewed quarterly, and
+  approves any CUI use on external systems in writing with
+  FIPS-validated encryption (3.1.21). Test: manual evidence,
+  allow-list review and approval records.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

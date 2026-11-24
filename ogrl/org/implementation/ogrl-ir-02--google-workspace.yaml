@@ -1,0 +1,25 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-ir-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-ir-02
+external_references:
+  - source: public
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=70"
+  - source: public
+    url: "https://support.google.com/a/answer/9104586"
+  - source: public
+    url: "https://support.google.com/a/answer/7575955"
+narrative: >-
+  Admin console Alert Center and the Security Investigation Tool
+  (Enterprise Plus) give detection, analysis, and containment
+  actions for Workspace (suspend user, delete mail, revoke tokens).
+  The Workspace guide marks IR.L2-3.6.1 as shared. Test: manual
+  evidence, Alert Center rule and notification settings review, plus
+  an investigation-tool search during each tabletop.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

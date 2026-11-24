@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-ir-04
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-ir-04
+external_references:
+  - source: public
+    url: "https://cloud.google.com/security/compliance/dfars"
+  - source: public
+    url: "https://cloud.google.com/docs/security/incident-response"
+narrative: >-
+  Google commits to inform affected DFARS-scope customers of data
+  incidents within 72 hours, but only for customers on properly
+  configured Assured Workloads and Assured Controls, which is why
+  the enclave buys Assured Controls Plus (decision 1). Test: manual
+  evidence, Assured Controls entitlement shown in the Admin console
+  and the security contact set.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

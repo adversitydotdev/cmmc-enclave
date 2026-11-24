@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ps-12
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ps-12
+external_references:
+  - source: public
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=124"
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  Home offices and other alternate sites are approved in writing,
+  users acknowledge written safeguards (managed encrypted device,
+  approved remote access only, locked storage, screen privacy, no
+  unapproved printing), and compliance is assessed annually by
+  self-attestation. Google excludes 3.10.6 from Workspace (guide)
+  and AWS lists it as inheritable, but the sites are the customer's.
+  Test: manual evidence, acknowledgments and annual attestations.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

@@ -1,0 +1,25 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ir-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ir-02
+external_references:
+  - source: public
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: public
+    url: "https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html"
+  - source: public
+    url: "https://docs.aws.amazon.com/securityhub/latest/userguide/what-is-securityhub.html"
+narrative: >-
+  Detection and triage inputs: GuardDuty and Security Hub are
+  enabled org-wide and aggregated in the security tooling account,
+  with findings classified by severity. Tests: Config rules
+  guardduty-enabled-centralized, securityhub-enabled,
+  guardduty-non-archived-findings (CMMC 2.0 L2 pack, IR.L2-3.6.1).
+  Triage, containment, and recovery stay with the customer.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws
