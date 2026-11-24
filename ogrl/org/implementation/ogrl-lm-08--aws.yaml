@@ -1,0 +1,31 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-lm-08
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-lm-08
+external_references:
+  - source: Querying AWS CloudTrail logs with Athena
+    url: "https://docs.aws.amazon.com/athena/latest/ug/cloudtrail-logs.html"
+  - source: AWS Config CMMC 2.0 Level 2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: AWS Security Hub
+    url: "https://docs.aws.amazon.com/securityhub/latest/userguide/what-is-securityhub.html"
+narrative: >
+  The log archive account holds the org trail, Config, flow logs,
+  ALB logs, and Workspace audit logs in one S3 layout, queryable
+  with Athena (Glue tables, partition projection) so analysts can
+  filter, search, and write reports on demand without touching the
+  Object Lock originals (3.3.6). Correlation across sources comes
+  from Security Hub and GuardDuty findings in security tooling, plus
+  Athena saved queries joining CloudTrail and Workspace records on
+  user email (3.3.5). Tests: Config rules
+  guardduty-enabled-centralized and securityhub-enabled; an annual
+  on-demand query across CloudTrail and Workspace records is the
+  evidence. Planned: the Athena tables and saved queries are not yet
+  in the M2 or M3 scope or the cost model (small, billed per query).
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: planned
+subservice_ref: party--dev.adversity.cmmc-enclave.aws
