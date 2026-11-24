@@ -1,0 +1,186 @@
+#!/usr/bin/env python3
+"""Generate wizard/bundle-data.js, the data the offline wizard runs on.
+
+Usage: scripts/build-wizard [--check] [--version LABEL]
+
+Inlines, deterministically (sorted keys, no timestamps):
+  - ogrl/org/**/*.yaml, ogrl/policy/*.md, ogrl/procedure/*.md, ogrl/parameters.yaml
+  - wizard/questions.json
+  - the variable names (and whether each is required) declared by
+    terraform/stacks/{org,baseline,workspace}/*.tf
+  - the parts of ogrl/parameters.yaml the wizard must act on without a YAML
+    parser: `set_value` slots (file, 0-based line, key) and the standard tier's
+    post_render deletion (the AWS GovCloud party entry).
+
+--check exits 1 if wizard/bundle-data.js differs from what would be generated.
+Requires Python 3 and PyYAML.
+"""
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+import yaml
+
+ROOT = Path(__file__).resolve().parent.parent
+OUT = ROOT / "wizard" / "bundle-data.js"
+STACKS = ("org", "baseline", "workspace")
+GOVCLOUD_ID = "F1603047866"
+
+
+def die(msg):
+    print(f"build-wizard: error: {msg}", file=sys.stderr)
+    sys.exit(2)
+
+
+def read(path):
+    text = path.read_text(encoding="utf-8")
+    if "\r" in text:
+        die(f"{path}: CR characters; the bundle uses LF")
+    return text
+
+
+def collect_files():
+    ogrl = ROOT / "ogrl"
+    files = {}
+    for path in sorted(ogrl.glob("org/**/*.yaml")):
+        files[path.relative_to(ogrl).as_posix()] = read(path)
+    for sub in ("policy", "procedure"):
+        for path in sorted((ogrl / sub).glob("*.md")):
+            files[path.relative_to(ogrl).as_posix()] = read(path)
+    files["parameters.yaml"] = read(ogrl / "parameters.yaml")
+    bundle = ogrl / "org" / "bundle.yaml"
+    if not bundle.is_file():
+        die("ogrl/org/bundle.yaml missing")
+    return files
+
+
+def parse_variables(stack):
+    """Names declared by `variable "x" {` blocks, and whether each has no default."""
+    found = {}
+    for path in sorted((ROOT / "terraform" / "stacks" / stack).glob("*.tf")):
+        lines = read(path).split("\n")
+        i = 0
+        while i < len(lines):
+            m = re.match(r'^variable\s+"([A-Za-z0-9_]+)"\s*\{', lines[i])
+            if not m:
+                i += 1
+                continue
+            name, depth, has_default, j = m.group(1), 0, False, i
+            while j < len(lines):
+                line = lines[j]
+                if depth == 1 and re.match(r"^\s*default\s*=", line):
+                    has_default = True
+                depth += line.count("{") - line.count("}")
+                j += 1
+                if depth == 0:
+                    break
+            found[name] = {"required": not has_default}
+            i = j
+    if not found:
+        die(f"no variables found for stack {stack}")
+    return found
+
+
+def pointer_slots(files, params):
+    """Locate each set_value pointer as (file, line, key); only simple scalar lines."""
+    slots = {}
+    for name, spec in params.items():
+        for pointer in spec.get("set_value", []):
+            fname, _, frag = pointer.partition("#")
+            tokens = [t for t in frag.split("/") if t != ""]
+            doc = yaml.safe_load(files[fname])
+            node = doc
+            for t in tokens:
+                node = node[int(t)] if isinstance(node, list) else node[t]
+            key = tokens[-1]
+            # Find the unique line `<indent>key: value` for this key at the right
+            # depth: search the lines whose parent chain matches by YAML load.
+            hits = []
+            for n, line in enumerate(files[fname].split("\n")):
+                if re.match(rf"^\s*(- )?{re.escape(key)}:\s+\S+\s*$", line):
+                    hits.append(n)
+            if len(hits) != 1:
+                die(f"{pointer}: expected one line for key {key!r}, found {len(hits)}")
+            slots.setdefault(name, []).append({"file": fname, "line": hits[0], "key": key, "current": str(node)})
+    return slots
+
+
+def standard_post_render(files):
+    """Delete the GovCloud party entry from org/system/enclave.yaml (standard tier)."""
+    fname = "org/system/enclave.yaml"
+    lines = files[fname].split("\n")
+    start = None
+    for n, line in enumerate(lines):
+        if re.match(r"^parties:\s*$", line):
+            parties = n
+            break
+    else:
+        die("parties: not found in enclave.yaml")
+    items = [n for n in range(parties + 1, len(lines)) if re.match(r"^  - party_ref:", lines[n])]
+    end_of_block = len(lines)
+    for n in range(parties + 1, len(lines)):
+        if lines[n] and not lines[n].startswith(" "):
+            end_of_block = n
+            break
+    for k, n in enumerate(items):
+        stop = items[k + 1] if k + 1 < len(items) else end_of_block
+        if any(f"identifier: {GOVCLOUD_ID}" in lines[x] for x in range(n, stop)):
+            start, end = n, stop
+            break
+    if start is None:
+        die(f"GovCloud party ({GOVCLOUD_ID}) not found in enclave.yaml; update scripts/build-wizard")
+    kept = lines[:start] + lines[end:]
+    doc = yaml.safe_load("\n".join(kept))
+    if len(doc["parties"]) != len(items) - 1:
+        die("standard post_render left enclave.yaml inconsistent")
+    return [{"file": fname, "start": start, "end": end}]
+
+
+def build(version):
+    files = collect_files()
+    params_doc = yaml.safe_load(files["parameters.yaml"])
+    params = params_doc["parameters"]
+    questions = json.loads(read(ROOT / "wizard" / "questions.json"))
+    data = {
+        "schema_version": questions["schema_version"],
+        "generated_by": f"cmmc-enclave wizard {version}",
+        "questions": questions,
+        "files": files,
+        "ogrl_params": {
+            name: {"type": spec["type"], "required": spec.get("required", False)}
+            for name, spec in sorted(params.items())
+        },
+        "set_value_slots": pointer_slots(files, params),
+        "post_render": {"standard": standard_post_render(files), "itar": []},
+        "stack_variables": {s: parse_variables(s) for s in STACKS},
+    }
+    body = json.dumps(data, sort_keys=True, indent=1, ensure_ascii=True)
+    return (
+        "// Generated by scripts/build-wizard from ogrl/, wizard/questions.json and\n"
+        "// terraform/stacks/*. Do not edit; run scripts/build-wizard.\n"
+        '"use strict";\n'
+        f"globalThis.WIZARD_DATA = {body};\n"
+    )
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    ap.add_argument("--check", action="store_true")
+    ap.add_argument("--version", default="dev", help="label recorded in answers.json generated_by")
+    a = ap.parse_args()
+    text = build(a.version)
+    if a.check:
+        if not OUT.is_file() or OUT.read_text(encoding="utf-8") != text:
+            print("build-wizard: wizard/bundle-data.js is out of date; run scripts/build-wizard", file=sys.stderr)
+            sys.exit(1)
+        print("build-wizard: wizard/bundle-data.js is current")
+        return
+    OUT.write_text(text, encoding="utf-8")
+    print(f"build-wizard: wrote {OUT.relative_to(ROOT)} ({len(text)} bytes)")
+
+
+if __name__ == "__main__":
+    main()
