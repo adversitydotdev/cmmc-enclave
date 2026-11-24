@@ -11,7 +11,7 @@ locals {
   bool         = { true = "true", false = "false" }
 }
 
-# 46,364 bytes at the pinned SHA, under the 51,200 byte template_body limit, so no S3 upload.
+# The template is over the 51,200-byte template_body limit (fathom#24), so it is staged in S3 below.
 data "http" "template" {
   url = local.template_url
 
@@ -148,7 +148,7 @@ resource "aws_cloudformation_stack" "fathom" {
   template_url = "https://${aws_s3_bucket.templates.bucket_regional_domain_name}/${aws_s3_object.template.key}"
   capabilities = ["CAPABILITY_IAM"] # template roles are unnamed
 
-  parameters = {
+  parameters = merge({
     EnableServices          = local.bool[var.enable_services]
     EnableNatGateway        = "true" # SCOPE section 5: tasks are private, egress through the one NAT
     EnableLoadBalancer      = "true" # the ALB is the only inbound path
@@ -171,7 +171,9 @@ resource "aws_cloudformation_stack" "fathom" {
     OidcRedirectUri           = var.oidc_redirect_uri
     BootstrapAdminEmails      = join(",", var.bootstrap_admin_emails)
     DisableApiTokenMinting    = local.bool[var.disable_api_token_minting]
-  }
+    }, var.seed_bundle_uri == "" ? {} : {
+    SeedBundleUri = var.seed_bundle_uri # first-boot restore of the enclave bundle (#32)
+  })
 
   notification_arns = var.notification_arns
   tags              = var.tags

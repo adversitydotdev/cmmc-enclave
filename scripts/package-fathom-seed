@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+"""Package the rendered enclave bundle as the artifact Fathom restores at first boot.
+
+Usage: scripts/package-fathom-seed <ogrl-dir> <out.tar.gz> --library-ref SHA
+                                   [--allow-unrendered]
+
+<ogrl-dir> is the wizard's output (or ogrl/ itself for a dry run): org/ plus the
+policy/ and procedure/ documents that org/policy and org/procedure objects point
+at. The wizard must have rendered every `{{ name }}` and re-pinned each
+document's resource.digest; this script refuses unrendered placeholders (unless
+--allow-unrendered) and any document whose bytes do not match its digest.
+
+Artifact (Fathom restore, repository form, RFC 0002 section 8, as a tarball):
+  bundle.yaml                  org/bundle.yaml plus `library: {id, commit}`
+  <type>/<name>.yaml           every org object, byte for byte
+  <type>/<remainder>.body      each document's bytes, where <remainder> is the
+                               object id after `--` (Fathom reads bytes from there)
+The tarball is deterministic (sorted, zero mtime, root owner), so the same
+inputs give the same sha256 and Terraform sees no change.
+"""
+
+import argparse
+import gzip
+import hashlib
+import io
+import re
+import sys
+import tarfile
+from pathlib import Path
+
+import yaml
+
+PLACEHOLDER = re.compile(r"\{\{.*?\}\}")
+LIBRARY_ID = "bundle--ogrl-library"
+
+
+def die(msg):
+    print(f"package-fathom-seed: error: {msg}", file=sys.stderr)
+    sys.exit(2)
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    ap.add_argument("ogrl_dir", type=Path)
+    ap.add_argument("out", type=Path)
+    ap.add_argument("--library-ref", required=True, help="40-character ogrl-library commit")
+    ap.add_argument("--allow-unrendered", action="store_true")
+    a = ap.parse_args()
+
+    if not re.fullmatch(r"[0-9a-f]{40}", a.library_ref):
+        die("--library-ref must be a full 40-character lowercase commit SHA")
+    org = a.ogrl_dir / "org"
+    if not (org / "bundle.yaml").is_file():
+        die(f"{org}/bundle.yaml not found")
+
+    files: dict[str, bytes] = {}
+    manifest = yaml.safe_load((org / "bundle.yaml").read_text())
+    manifest["library"] = {"id": LIBRARY_ID, "commit": a.library_ref}
+    files["bundle.yaml"] = yaml.safe_dump(manifest, sort_keys=False).encode()
+
+    for path in sorted(org.glob("*/*.yaml")):
+        raw = path.read_bytes()
+        files[f"{path.parent.name}/{path.name}"] = raw
+        obj = yaml.safe_load(raw)
+        resource = obj.get("resource") or {}
+        uri = resource.get("uri")
+        if not uri:
+            continue
+        # A relative uri is relative to the bundle root, org/.
+        source = (org / uri).resolve()
+        if not source.is_file():
+            die(f"{obj['id']}: {uri} not found at {source}")
+        body = source.read_bytes()
+        want = (resource.get("digest") or {}).get("value")
+        have = hashlib.sha256(body).hexdigest()
+        if want != have:
+            die(f"{obj['id']}: {source.name} sha-256 is {have}, object pins {want}; re-pin it")
+        kind, remainder = obj["id"].split("--", 1)
+        files[f"{kind}/{remainder}.body"] = body
+
+    if not a.allow_unrendered:
+        for name, data in files.items():
+            m = PLACEHOLDER.search(data.decode(errors="replace"))
+            if m:
+                die(f"{name} still holds {m.group(0)!r}; run the wizard render first")
+
+    buffer = io.BytesIO()
+    with tarfile.open(fileobj=buffer, mode="w", format=tarfile.PAX_FORMAT) as tar:
+        for name in sorted(files):
+            info = tarfile.TarInfo(name)
+            info.size = len(files[name])
+            info.mtime = 0
+            info.mode = 0o644
+            info.uid = info.gid = 0
+            info.uname = info.gname = ""
+            tar.addfile(info, io.BytesIO(files[name]))
+    a.out.parent.mkdir(parents=True, exist_ok=True)
+    with a.out.open("wb") as raw, gzip.GzipFile(filename="", fileobj=raw, mode="wb", mtime=0) as gz:
+        gz.write(buffer.getvalue())
+    digest = hashlib.sha256(a.out.read_bytes()).hexdigest()
+    print(f"package-fathom-seed: {len(files)} files, sha256 {digest}, {a.out}")
+
+
+if __name__ == "__main__":
+    main()

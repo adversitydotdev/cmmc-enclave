@@ -35,3 +35,11 @@ fathom_bootstrap_admin_emails = ["admin@example.com"]
 
 # Workspace audit collector (#30): admin the service account impersonates.
 workspace_admin_email = "admin@example.com"
+# Fathom first-boot seed (#32). Build the artifact from the wizard's rendered ogrl/ with
+#   scripts/package-fathom-seed <rendered ogrl dir> seed.tar.gz --library-ref <ogrl_library_ref>
+# fathom_seed_bundle_path = "../../../seed.tar.gz"
+# ogrl_library_ref        = "5c0987730e2af897d0071cd3826f1c3c4faf8926"
+
+# Fathom read roles (#32). After creating each aws_role connection in Fathom, copy its
+# ExternalId here and apply again.
+# fathom_read_external_ids = { workload = ["..."], grc = ["..."] }

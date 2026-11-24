@@ -190,3 +190,9 @@ variable "disable_api_token_minting" {
   type        = bool
   default     = true
 }
+
+variable "seed_bundle_uri" {
+  description = "SeedBundleUri: s3:// or https:// snapshot Fathom restores into its empty database at first boot (FATHOM_SEED_BUNDLE_URI). Empty seeds nothing and omits the parameter, so it works with a fathom_ref whose template has no SeedBundleUri. Non-empty needs a fathom_ref at or after the seed-org-bundle change."
+  type        = string
+  default     = ""
+}
