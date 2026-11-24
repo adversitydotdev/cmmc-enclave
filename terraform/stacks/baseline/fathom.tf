@@ -103,6 +103,8 @@ module "fathom" {
   oidc_client_id               = var.fathom_oidc_client_id
   oidc_client_secret_parameter = var.fathom_oidc_client_secret_parameter
   bootstrap_admin_emails       = var.fathom_bootstrap_admin_emails
+
+  seed_bundle_uri = try(module.fathom_seed[0].bundle_uri, "") # fathom_seed.tf
 }
 
 output "fathom_vpc_id" {
