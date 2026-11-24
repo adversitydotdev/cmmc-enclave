@@ -1,0 +1,49 @@
+type: implementation
+id: implementation--dev.adversity.community.google-workspace.ogrl-lm-01
+spec_version: "0.2.0"
+created: "2026-11-24T00:00:00Z"
+modified: "2026-11-24T00:00:00Z"
+created_by_ref: party--dev.adversity.community.google-workspace-author
+component_ref: component--dev.adversity.community.google-workspace
+control_ref: control--ogrl-lm-01
+customer_responsibility: >-
+  Specify event types and retention, and collect records through the
+  Reports API into a retained store.
+extensions:
+  dev.adversity.community:
+    authored_from: public-sources
+    statement: >-
+      Community-authored from public sources by adversity.dev; not
+      published, reviewed, or endorsed by Google. Not a vendor
+      responsibility matrix. Verify against the vendor's own
+      documentation before relying on it.
+    vendor_endorsed: false
+    vendor_published: false
+external_references:
+  - source: >-
+      Community-authored from public sources; not published or
+      endorsed by Google
+    url: "https://github.com/adversitydotdev/cmmc-enclave/tree/main/ogrl/providers"
+  - source: >-
+      Google Workspace CMMC L2 guide, AU.L2-3.3.1 (Shared; Reports
+      API, p.40), 3.3.3 (p.41), 3.3.2 (Google, p.88)
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=40"
+  - source: Reports API
+    url: "https://developers.google.com/admin-sdk/reports/v1/get-start/getting-started"
+  - source: Security investigation tool data sources
+    url: "https://support.google.com/a/answer/11482175"
+  - source: Google Workspace Admin Help
+    url: "https://support.google.com/a"
+  - source: "FedRAMP Marketplace, Google Workspace (High)"
+    url: "https://marketplace.fedramp.gov/products/F1206081364"
+narrative: >-
+  Google generates and structures Workspace audit records (Admin,
+  Login, Drive, Token, and other Reports API applications, each with
+  the actor email) and fixes their content. 3.3.2 is Google's per
+  the guide.
+origin: provider
+responsibility: shared
+status: implemented
+tags:
+  - community-authored
+  - not-vendor-published

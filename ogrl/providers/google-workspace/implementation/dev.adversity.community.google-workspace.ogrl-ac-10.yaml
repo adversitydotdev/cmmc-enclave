@@ -1,0 +1,49 @@
+type: implementation
+id: implementation--dev.adversity.community.google-workspace.ogrl-ac-10
+spec_version: "0.2.0"
+created: "2026-11-24T00:00:00Z"
+modified: "2026-11-24T00:00:00Z"
+created_by_ref: party--dev.adversity.community.google-workspace-author
+component_ref: component--dev.adversity.community.google-workspace
+control_ref: control--ogrl-ac-10
+customer_responsibility: >-
+  Set session length at or below the baseline cap and require
+  security keys on re-authentication; cover inactivity with an
+  endpoint lock.
+extensions:
+  dev.adversity.community:
+    authored_from: public-sources
+    statement: >-
+      Community-authored from public sources by adversity.dev; not
+      published, reviewed, or endorsed by Google. Not a vendor
+      responsibility matrix. Verify against the vendor's own
+      documentation before relying on it.
+    vendor_endorsed: false
+    vendor_published: false
+external_references:
+  - source: >-
+      Community-authored from public sources; not published or
+      endorsed by Google
+    url: "https://github.com/adversitydotdev/cmmc-enclave/tree/main/ogrl/providers"
+  - source: Set session length for Google services
+    url: "https://support.google.com/a/answer/7576830"
+  - source: Cloud Identity Policy API supported settings
+    url: "https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings"
+  - source: "Google Workspace CMMC implementation guide (page 29)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=29"
+  - source: "Google Workspace CMMC implementation guide (page 78)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=78"
+  - source: Google Workspace Admin Help
+    url: "https://support.google.com/a"
+  - source: "FedRAMP Marketplace, Google Workspace (High)"
+    url: "https://marketplace.fedramp.gov/products/F1206081364"
+narrative: >-
+  Workspace lets admins set web session length per organizational
+  unit and require re-authentication. It has no inactivity timer for
+  web sessions.
+origin: provider
+responsibility: shared
+status: implemented
+tags:
+  - community-authored
+  - not-vendor-published

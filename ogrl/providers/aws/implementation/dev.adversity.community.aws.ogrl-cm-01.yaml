@@ -1,0 +1,48 @@
+type: implementation
+id: implementation--dev.adversity.community.aws.ogrl-cm-01
+spec_version: "0.2.0"
+created: "2026-11-24T00:00:00Z"
+modified: "2026-11-24T00:00:00Z"
+created_by_ref: party--dev.adversity.community.aws-author
+component_ref: component--dev.adversity.community.aws
+control_ref: control--ogrl-cm-01
+customer_responsibility: >-
+  Run a change process with independent review and approval, and
+  keep the change record that ties each approved change to the
+  CloudTrail and Config history.
+extensions:
+  dev.adversity.community:
+    authored_from: public-sources
+    statement: >-
+      Community-authored from public sources by adversity.dev; not
+      published, reviewed, or endorsed by AWS. Not a vendor
+      responsibility matrix. Verify against the vendor's own
+      documentation before relying on it.
+    vendor_endorsed: false
+    vendor_published: false
+external_references:
+  - source: >-
+      Community-authored from public sources; not published or
+      endorsed by AWS
+    url: "https://github.com/adversitydotdev/cmmc-enclave/tree/main/ogrl/providers"
+  - source: AWS documentation
+    url: "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+  - source: AWS documentation
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html"
+  - source: AWS documentation
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: "FedRAMP Marketplace, AWS US East/West (Moderate)"
+    url: "https://marketplace.fedramp.gov/products/AGENCYAMAZONEW"
+  - source: "FedRAMP Marketplace, AWS GovCloud (High)"
+    url: "https://marketplace.fedramp.gov/products/F1603047866"
+narrative: >-
+  CloudTrail records API changes and AWS Config records
+  configuration changes to resources. CloudFormation change sets
+  support review before a change applies. AWS does not approve
+  customer changes.
+origin: provider
+responsibility: shared
+status: implemented
+tags:
+  - community-authored
+  - not-vendor-published

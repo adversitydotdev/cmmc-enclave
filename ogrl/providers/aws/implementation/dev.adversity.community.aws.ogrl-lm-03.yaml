@@ -1,0 +1,51 @@
+type: implementation
+id: implementation--dev.adversity.community.aws.ogrl-lm-03
+spec_version: "0.2.0"
+created: "2026-11-24T00:00:00Z"
+modified: "2026-11-24T00:00:00Z"
+created_by_ref: party--dev.adversity.community.aws-author
+component_ref: component--dev.adversity.community.aws
+control_ref: control--ogrl-lm-03
+customer_responsibility: >-
+  Configure the protections, restrict who can change or delete logs,
+  and limit audit-management access to named roles.
+extensions:
+  dev.adversity.community:
+    authored_from: public-sources
+    statement: >-
+      Community-authored from public sources by adversity.dev; not
+      published, reviewed, or endorsed by AWS. Not a vendor
+      responsibility matrix. Verify against the vendor's own
+      documentation before relying on it.
+    vendor_endorsed: false
+    vendor_published: false
+external_references:
+  - source: >-
+      Community-authored from public sources; not published or
+      endorsed by AWS
+    url: "https://github.com/adversitydotdev/cmmc-enclave/tree/main/ogrl/providers"
+  - source: AWS CloudTrail security best practices
+    url: "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/best-practices-security.html"
+  - source: S3 Object Lock
+    url: "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html"
+  - source: CloudTrail log file validation
+    url: "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-validation-intro.html"
+  - source: Example SCPs for CloudTrail
+    url: "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples_cloudtrail.html"
+  - source: AWS Config CMMC 2.0 Level 2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: "FedRAMP Marketplace, AWS US East/West (Moderate)"
+    url: "https://marketplace.fedramp.gov/products/AGENCYAMAZONEW"
+  - source: "FedRAMP Marketplace, AWS GovCloud (High)"
+    url: "https://marketplace.fedramp.gov/products/F1603047866"
+narrative: >-
+  S3 Object Lock, versioning, KMS encryption, CloudTrail log file
+  validation, and SCPs let customers protect audit records. A
+  separate log archive account keeps workload administrators away
+  from them.
+origin: provider
+responsibility: shared
+status: implemented
+tags:
+  - community-authored
+  - not-vendor-published

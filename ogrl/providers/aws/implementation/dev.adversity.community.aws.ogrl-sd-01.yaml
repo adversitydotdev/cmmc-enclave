@@ -1,0 +1,44 @@
+type: implementation
+id: implementation--dev.adversity.community.aws.ogrl-sd-01
+spec_version: "0.2.0"
+created: "2026-11-24T00:00:00Z"
+modified: "2026-11-24T00:00:00Z"
+created_by_ref: party--dev.adversity.community.aws-author
+component_ref: component--dev.adversity.community.aws
+control_ref: control--ogrl-sd-01
+customer_responsibility: >-
+  Apply security engineering principles to the customer's own
+  configuration and code: least privilege, defense in depth, secure
+  defaults, and reviewed changes.
+extensions:
+  dev.adversity.community:
+    authored_from: public-sources
+    statement: >-
+      Community-authored from public sources by adversity.dev; not
+      published, reviewed, or endorsed by AWS. Not a vendor
+      responsibility matrix. Verify against the vendor's own
+      documentation before relying on it.
+    vendor_endorsed: false
+    vendor_published: false
+external_references:
+  - source: >-
+      Community-authored from public sources; not published or
+      endorsed by AWS
+    url: "https://github.com/adversitydotdev/cmmc-enclave/tree/main/ogrl/providers"
+  - source: AWS Config CMMC 2.0 Level 2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: "FedRAMP Marketplace, AWS US East/West (Moderate)"
+    url: "https://marketplace.fedramp.gov/products/AGENCYAMAZONEW"
+  - source: "FedRAMP Marketplace, AWS GovCloud (High)"
+    url: "https://marketplace.fedramp.gov/products/F1603047866"
+narrative: >-
+  AWS builds its services under a secure development lifecycle
+  assessed within its FedRAMP authorization. Tools such as
+  Inspector, CodeGuru, and CodePipeline support customers building
+  on AWS.
+origin: provider
+responsibility: shared
+status: implemented
+tags:
+  - community-authored
+  - not-vendor-published

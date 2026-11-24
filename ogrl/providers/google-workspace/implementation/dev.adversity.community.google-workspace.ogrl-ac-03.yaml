@@ -1,0 +1,52 @@
+type: implementation
+id: implementation--dev.adversity.community.google-workspace.ogrl-ac-03
+spec_version: "0.2.0"
+created: "2026-11-24T00:00:00Z"
+modified: "2026-11-24T00:00:00Z"
+created_by_ref: party--dev.adversity.community.google-workspace-author
+component_ref: component--dev.adversity.community.google-workspace
+control_ref: control--ogrl-ac-03
+customer_responsibility: >-
+  Scope admin roles to tasks instead of super admin, and set
+  service, sharing, and app access per organizational unit.
+extensions:
+  dev.adversity.community:
+    authored_from: public-sources
+    statement: >-
+      Community-authored from public sources by adversity.dev; not
+      published, reviewed, or endorsed by Google. Not a vendor
+      responsibility matrix. Verify against the vendor's own
+      documentation before relying on it.
+    vendor_endorsed: false
+    vendor_published: false
+external_references:
+  - source: >-
+      Community-authored from public sources; not published or
+      endorsed by Google
+    url: "https://github.com/adversitydotdev/cmmc-enclave/tree/main/ogrl/providers"
+  - source: Custom admin roles
+    url: "https://support.google.com/a/answer/2406043"
+  - source: Turn a service on or off for Google Workspace users
+    url: "https://support.google.com/a/answer/182442"
+  - source: Control which apps access Google Workspace data
+    url: "https://support.google.com/a/answer/7281227"
+  - source: Cloud Identity Policy API supported settings
+    url: "https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings"
+  - source: "Google Workspace CMMC implementation guide (page 18)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=18"
+  - source: "Google Workspace CMMC implementation guide (page 24)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=24"
+  - source: Google Workspace Admin Help
+    url: "https://support.google.com/a"
+  - source: "FedRAMP Marketplace, Google Workspace (High)"
+    url: "https://marketplace.fedramp.gov/products/F1206081364"
+narrative: >-
+  Workspace supports custom admin roles, per-OU turn on and off of
+  services, external sharing limits, and third-party app access
+  controls. Google enforces them.
+origin: provider
+responsibility: shared
+status: implemented
+tags:
+  - community-authored
+  - not-vendor-published
