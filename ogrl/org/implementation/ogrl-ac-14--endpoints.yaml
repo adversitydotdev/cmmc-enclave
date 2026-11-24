@@ -1,0 +1,18 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-ac-14
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-ac-14
+external_references:
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  Endpoints are out of scope. Local OS accounts must enforce the
+  same password rules and lockout (for example macOS and Windows
+  policy) and store passwords hashed. Local lockout after failed
+  attempts is an endpoint setting (3.1.8).
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned
