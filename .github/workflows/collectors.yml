@@ -1,0 +1,28 @@
+name: collectors
+
+on:
+  pull_request:
+    paths: ["collectors/**", ".github/workflows/collectors.yml"]
+  push:
+    branches: [main]
+    paths: ["collectors/**", ".github/workflows/collectors.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: collectors-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Workspace audit collector tests
+        working-directory: collectors/workspace_audit
+        run: |
+          python3 -m pip install --quiet -r requirements.txt -r requirements-dev.txt
+          python3 -m pytest -q

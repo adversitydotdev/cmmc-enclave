@@ -195,7 +195,7 @@ data "aws_iam_policy_document" "security" {
     condition {
       test     = "StringEquals"
       variable = "aws:SourceAccount"
-      values   = [local.acct["security"]]
+      values   = [local.acct["security"], local.acct["management"], local.acct["log_archive"]] # cross-account CloudWatch alarms (trail alarms in management, collector alarms in log_archive)
     }
   }
 

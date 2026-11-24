@@ -16,13 +16,17 @@ narrative: >
   Google defines the failure types and alerts for Workspace's own
   audit pipeline (guide: Google responsible for 3.3.4 on Workspace
   audit data). {{ company_name }} covers the leg Google cannot: the
-  Reports API collector into AWS, alarmed in the AWS row. Baseline:
-  alert center notifications for system-defined alerts go to the
-  security on-call team. The guide's Chrome section marks 3.3.4 as
-  customer configured (investigation tool activity rule, Telemetry
-  API notifications), which we treat as out of scope because Chrome
-  telemetry is not collected. Test: manual evidence (alert center
-  notification settings export and a test notification).
+  Reports API collector into AWS (Lambda in the log archive
+  account), alarmed in the AWS row for errors, no success in 15
+  minutes and no new archived objects. A collector failure,
+  including a revoked delegation or key, raises the Lambda Errors
+  alarm. Baseline: alert center notifications for system-defined
+  alerts go to the security on-call team. The guide's Chrome section
+  marks 3.3.4 as customer configured (investigation tool activity
+  rule, Telemetry API notifications), which we treat as out of scope
+  because Chrome telemetry is not collected. Test: manual evidence
+  (alert center notification settings export and a test
+  notification).
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

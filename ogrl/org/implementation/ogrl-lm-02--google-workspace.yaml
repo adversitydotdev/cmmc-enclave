@@ -20,10 +20,11 @@ narrative: >
   audit logs are also pulled into the AWS log archive. Tested by a
   Policy API read of rule.system_defined_alerts plus manual evidence
   (dated screenshots of alert center notifications); audit log
-  delivery is tested by the collector's last-success time. Google
-  operates the tooling; {{ company_name }} reviews and acts on it.
-  Per the Google guide (pages 83 to 85), 3.14.6 and 3.14.7 are
-  customer-configured features of Workspace.
+  delivery is tested by the collector's Success metric (last success
+  time) and its 15 minute no-success alarm. Google operates the
+  tooling; {{ company_name }} reviews and acts on it. Per the Google
+  guide (pages 83 to 85), 3.14.6 and 3.14.7 are customer-configured
+  features of Workspace.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

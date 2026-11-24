@@ -32,3 +32,6 @@ fathom_oidc_client_id         = "1234567890-abc.apps.googleusercontent.com"
 fathom_bootstrap_admin_emails = ["admin@example.com"]
 # fathom_certificate_arn = "arn:aws:acm:us-east-1:555555555555:certificate/..."
 # fathom_public_url      = "https://fathom.example.com"
+
+# Workspace audit collector (#30): admin the service account impersonates.
+workspace_admin_email = "admin@example.com"

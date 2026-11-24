@@ -19,15 +19,27 @@ narrative: >
   Login, Drive, Token, and the other Reports API applications, each
   carrying the actor email) and fixes their content, so 3.3.2 is
   Google's. {{ company_name }} specifies the event types and
-  retention: the Reports API collector (issue #30) pulls every
-  activity application into the log archive account on a 5 minute
-  schedule, where it is held 365 days under Object Lock, longer than
-  Workspace's own per-event retention. Admin console Audit and
-  investigation covers ad hoc review (3.3.3). Test: the collector's
-  last-success timestamp and a sample archived record, plus a Cloud
-  Identity Policy API read of audit-related settings; manual
-  evidence until the collector exists. Chrome and device log events
-  are outside the CUI data path and not collected.
+  retention: a Lambda collector in the log archive account
+  (Terraform module workspace_audit, code in
+  collectors/workspace_audit) runs every 10 minutes and pulls the
+  Reports API applications admin, login, drive, token, saml,
+  user_accounts, groups, mobile and access_transparency (the list is
+  configurable; an application the tenant cannot read is skipped
+  with a warning). It authenticates as a service account with
+  domain-wide delegation, impersonating an admin user, with the
+  single scope admin.reports.audit.readonly; the key lives in
+  Secrets Manager and is set by hand. Each application has a cursor
+  in DynamoDB, and every run re-reads a 6 hour overlap and drops
+  repeats by event id and time, so events Google reports late are
+  not missed. Records are written as gzip JSON Lines, SSE-KMS, under
+  workspace-audit/application=APP/dt=DATE/ in the log archive
+  bucket, a new object per run, held 365 days under Object Lock,
+  longer than Workspace's own per-event retention. Admin console
+  Audit and investigation covers ad hoc review (3.3.3). Test: the
+  collector's Success metric (last success time), a sample archived
+  record, plus a Cloud Identity Policy API read of audit-related
+  settings. Chrome and device log events are outside the CUI data
+  path and not collected.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

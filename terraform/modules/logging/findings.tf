@@ -39,7 +39,7 @@ data "aws_iam_policy_document" "findings_topic" {
     condition {
       test     = "StringEquals"
       variable = "aws:SourceAccount"
-      values   = [local.mgmt_id]
+      values   = [local.mgmt_id, var.account_ids["log_archive"]]
     }
   }
 
