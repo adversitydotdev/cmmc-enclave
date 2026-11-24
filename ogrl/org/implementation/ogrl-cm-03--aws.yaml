@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-cm-03
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-cm-03
+external_references:
+  - url: "https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html"
+  - url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - url: "https://github.com/awslabs/aws-config-rules/blob/master/aws-config-conformance-packs/Operational-Best-Practices-for-CMMC-2.0-Level-2.yaml"
+  - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  Drift is detected two ways. AWS Config evaluates the CMMC 2.0
+  Level 2 conformance pack continuously and flags noncompliant
+  resources, and a scheduled terraform plan in CI reports any
+  difference between code and live state. Alerts go to Security Hub
+  and the security team. Tests: Config conformance pack compliance
+  state; scheduled plan job shows no unapproved diff (manual
+  evidence of the last run).
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

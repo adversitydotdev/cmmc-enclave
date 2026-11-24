@@ -1,0 +1,18 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-cm-05
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-cm-05
+external_references:
+  - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  Endpoints are outside this repository. {{ company_name }} owns the
+  endpoint part of this control and has not yet implemented it
+  (planned). Removal of local administrator rights, which limits who
+  can change endpoint configuration, is the company's. Test: manual
+  MDM report.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

@@ -1,0 +1,27 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-cm-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-cm-01
+external_references:
+  - url: "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+  - url: "https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html"
+  - url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  The Terraform repository, version controlled with required pull
+  request review, is the change record for AWS. Branch protection
+  requires an independent approver and passing plan checks, and the
+  apply runs from the pipeline role against a merged commit.
+  CloudTrail (organization trail to an Object Lock bucket) logs
+  every API change and AWS Config records each resource
+  configuration change, so approved changes and actual changes can
+  be compared. Tests: Config rules CLOUD_TRAIL_ENABLED and
+  MULTI_REGION_CLOUD_TRAIL_ENABLED; library test
+  test--ogrl-cm-01-change-control (branch protection) once the
+  repository is attached; manual PR sample.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
