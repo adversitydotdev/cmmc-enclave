@@ -1,0 +1,25 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-vm-07
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-vm-07
+external_references:
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+  - source: Google Workspace CMMC implementation guide
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+narrative: >-
+  {{ company_name }} keeps the inventory of collaboration devices
+  (conference rooms, cameras, microphones, Meet hardware), prohibits
+  remote activation, and prohibits administrators from remotely
+  joining Meet hardware to calls, because Workspace has no setting
+  that blocks it (3.13.12, Google guide p.79). Devices show an
+  in-use indicator to people in the room. Meet hardware stays off
+  unless needed, and settings are reviewed quarterly. Evidence is
+  the device inventory and quarterly review record. Written into the
+  Access Control and System and Communications Protection policies.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-vm-09
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-vm-09
+external_references:
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  {{ company_name }} limits VoIP and video to approved services
+  (Google Meet only) with single sign-on, MFA, and encrypted
+  signaling and media, reviews approved services and Meet audit logs
+  at least quarterly (3.13.14), and blocks consumer calling apps on
+  endpoints. Evidence is the approved list and quarterly review
+  record. Written into the System and Communications Protection
+  Policy.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

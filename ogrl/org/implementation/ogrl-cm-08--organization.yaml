@@ -7,11 +7,19 @@ component_ref: component--dev.adversity.cmmc-enclave.organization
 control_ref: control--ogrl-cm-08
 external_references:
   - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
-narrative: >
+narrative: >-
   {{ company_name }} owns the approved software list, the approval
   process for new software, the user-installed software rule, and
   the quarterly review. Policy template follows in issue #20. Test:
-  manual review of the approved list and review record.
+  manual review of the approved list and review record. The baseline
+  standard also names essential programs, functions, ports,
+  protocols, and services per component type (3.4.7 a, d, g, j, m)
+  and defines everything else as nonessential. Software control is
+  allow-listing (deny all, permit by exception) (3.4.8 a).
+  User-installed software (3.4.9): users may not install software;
+  the MDM installed-software report and Workspace Marketplace
+  install events are compared with the approved list at least
+  quarterly (3.4.9 c), and unapproved software is removed.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: provider
 status: planned

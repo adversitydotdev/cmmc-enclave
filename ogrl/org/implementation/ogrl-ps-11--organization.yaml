@@ -13,7 +13,9 @@ narrative: >-
   tracked carriers in sealed, tamper-evident packaging, with
   FIPS-validated encryption for digital media (3.8.6). Each
   transport is logged and open entries reconciled monthly. Test:
-  manual evidence, transport log sample.
+  manual evidence, transport log sample. No alternative physical
+  safeguards replace encryption for digital media in transport; any
+  exception needs a written approval (3.8.6).
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: provider
 status: planned

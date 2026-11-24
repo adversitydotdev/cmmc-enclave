@@ -7,12 +7,18 @@ component_ref: component--dev.adversity.cmmc-enclave.organization
 control_ref: control--ogrl-cm-05
 external_references:
   - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
-narrative: >
+narrative: >-
   {{ company_name }} owns the rules for who may change production,
   GitHub branch protection and environment reviewers, the emergency
   change path, and the quarterly access review. Test: manual review
   of repository settings and the review record. Policy template
-  follows in issue #20.
+  follows in issue #20. Physical access restrictions on changes
+  (3.4.5 a to d): changes to cloud systems are logical only.
+  Physical access to provider facilities is the cloud vendors' (AWS
+  and Google, see ogrl-ps-02). For company equipment, only the IT
+  lead's approved people may open or service it, per the physical
+  access list; the restriction is documented, approved by the SSP
+  signer, and enforced by locked storage.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: provider
 status: planned

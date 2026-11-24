@@ -16,7 +16,12 @@ narrative: >-
   validity. Break-glass console login uses FIDO2 plus password over
   TLS; the AWS sign-in page masks the password field (3.5.11).
   Tested by manual evidence (sign-in screenshot, IdP configuration
-  export); no Config rule exists for this.
+  export); no Config rule exists for this. Non-interactive access
+  (3.5.4): AWS API calls from roles and the CI deployment role are
+  SigV4-signed with a timestamp and use short-lived credentials
+  (GitHub OIDC, role sessions), so captured requests expire and
+  cannot be replayed. The SCIM token is the exception, covered in
+  the Organization row.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

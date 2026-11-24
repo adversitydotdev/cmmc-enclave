@@ -16,7 +16,7 @@ external_references:
     url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=108"
   - source: "AWS PrivateLink services (FIPS endpoint services)"
     url: "https://docs.aws.amazon.com/vpc/latest/privatelink/aws-services-privatelink-support.html"
-narrative: >
+narrative: >-
   FIPS-validated cryptography is required where it protects CUI, so
   it is scoped to the CUI data path: S3, EBS, RDS and Backup data
   encrypted with our KMS keys (FIPS 140 validated HSMs), CUI in
@@ -41,7 +41,11 @@ narrative: >
   assertion on provider config, a listener TLS policy check (custom
   Config rule or manual evidence; the conformance pack has no ALB
   TLS-policy rule), and CMVP certificate numbers in the crypto
-  inventory.
+  inventory. Certificate numbers: AWS publishes no number for the
+  KMS HSMs; its documentation says to search the CMVP validated
+  modules list for AWS Key Management Service HSM (FIPS 140-3).
+  Record that certificate number from the CMVP search when the
+  inventory is built. Not verified from a public AWS page.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

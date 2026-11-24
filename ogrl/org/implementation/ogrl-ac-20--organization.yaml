@@ -1,0 +1,26 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ac-20
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ac-20
+external_references:
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  {{ company_name }} defines replay-resistant authentication for
+  network access to privileged and non-privileged accounts (3.5.4):
+  phishing-resistant security keys and signed, time-bound SAML
+  assertions for people, and signed API requests or short-lived
+  tokens for non-interactive accounts. It keeps the list of
+  non-interactive accounts (IAM roles, the CI deployment role, the
+  Identity Center SCIM token, Fathom task roles) and the exceptions,
+  and prohibits NTLMv1, LM, Telnet, unencrypted FTP, and basic
+  authentication. The SCIM bearer token is a static secret sent only
+  over TLS and rotated yearly, so it is not replay-resistant by
+  itself; the exception is recorded in the SSP. Evidence is the
+  account list and exception record.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

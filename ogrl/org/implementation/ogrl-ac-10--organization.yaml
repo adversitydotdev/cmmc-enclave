@@ -1,0 +1,27 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ac-10
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ac-10
+external_references:
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  {{ company_name }} defines the session lock and termination
+  conditions. Endpoints lock after 15 minutes of inactivity, require
+  re-authentication, and show a pattern-hiding display (3.1.10 a to
+  c). Remote and application sessions end on these conditions
+  (3.1.11 a): 30 minutes of inactivity where the platform has an
+  inactivity timer, 12 hours total, termination or role change, and
+  loss of device compliance (3.13.9 a). Workspace web sessions and
+  Identity Center have no inactivity timer, so session length plus
+  the endpoint lock is the recorded control; AWS and Workspace do
+  not display or lock anything on the user's screen. Evidence is the
+  SSP section with the values and the MDM and settings exports.
+  Written into the Access Control and System and Communications
+  Protection policies.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

@@ -8,12 +8,19 @@ control_ref: control--ogrl-cr-06
 external_references:
   - source: "Google Workspace CMMC implementation guide (2025)"
     url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=108"
+  - source: "Google FIPS 140 validation (BoringCrypto, CMVP #4735)"
+    url: "https://cloud.google.com/security/compliance/fips-140-validated"
+  - source: "NIST CMVP certificate #4735"
+    url: "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4735"
 narrative: >
   Google carries FIPS-validated cryptography for Workspace (Google
-  guide: native), covered by its FedRAMP High authorization. We
-  record the module and CMVP certificate numbers from Google's
-  documentation in the crypto inventory; certificate numbers not
-  verified from a public source here. Test: manual evidence.
+  guide: native), covered by its FedRAMP High authorization.
+  Google's BoringCrypto module holds FIPS 140-3 CMVP certificate
+  #4735 (Active); the earlier FIPS 140-2 certificate #4407 became
+  Historical on 2026-09-21 and is not cited. We record the module
+  and certificate in the crypto inventory and re-check its status on
+  the CMVP site at each SSP review. Test: manual evidence (CMVP
+  certificate page).
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented
