@@ -1,0 +1,2 @@
+# Output of the logging module (log archive bucket ARN).
+flow_log_bucket_arn = "arn:aws:s3:::example-log-archive"

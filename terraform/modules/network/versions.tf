@@ -3,13 +3,8 @@ terraform {
 
   required_providers {
     aws = {
-      source                = "hashicorp/aws"
-      version               = "~> 6.74"
-      configuration_aliases = [aws.workload]
+      source  = "hashicorp/aws"
+      version = "~> 6.74"
     }
   }
-}
-
-data "aws_partition" "current" {
-  provider = aws.workload
 }
