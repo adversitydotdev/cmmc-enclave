@@ -18,10 +18,11 @@ narrative: >-
   Verification, and reaches AWS through the Identity Center SAML app
   (manual runbook step). No shared user accounts; users are managed
   by Terraform (macadmins/googleworkspace) and SCIM users-only sync.
-  Tested by a Cloud Identity Policy API read of SSO profile
-  assignment and the Directory API user list. Workspace audit logs
-  (login events) land in the AWS log archive so actions trace to one
-  user.
+  Google is the IdP, so there is no SSO profile assignment to read.
+  Tested by manual evidence of the SAML app existence and OU
+  assignment, Reports API SAML login events, and the Directory API
+  user list. Workspace audit logs (login events) land in the AWS log
+  archive so actions trace to one user.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented

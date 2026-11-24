@@ -17,11 +17,11 @@ narrative: >
   builds the enclave boundary: a VPC with no inbound internet path
   except the Fathom ALB in the grc account, public subnets holding
   only that ALB (3.13.5), private subnets for everything else,
-  default security groups closed, security groups and NACLs
-  default-deny with explicit allows (3.13.6), VPC endpoints for AWS
-  APIs, and flow logs to the log archive. GuardDuty and Security Hub
-  monitor the boundary (3.13.1). Tested by Config rules
-  vpc-default-security-group-closed,
+  default security groups closed, security groups default-deny with
+  explicit allows (3.13.6; NACLs are left at AWS defaults), VPC
+  endpoints for AWS APIs, and flow logs to the log archive.
+  GuardDuty and Security Hub monitor the boundary (3.13.1). Tested
+  by Config rules vpc-default-security-group-closed,
   vpc-sg-open-only-to-authorized-ports, restricted-common-ports,
   restricted-ssh, no-unrestricted-route-to-igw,
   subnet-auto-assign-public-ip-disabled,

@@ -16,9 +16,9 @@ narrative: >-
   (User Directory), which blocks SSO to every app including AWS,
   then deletes after data handover. The runbook sets the offboarding
   step; Google provides the suspend and delete functions. Test:
-  Cloud Identity Policy API and Admin console read of suspended
-  users; manual evidence, the offboarding ticket with suspend
-  timestamp.
+  Directory API read of the suspended flag (user lifecycle is not in
+  the Policy API) and Reports API suspend events; manual evidence,
+  the offboarding ticket with suspend timestamp.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

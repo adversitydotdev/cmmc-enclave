@@ -17,8 +17,8 @@ narrative: >
   the customer must prohibit it by policy and limit Meet hardware
   admin roles. Our runbook sets the Meet camera and microphone
   defaults and turns Meet hardware off unless needed. Test: manual
-  evidence (admin role list, Meet settings screenshots) and a Policy
-  API read of Meet settings where supported.
+  evidence (admin role list, Meet settings screenshots); the
+  remote-join gap has no setting to read.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

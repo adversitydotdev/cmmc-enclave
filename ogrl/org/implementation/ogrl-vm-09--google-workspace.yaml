@@ -17,7 +17,9 @@ narrative: >
   archive), and our runbook restricts external participants on the
   CUI OU. Google Voice is not used unless added later. AWS lists
   this customer only; Google lists it native (SCOPE section 9, item
-  3). Test: Policy API read of Meet settings and manual evidence.
+  3). Test: manual evidence (Meet settings screenshots; the audit
+  found no Meet setting in the Policy API) and Reports API Meet
+  logs.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented

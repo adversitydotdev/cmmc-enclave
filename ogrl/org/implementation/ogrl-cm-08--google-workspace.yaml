@@ -16,8 +16,10 @@ narrative: >
   apps (allowlist) and block user installs of unlisted apps;
   restrict third-party API access to allowlisted OAuth apps. Test:
   Admin console service status and Marketplace setting export per OU
-  (Policy API read where the setting is exposed; not yet confirmed);
-  manual quarterly review of the allowlist.
+  (Policy API reads of service_status,
+  workspace_marketplace.apps_access_options and apps_allowlist, and
+  api_controls.unconfigured_third_party_apps); manual quarterly
+  review of the allowlist.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

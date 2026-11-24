@@ -16,11 +16,12 @@ narrative: >
   Workspace encrypts data in transit between clients and Google and
   at rest by default. Our share: Gmail secure transport (TLS)
   compliance rules and MTA-STS for CUI mail, and optionally CSE for
-  the CUI OU (required for the ITAR tier). Both are runbook steps
-  tested by Policy API reads of the Gmail TLS compliance and MTA-STS
-  settings. Session authenticity (3.13.15) rests on Google sign-in
-  with DKIM on the domain. Google guide rates 3.13.8 shared and
-  3.13.16 native.
+  the CUI OU (required for the ITAR tier). Both are runbook steps.
+  Neither is in the Policy API, so the test is a DNS check (MTA-STS
+  TXT record and policy file, DKIM, SPF) plus manual evidence of the
+  TLS compliance rule. Session authenticity (3.13.15) rests on
+  Google sign-in with DKIM on the domain. Google guide rates 3.13.8
+  shared and 3.13.16 native.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

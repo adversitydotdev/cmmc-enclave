@@ -18,9 +18,9 @@ narrative: >-
   security-key-only enforcement means a password alone never grants
   access. Backup codes for lost keys are admin-generated with a
   bounded suspension grace period. Set in the user-creation runbook;
-  tested by manual evidence (new-user creation screenshot, Reports
-  API password change state) because the Policy API has no read for
-  it.
+  tested by reading changePasswordAtNextLogin through the Directory
+  API, plus manual evidence (new-user creation screenshot, Reports
+  API password change events). The Policy API has no read for it.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

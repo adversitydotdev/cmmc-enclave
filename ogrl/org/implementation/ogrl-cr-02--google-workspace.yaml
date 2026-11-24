@@ -17,8 +17,9 @@ narrative: >
   external key service and the customer manages them, so the guide
   says this control then enters the CUI boundary. Sources agree; we
   record the CSE exception and put those keys in the Organization
-  key inventory. Test: manual evidence of Google FedRAMP High;
-  Policy API read of CSE settings if enabled.
+  key inventory. Test: manual evidence of Google FedRAMP High; CSE
+  settings are not in the Policy API, so if CSE is enabled the
+  evidence is console screenshots.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: subservice
 status: implemented

@@ -21,7 +21,8 @@ narrative: >-
   short admin role roster. Tested by reading
   drive_and_docs.external_sharing and
   drive_and_docs.general_access_default through the Policy API;
-  per-OU service state is manual evidence.
+  per-OU service on/off state (Sites and other publishing services)
+  is read through the Policy API service_status setting.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented
