@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-cm-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-cm-01
+external_references:
+  - url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - url: "https://support.google.com/a/answer/4579579"
+  - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  Workspace settings managed in Terraform follow the same pull
+  request path as AWS. Settings changed in the Admin console are
+  tracked by the Admin audit log, which records who changed which
+  setting and when. Console changes outside Terraform require a
+  ticket reference in the runbook. Test: manual review of an Admin
+  audit log sample against approved changes.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

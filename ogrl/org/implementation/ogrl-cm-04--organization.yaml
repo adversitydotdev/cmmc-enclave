@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-cm-04
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-cm-04
+external_references:
+  - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+  - url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+narrative: >
+  {{ company_name }} owns security impact analysis. The pull request
+  template carries a required security impact section for changes to
+  systems that process, store, or transmit CUI, and the security
+  lead signs off before merge. Terraform plan output is attached to
+  show the technical effect. No cloud vendor performs this analysis
+  for the company. Test: manual review of a sample of merged PRs for
+  the section and sign-off. Policy template follows in issue #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

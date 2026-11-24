@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-am-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-am-01
+external_references:
+  - url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - url: "https://support.google.com/a/answer/7491797"
+  - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  Workspace provides the inventory of users, groups, OUs, enrolled
+  mobile and desktop devices, and installed Marketplace apps in the
+  Admin console and Directory API. Terraform-managed pieces appear
+  in state. Test: manual quarterly export of the Admin console
+  device list and the installed apps list, kept as evidence. Google
+  does not inventory the company's own hardware or software.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

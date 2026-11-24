@@ -1,0 +1,25 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-am-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-am-01
+external_references:
+  - url: "https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html"
+  - url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  Inventory of AWS components is generated, not hand-kept. AWS
+  Config records every supported resource in every account and
+  Region and aggregates to the security tooling account. AWS
+  Organizations lists accounts. Terraform state lists the managed
+  resources. A tag policy and an SCP require owner, environment, and
+  data classification tags. Reconciliation: Terraform state against
+  Config inventory quarterly. Test: Config rule
+  EC2_INSTANCE_MANAGED_BY_SSM (compute is managed) plus a manual
+  quarterly export of the Config aggregator inventory. AWS carries
+  the platform; {{ company_name }} runs the reconciliation.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

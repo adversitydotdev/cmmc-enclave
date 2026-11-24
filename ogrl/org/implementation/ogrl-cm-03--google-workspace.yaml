@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-cm-03
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-cm-03
+external_references:
+  - url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - url: "https://cloud.google.com/identity/docs/concepts/overview-of-cloud-identity-policy-api"
+  - url: "https://support.google.com/a/answer/4579579"
+  - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  Security settings are read through the Cloud Identity Policy API
+  on a schedule and compared with the runbook baseline. Differences
+  are flagged. Admin audit log gives the who and when. Test: Policy
+  API read compared with baseline (setting coverage not yet
+  confirmed); manual Admin audit log review.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
