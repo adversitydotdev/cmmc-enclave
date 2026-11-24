@@ -43,3 +43,10 @@ workspace_admin_email = "admin@example.com"
 # Fathom read roles (#32). After creating each aws_role connection in Fathom, copy its
 # ExternalId here and apply again.
 # fathom_read_external_ids = { workload = ["..."], grc = ["..."] }
+
+# Idle Workspace account suspension (#51, 3.5.6). Default is report only; "suspend" is a
+# deliberate switch and needs the write scope delegated to the idle service account.
+# workspace_idle_mode              = "report"
+# workspace_idle_days              = 90
+# workspace_idle_exclude_emails    = ["breakglass@example.com"]
+# workspace_idle_exclude_org_units = ["/Service Accounts"]
