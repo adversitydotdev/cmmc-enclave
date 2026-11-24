@@ -1,0 +1,28 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-13
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-13
+external_references:
+  - source: AWS Config CMMC 2.0 L2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: AWS IAM Identity Center with Google Workspace
+    url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html"
+  - source: AWS IAM Identity Center SCIM provisioning
+    url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/provision-automatically.html"
+narrative: >-
+  Identity Center users are SCIM-synced from Workspace and groups
+  are Terraform aws_identitystore_group resources, so each session
+  maps to one named user. Sessions are 1 hour. Break-glass is the
+  only inventoried non-SSO account. The org CloudTrail records the
+  Identity Center user on each API call to an Object Lock bucket,
+  covering user attribution for 3.3.2. Tested by Config rules
+  cloudtrail-enabled, multi-region-cloudtrail-enabled, and
+  cloud-trail-cloud-watch-logs-enabled. Processes and service
+  identities use IAM roles, not users.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

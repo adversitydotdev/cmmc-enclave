@@ -1,0 +1,18 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-ac-20
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-ac-20
+external_references:
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  Endpoints are out of scope. Managed endpoints must mask password
+  and PIN entry in OS and command-line tools and avoid NTLMv1,
+  Telnet, and plain FTP. Tested by manual evidence on
+  {{ company_name }} endpoints.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

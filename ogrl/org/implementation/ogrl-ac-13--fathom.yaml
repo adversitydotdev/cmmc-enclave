@@ -1,0 +1,20 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.fathom.ogrl-ac-13
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.fathom
+control_ref: control--ogrl-ac-13
+external_references:
+  - source: AWS IAM Identity Center with Google Workspace
+    url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html"
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  Fathom identifies each operator by Workspace SSO identity
+  (planned, M4) and records the identity on every evidence and POA&M
+  change. Fathom's own service identity is an IAM task role. Tested
+  by Fathom's own audit log check.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

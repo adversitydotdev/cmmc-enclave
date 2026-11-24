@@ -1,0 +1,25 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-05
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-05
+external_references:
+  - source: AWS Config CMMC 2.0 L2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: AWS IAM Identity Center with Google Workspace
+    url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html"
+narrative: >-
+  Console and CLI access goes through IAM Identity Center with
+  Workspace as SAML IdP, so MFA is the Workspace security-key check
+  above and permission sets expire after 1 hour. The only local AWS
+  identities are the break-glass IAM user (two FIDO keys, no access
+  keys, alert on use) and the sealed root user with hardware MFA;
+  Terraform sets both. Tested by Config rules iam-user-mfa-enabled,
+  mfa-enabled-for-iam-console-access, root-account-mfa-enabled, and
+  root-account-hardware-mfa-enabled.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws
