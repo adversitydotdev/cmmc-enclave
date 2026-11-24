@@ -14,6 +14,13 @@ external_references:
     url: "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html"
   - source: "Google Workspace CMMC implementation guide (2025)"
     url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=108"
+  - source: >-
+      NIST CMVP certificate #4884 (AWS Key Management Service HSM)
+    url: "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4884"
+  - source: "NIST CMVP certificate #5595 (AWS-LC 4, dynamic)"
+    url: "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5595"
+  - source: AWS-LC FIPS certificates
+    url: "https://github.com/aws/aws-lc/blob/main/crypto/fipsmodule/FIPS.md"
   - source: "AWS PrivateLink services (FIPS endpoint services)"
     url: "https://docs.aws.amazon.com/vpc/latest/privatelink/aws-services-privatelink-support.html"
 narrative: >-
@@ -40,12 +47,21 @@ narrative: >-
   (ITAR tier) endpoints are FIPS by default. Test: terraform plan
   assertion on provider config, a listener TLS policy check (custom
   Config rule or manual evidence; the conformance pack has no ALB
-  TLS-policy rule), and CMVP certificate numbers in the crypto
-  inventory. Certificate numbers: AWS publishes no number for the
-  KMS HSMs; its documentation says to search the CMVP validated
-  modules list for AWS Key Management Service HSM (FIPS 140-3).
-  Record that certificate number from the CMVP search when the
-  inventory is built. Not verified from a public AWS page.
+  TLS-policy rule), and the crypto inventory
+  (docs/crypto-inventory.csv). Certificates, all FIPS 140-3 and
+  Active on the CMVP site as of 2026-11-24: AWS Key Management
+  Service HSM #4884 (Level 3, sunset 2029-11-17) for KMS keys that
+  protect S3, EBS, RDS and Backup data; AWS-LC for FIPS endpoints
+  and ALB TLS (AWS says "latest release of AWS-LC (dynamic)" and
+  AWS-Libcrypto but names no release, so the inventory lists the
+  active AWS-LC certificates, newest dynamic #5595; ALB announcement
+  links #4631); AWS-LC (static) for S3 and DynamoDB server-side
+  encryption (newest #5596); Nitro Card Security Engine SSMAE #5310
+  for EBS. AWS does not map services to certificate numbers on its
+  pages, so the service-to-certificate mapping for AWS-LC is
+  unconfirmed; confirm through AWS Artifact or the AWS account team
+  and re-check status at each SSP review. Historical certificates
+  are not cited.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented
