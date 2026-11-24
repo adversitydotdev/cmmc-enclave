@@ -1,0 +1,15 @@
+type: test
+id: test--dev.adversity.cmmc-enclave.workspace-meet-hardware-remote-join
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Review Meet hardware roster and remote join policy
+control_ref: control--ogrl-vm-07
+description: >-
+  Screenshot of Meet hardware devices and admin roster. No setting
+  disables remote join, so the policy prohibits it.
+interval: quarterly
+method: manual
+required: false
+tags:
+  - google-workspace

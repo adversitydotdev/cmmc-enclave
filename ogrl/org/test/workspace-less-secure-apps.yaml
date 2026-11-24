@@ -1,0 +1,17 @@
+type: test
+id: test--dev.adversity.cmmc-enclave.workspace-less-secure-apps
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Verify less secure apps are not allowed
+control_ref: control--ogrl-ac-18
+description: >-
+  Policy API setting security.less_secure_apps is set to disallow
+  less secure app access on every OU.
+interval: daily
+method: automated
+objective_refs:
+  - "requirement--nist-sp-800-171-r2-3-1-20#obj.f"
+required: false
+tags:
+  - google-workspace

@@ -1,0 +1,19 @@
+type: test
+id: test--dev.adversity.cmmc-enclave.workspace-dlp-rules-cui
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Verify CUI marking DLP rules and detectors are active
+control_ref: control--ogrl-ac-12
+description: >-
+  Policy API settings rule.dlp and detector.regular_expression
+  contain the CUI marking detectors and the Drive block-external,
+  Drive warn- internal and Gmail block-external rules (created by
+  scripts/workspace- dlp), all state ACTIVE on the CUI OU.
+interval: daily
+method: automated
+objective_refs:
+  - "requirement--nist-sp-800-171-r2-3-1-3#obj.e"
+required: false
+tags:
+  - google-workspace

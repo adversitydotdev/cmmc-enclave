@@ -1,0 +1,17 @@
+type: test
+id: test--dev.adversity.cmmc-enclave.workspace-investigation-tool-review
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Review saved investigation tool searches
+control_ref: control--ogrl-lm-08
+description: >-
+  Saved Investigation tool searches per data source (Admin, Login,
+  Drive, Gmail, Device) and an exported result, taken per the
+  Workspace runbook.
+interval: quarterly
+method: manual
+procedure_ref: procedure--dev.adversity.cmmc-enclave.audit-log-review
+required: false
+tags:
+  - google-workspace

@@ -1,0 +1,22 @@
+type: test
+id: test--dev.adversity.cmmc-enclave.workspace-2sv-methods
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Verify 2-Step Verification methods are security keys only
+control_ref: control--ogrl-ac-05
+description: >-
+  Policy API setting
+  security.two_step_verification_enforcement_factor has
+  allowedSignInFactorSet PASSKEY_ONLY (only security key) on both
+  OUs.
+interval: daily
+method: automated
+objective_refs:
+  - "requirement--nist-sp-800-171-r2-3-5-3#obj.a"
+  - "requirement--nist-sp-800-171-r2-3-5-3#obj.b"
+  - "requirement--nist-sp-800-171-r2-3-5-3#obj.c"
+  - "requirement--nist-sp-800-171-r2-3-5-3#obj.d"
+required: false
+tags:
+  - google-workspace

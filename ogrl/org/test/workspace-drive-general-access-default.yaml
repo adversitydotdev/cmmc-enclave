@@ -1,0 +1,17 @@
+type: test
+id: test--dev.adversity.cmmc-enclave.workspace-drive-general-access-default
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Verify Drive general access default is Restricted
+control_ref: control--ogrl-ac-12
+description: >-
+  Policy API setting drive_and_docs.general_access_default on the
+  CUI OU is Restricted (not Anyone with the link).
+interval: daily
+method: automated
+objective_refs:
+  - "requirement--nist-sp-800-171-r2-3-1-3#obj.e"
+required: false
+tags:
+  - google-workspace

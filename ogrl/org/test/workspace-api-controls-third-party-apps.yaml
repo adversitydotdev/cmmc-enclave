@@ -1,0 +1,20 @@
+type: test
+id: test--dev.adversity.cmmc-enclave.workspace-api-controls-third-party-apps
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Verify unconfigured third-party apps are blocked
+control_ref: control--ogrl-ac-18
+description: >-
+  Cloud Identity Policy API setting
+  api_controls.unconfigured_third_party_apps is set to block all
+  unconfigured third-party app access (no scopes allowed) on every
+  OU.
+interval: daily
+method: automated
+objective_refs:
+  - "requirement--nist-sp-800-171-r2-3-1-20#obj.e"
+  - "requirement--nist-sp-800-171-r2-3-1-20#obj.f"
+required: false
+tags:
+  - google-workspace

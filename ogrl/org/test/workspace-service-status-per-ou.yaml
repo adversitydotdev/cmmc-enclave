@@ -1,0 +1,19 @@
+type: test
+id: test--dev.adversity.cmmc-enclave.workspace-service-status-per-ou
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Verify only FedRAMP High services are on for the CUI OU
+control_ref: control--ogrl-cm-08
+description: >-
+  Policy API setting service_status on the CUI OU is on only for the
+  services in the FedRAMP High list and off for every other service,
+  including Sites and additional Google services.
+interval: daily
+method: automated
+objective_refs:
+  - "requirement--nist-sp-800-171-r2-3-4-6#obj.b"
+  - "requirement--nist-sp-800-171-r2-3-4-7#obj.o"
+required: false
+tags:
+  - google-workspace

@@ -1,0 +1,16 @@
+type: test
+id: test--dev.adversity.cmmc-enclave.workspace-smime
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+name: Verify S/MIME setting matches the CUI mail policy
+control_ref: control--ogrl-cr-01
+description: >-
+  Policy API setting gmail.smime_encryption on the CUI OU matches
+  the value recorded in the Gmail section of the runbook (optional
+  feature; default off).
+interval: daily
+method: automated
+required: false
+tags:
+  - google-workspace
