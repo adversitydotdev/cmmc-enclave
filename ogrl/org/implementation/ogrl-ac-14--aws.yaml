@@ -10,7 +10,7 @@ external_references:
     url: "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_account-policy.html"
   - source: AWS Config CMMC 2.0 L2 conformance pack
     url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
-narrative: >-
+narrative: >
   Break-glass IAM user only: Terraform
   aws_iam_account_password_policy sets minimum length 14, upper,
   lower, number, and symbol classes, reuse prevention 24, and expiry
@@ -25,6 +25,11 @@ narrative: >-
   account. The change-of-4-characters rule is not an IAM option.
   Tested by Config rule iam-password-policy; the alarms are tested
   by a periodic failed-login drill whose ticket is the evidence.
+  Accepted exception (2026-11-24, recorded in #42): IAM has no
+  account lockout (3.1.8). It affects only the break-glass IAM user;
+  all other access is through Workspace SSO with security keys.
+  Compensating controls: failed ConsoleLogin alarms for break-glass
+  and root, FIDO MFA required for any action, and no access keys.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: partial

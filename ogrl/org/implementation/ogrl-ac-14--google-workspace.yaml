@@ -16,7 +16,7 @@ external_references:
     url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=27"
   - source: "Google Workspace CMMC implementation guide (page 66)"
     url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=66"
-narrative: >-
+narrative: >
   Users: password management enforces minimum length 12, Enforce
   strong password (Google screens for common and compromised
   values), and enforcement at next sign-in; passwords are sent over
@@ -32,7 +32,12 @@ narrative: >-
   rules are not in the Policy API, so the lockout rule is manual
   evidence plus Alert Center and Reports API login events); the
   history gap stays open until compensating evidence is accepted or
-  a POA&M item is raised.
+  a POA&M item is raised. Accepted exception (2026-11-24, recorded
+  in #42): Workspace cannot set a password-history count (3.5.8);
+  "Allow password reuse" is off. Sign-in requires security keys
+  (2SV, security key only), so the password is not a standalone
+  authenticator. Lockout (3.1.8) is met by the activity rule that
+  suspends a user after more than 5 failed logins in 24 hours.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: partial
