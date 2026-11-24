@@ -14,26 +14,34 @@ external_references:
     url: "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html"
   - source: "Google Workspace CMMC implementation guide (2025)"
     url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=108"
+  - source: "AWS PrivateLink services (FIPS endpoint services)"
+    url: "https://docs.aws.amazon.com/vpc/latest/privatelink/aws-services-privatelink-support.html"
 narrative: >
-  AWS commercial regions use FIPS-validated modules only when FIPS
-  endpoints are called. No IAM or SCP condition key shows which
-  endpoint a request used, so no SCP can deny non-FIPS endpoints;
-  FIPS is enforced client-side. Our Terraform sets use_fips_endpoint
-  in every AWS provider block. Services with no FIPS endpoint are
-  pinned to standard endpoints: backup everywhere, and sso-admin and
-  identitystore in commercial. Standard-tier VPCs add sts-fips and
-  kms-fips PrivateLink endpoints. ssm, logs, ecr and secretsmanager
-  have no FIPS PrivateLink service, so clients in the no-egress
-  workload VPC reach them on standard endpoints. That is a
-  documented 3.13.11 gap on AWS commercial. ALB listeners use FIPS
-  TLS policies and KMS uses FIPS 140 validated HSMs. GovCloud (ITAR
-  tier) endpoints are FIPS by default, with backup the only pinned
-  exception. Test: terraform plan assertion on provider config plus
-  a listener TLS policy check (custom Config rule or manual
-  evidence; the conformance pack has no ALB TLS-policy rule), and
-  manual CMVP certificate numbers in the crypto inventory. Google
-  lists this native, AWS commercial is shared (SCOPE section 9, item
-  4).
+  FIPS-validated cryptography is required where it protects CUI, so
+  it is scoped to the CUI data path: S3, EBS, RDS and Backup data
+  encrypted with our KMS keys (FIPS 140 validated HSMs), CUI in
+  transit through the enclave's AWS endpoints, and ALB listeners on
+  FIPS TLS policies. Identity and control-plane services (IAM, IAM
+  Identity Center, identitystore, Organizations, the Backup API)
+  carry no CUI, so 3.13.11 does not apply to them. AWS commercial
+  regions use FIPS modules only when FIPS endpoints are called, and
+  no IAM or SCP condition key shows which endpoint a request used,
+  so FIPS is enforced client-side: every Terraform AWS provider sets
+  use_fips_endpoint, with standard endpoints pinned only where no
+  FIPS endpoint exists (Backup everywhere; sso-admin and
+  identitystore in commercial). Standard-tier VPCs add sts-fips and
+  kms-fips PrivateLink endpoints; S3 and DynamoDB reach FIPS through
+  the gateway endpoints. ECR and Secrets Manager have no FIPS
+  PrivateLink service but carry no CUI. CloudWatch Logs and SSM
+  Session Manager also lack one and can carry CUI if applications
+  log it or admins open sessions on CUI hosts; that is the remaining
+  3.13.11 gap on AWS commercial, handled by keeping CUI out of logs
+  and sessions or recording it (SCOPE section 9, item 15). GovCloud
+  (ITAR tier) endpoints are FIPS by default. Test: terraform plan
+  assertion on provider config, a listener TLS policy check (custom
+  Config rule or manual evidence; the conformance pack has no ALB
+  TLS-policy rule), and CMVP certificate numbers in the crypto
+  inventory.
 owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
 responsibility: shared
 status: implemented

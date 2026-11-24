@@ -27,7 +27,8 @@ provider "aws" {
 
 # FIPS endpoint gaps (botocore endpoints.json 1.44.10, checked 2026-11-23): with
 # use_fips_endpoint on, the SDK would call hostnames that don't exist. Pin these
-# services to their standard regional endpoints. Commercial: backup, sso-admin,
+# services to their standard regional endpoints. They are control-plane APIs that
+# carry no CUI, so 3.13.11 doesn't apply to them (SCOPE section 9, item 15). Commercial: backup, sso-admin,
 # identitystore. GovCloud: backup only (its other endpoints are FIPS by default).
 locals {
   nonfips_endpoints = {
