@@ -227,26 +227,26 @@ Monthly USD, list prices, no discounts, no tax, no labor. Modeled November 23, 2
 | Monthly | 10 users | 25 users | 100 users |
 |---|---|---|---|
 | **Standard tier** | | | |
-| AWS fixed (16 interface endpoint-AZs, 8 CMKs) | 81 | 81 | 81 |
+| AWS fixed (10 workload interface endpoint-AZs, 8 CMKs) | 81 | 81 | 81 |
 | AWS usage (Config, GuardDuty, Security Hub, log storage, flow logs, KMS requests, Lambda) | 83 | 116 | 246 |
-| Fathom (template idle + ALB + grc endpoints + logs) | 103 | 103 | 123 |
-| **AWS total** | **267** | **300** | **450** |
+| Fathom (template idle + ALB + grc endpoints + NAT + logs) | 136 | 136 | 156 |
+| **AWS total** | **300** | **333** | **483** |
 | Workspace Enterprise Plus + Assured Controls Plus (reseller list, $65/user, not a Google quote) | 650 | 1,625 | 6,500 |
-| **Standard total** | **~920** | **~1,925** | **~6,950** |
-| Fallback: Enterprise Plus + Assured Controls (reseller list, $55/user), total | ~820 | ~1,675 | ~5,950 |
+| **Standard total** | **~950** | **~1,960** | **~6,980** |
+| Fallback: Enterprise Plus + Assured Controls (reseller list, $55/user), total | ~850 | ~1,710 | ~5,980 |
 | **ITAR tier** | | | |
 | AWS fixed (GovCloud endpoints $0.0125/hr) | 99 | 99 | 99 |
 | AWS usage in GovCloud (GovCloud rates) | 101 | 142 | 304 |
 | Commercial remnant (mgmt, log archive, grc; 40% of standard usage lines + 3 CMKs) | 36 | 50 | 101 |
-| Fathom (commercial, same as standard) | 103 | 103 | 123 |
-| **AWS total** | **339** | **393** | **628** |
+| Fathom (commercial, same as standard) | 136 | 136 | 156 |
+| **AWS total** | **372** | **426** | **661** |
 | Workspace EP + ACP (same list) | 650 | 1,625 | 6,500 |
-| **ITAR total before CSE** | **~990** | **~2,020** | **~7,130** |
+| **ITAR total before CSE** | **~1,020** | **~2,050** | **~7,160** |
 | CSE key service, Flowcrypt published list (EUR) | 67 | 117 | 217 |
 | CSE key service, Thales, Virtru, Fortanix and others | quote | quote | quote |
 | CSE key service, self-built (our estimate, unsourced) | 100 to 300 infra plus engineering | same | same |
 
-Where the money goes: Workspace is 70% of the Standard total at 10 users and 93% at 100. AWS is mostly fixed: roughly $185 a month before the first user (endpoints, keys, Fathom, Config baseline). Per-user AWS cost is about $1.50 to $2 a month, almost all log and Config volume.
+Where the money goes: Workspace is about 68% of the Standard total at 10 users and 93% at 100. AWS is mostly fixed: roughly $220 a month before the first user (endpoints, keys, Fathom with NAT, Config baseline). Per-user AWS cost is about $1.50 to $2 a month, almost all log and Config volume.
 
 ### Workspace
 
@@ -274,7 +274,7 @@ Config item $0.0036 vs $0.003, conformance evaluation $0.0012 vs $0.001, GuardDu
 
 ### Open points
 
-- **NAT.** Fathom must reach Google APIs and the GovCloud endpoints over the internet, and neither has PrivateLink. The model keeps the template's public task IP (ingress from the ALB only), which conflicts with section 5 "no public task IPs". Moving tasks private needs one NAT: +$32.85 a month net of the dropped IPv4, plus $0.045 per GB.
+- **NAT.** Fathom must reach Google APIs and the GovCloud endpoints over the internet, and neither has PrivateLink. Section 5 says no public task IPs, so the table includes one NAT gateway in the grc account: +$32.85 a month net of the dropped IPv4, plus $0.045 per GB processed.
 - **Interface endpoints are the largest fixed line** ($117 a month in the table). Fewer endpoints or one AZ halves it; the workload account's real endpoint list is not designed yet.
 - **CSE vendor.** An ITAR key service must be operated under ITAR rules; check where each partner operates and who has access before counting Flowcrypt as viable. Flowcrypt also publishes a second, package-based scheme (free up to 100 users with limits), and the two pages disagree. Prices are EUR, not converted.
 - **Not sourced:** Google's own Enterprise Plus, Assured Controls, and Assured Controls Plus quotes; Thales, Virtru, Fortanix, Futurex, and Stormshield CSE pricing; real log and Config volumes.
