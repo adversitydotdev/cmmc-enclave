@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ir-07
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ir-07
+external_references:
+  - source: public
+    url: "https://www.acquisition.gov/dfars/252.204-7012-safeguarding-covered-defense-information-and-cyber-incident-reporting."
+narrative: >-
+  {{ company_name }} holds a DoD-approved medium assurance
+  certificate for the security lead and an alternate, checked
+  quarterly. On a cyber incident the team reviews affected systems,
+  reports at dibnet.dod.mil within 72 hours of discovery, submits
+  malware to DC3, preserves images and logs for 90 days, and gives
+  DoD access for forensics. The 72 hour clock is the DFARS
+  252.204-7012 requirement, not a vendor feature. Test: manual
+  evidence, certificate check records and tabletop drill of the
+  report.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

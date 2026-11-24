@@ -7,7 +7,7 @@ Draft, November 23, 2026. This is the plan, not the build. Every claim about a v
 Ship a baseline that a small defense contractor can deploy into their own AWS organization and Google Workspace tenant and end up with:
 
 1. A CUI enclave whose technical controls are set to the vendors' published CMMC Level 2 guidance.
-2. Fathom running in AWS, loaded with OGRL objects that describe that enclave: the system and boundary, components, one implementation per control with its responsibility (provider, shared, customer, subservice), tests that check the settings, and the gaps left for the company.
+2. Fathom running in AWS, loaded with OGRL objects that describe that enclave: the system and boundary, components, one implementation per control and component with its responsibility (provider, shared, subservice), tests that check the settings, and the gaps left for the company.
 3. A clear list of what the company still owns: policies, people, physical sites, endpoints.
 
 It is a baseline others build on. Each company's contracts, CUI categories, and existing tools will add to it.
@@ -165,7 +165,7 @@ Totals: GW guide 47 / 42 / 21 = 110. AWS CRM 21 / 79 / 10 = 110.
 
 ## 7. Shared responsibility matrix
 
-Every one of the 110 requirements gets one row in OGRL terms: an `implementation` per component (AWS, Google Workspace, Fathom, Endpoints, Organization) with `responsibility` set to `subservice` (AWS or Google carries it, with `subservice_ref` to the party and its FedRAMP authorization), `shared`, or `customer`, plus a narrative and a test where one exists. The rule when sources disagree is: take the more conservative answer, record both sources, and say why.
+Every one of the 110 requirements gets one row in OGRL terms: an `implementation` per component (AWS, Google Workspace, Fathom, Endpoints, Organization) with `responsibility` set to `subservice` (AWS or Google carries it, with `subservice_ref` to the party and its FedRAMP authorization), `shared` (we configure our part, the vendor carries the rest), or `provider` (the company does it: policies, people, sites, endpoints), plus a narrative and a test where one exists. OGRL writes `responsibility` from the bundle author's side, and the author is the company, so what CMMC matrices call "customer" is `provider` here; `customer` would mean the company's own downstream customers and evaluates as out of scope ([RFC 0001](https://ogrl.adversity.dev/rfcs/0001-object-model/)). The bundle lives in `ogrl/org/`: 232 implementations across 80 controls, with sources in each row's `external_references`. The rule when sources disagree is: take the more conservative answer, record both sources, and say why.
 
 Buckets we expect to land in the "still on you" column regardless of tier:
 
@@ -188,6 +188,14 @@ Buckets we expect to land in the "still on you" column regardless of tier:
 4. **FIPS (3.13.11).** Google marks it native. AWS commercial regions only use FIPS modules if you call the FIPS endpoints, so it's shared on AWS and the Terraform has to force it. GovCloud uses FIPS endpoints by default.
 5. **AWS's own pages disagree.** The AWS CMMC page still describes CMMC 2.0 as pending rulemaking "9-24 months from November 2021" and ties the Customer Package to Landing Zone Accelerator in GovCloud. The prescriptive guidance treats commercial US East/West as fine for Level 2. The prescriptive guidance URLs are currently returning 404 or 403.
 6. **Both vendor guides predate the Phase 2 suspension** and talk about C3PAO certification as the next step. Ours shouldn't.
+7. **Google's guide disagrees with itself on audit (3.3.1, 3.3.4).** The core Workspace section calls 3.3.1 shared ([p.40](https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=40)) and 3.3.4 Google ([p.89](https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=89)); the Chrome section calls both customer ([p.143](https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=143), [p.145](https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=145)). We mark both shared and alarm our own Workspace log collector.
+8. **Password reuse and lockout (3.5.8, 3.1.8).** The Config pack's `iam-password-policy` enforces 24 generations of reuse prevention ([pack](https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html)), but Workspace "cannot set the password history" ([Google](https://knowledge.workspace.google.com/admin/users/enforce-and-monitor-password-requirements-for-users)), and IAM has no lockout policy ([AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_account-policy.html)). Marked partial; expect POA&M items or a documented reliance on security-key-only sign-in.
+9. **Key management with CSE (3.13.10).** Google's guide calls it native, but with client-side encryption the keys move into the customer's boundary ([p.107](https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=107)). Subservice for the standard tier; the ITAR tier's key service is ours.
+10. **Collaboration devices (3.13.12).** Shared: admins can remotely join Meet hardware and no setting prevents it, so a policy prohibits it ([p.79](https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=79)).
+11. **Malicious code (3.14.2, 3.14.4, 3.14.5).** The Config pack maps GuardDuty to these ([pack](https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html)), but GuardDuty foundational is threat detection, not file scanning ([AWS](https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html)); Google calls them native ([p.112](https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=112)). AWS shared, file scanning on Endpoints.
+12. **Vulnerability scanning (3.11.2, 3.11.3).** Google says Google, nothing to configure ([p.103](https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=103)). The pack has customer checks for 3.11.2 only. Google is subservice for its systems; we scan our AWS workloads (Inspector, ECR scan on push) and endpoints.
+13. **Process families (AT, PS 3.9.1, RA 3.11.1, CA).** Google's summary puts them outside Workspace, but each control page ticks "Shared" with no features ([pp.117 to 127](https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=117)). We treat them as the company's alone.
+14. **Deprovisioning (3.9.2).** Google's SCIM sync offers suspend and delete delays of 24 hours up to 30 days ([AWS](https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html)). We set 24 hours; a disabled user can keep an Identity Center session for up to 1 more hour.
 
 ## 10. Out of scope
 
@@ -267,8 +275,9 @@ Enterprise Plus, Assured Controls, and Assured Controls Plus are quote based. On
 - Interface endpoints at $0.01 per endpoint-AZ-hour ($7.30 a month): workload account 5 endpoints in 2 AZs, grc account 6 endpoints in 1 AZ (in the Fathom line). Endpoint data $0.01 per GB, assumed negligible.
 - Fathom: [template](https://github.com/adversitydotdev/fathom/blob/main/deploy/aws/template.yaml) idle $26.26, plus ALB $23.73 and one LCU ($5.84), plus 6 grc endpoints ($43.80), plus $3 for logs and DNS. At 100 users the task goes to medium (+$8.51) and the database to `db.t4g.small` (+$11.68). Evidence S3 is 5 GB, then 20 GB.
 - ITAR commercial remnant: GovCloud holds management, log archive, security, and workload accounts. Commercial keeps a management, log archive, and grc account for Fathom, at 40% of the commercial usage lines. This split is our assumption.
+- Inspector (ECR image and Lambda scanning for 3.11.2): a few dollars a month at this scale (tens of images, a handful of functions), not broken out in the table; see [Inspector pricing](https://aws.amazon.com/inspector/pricing/).
 - Free: Organizations, IAM Identity Center, IAM Roles Anywhere with an external CA trust anchor. A Private CA trust anchor adds $50 a month (short-lived mode) or $400 (general purpose).
-- Not included: AWS Support plan, WAF, Inspector, Macie, backups, SES, data transfer out, Route 53, domain, a SIEM, EDR and MDM, the model provider for Fathom, and any labor or assessor fees.
+- Not included: AWS Support plan, WAF, Macie, backups, SES, data transfer out, Route 53, domain, a SIEM, EDR and MDM, the model provider for Fathom, and any labor or assessor fees.
 
 ### GovCloud deltas (us-gov-west-1 vs us-east-1)
 

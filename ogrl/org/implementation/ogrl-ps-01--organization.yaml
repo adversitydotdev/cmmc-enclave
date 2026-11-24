@@ -1,0 +1,20 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ps-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ps-01
+external_references:
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  {{ company_name }} keeps the list of people authorized to enter
+  every site where CUI is handled ({{ sites }}), including any home
+  office approved for CUI, issues keys or badges only after
+  approval, reviews the list quarterly, and removes access within 1
+  business day of termination. Test: manual evidence, access list
+  and quarterly review record.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

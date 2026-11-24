@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ac-05
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ac-05
+external_references:
+  - source: "Google Workspace: deploy 2-Step Verification"
+    url: "https://knowledge.workspace.google.com/admin/security/deploy-2-step-verification"
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  {{ company_name }} owns the procedure for issuing, registering,
+  and replacing security keys (at least two per user), identity
+  proofing for key resets, and the admin-issued backup code process
+  that security-key-only mode requires. Policy template follows in
+  issue #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

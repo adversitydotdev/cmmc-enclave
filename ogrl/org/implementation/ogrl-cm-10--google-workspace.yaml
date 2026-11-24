@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-cm-10
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-cm-10
+external_references:
+  - source: public
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=92"
+  - source: public
+    url: "https://www.google.com/about/datacenters/data-security/"
+narrative: >
+  Google performs and controls all maintenance of the Workspace
+  service. The Workspace guide lists MA.L2-3.7.1 and 3.7.2 as
+  Google's responsibility with no customer configuration. Test:
+  manual evidence, annual review of the Google Workspace FedRAMP
+  High authorization listing and the public Google data center
+  security page.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

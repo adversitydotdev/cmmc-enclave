@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.fathom.ogrl-gv-12
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.fathom
+control_ref: control--ogrl-gv-12
+external_references:
+  - source: "32 CFR part 170 (CMMC Program)"
+    url: "https://www.ecfr.gov/current/title-32/subtitle-A/chapter-I/subchapter-G/part-170"
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  Fathom is the POA&M. Each deficiency is a record with owner,
+  severity, remediation plan, and due date, scored with the DoD
+  Assessment Methodology and tracked against the 32 CFR 170.21 rules
+  and the 180 day closeout. Test: manual evidence, the POA&M export
+  showing owners and due dates.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

@@ -1,0 +1,17 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-lm-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-lm-02
+external_references:
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=83"
+narrative: >
+  Endpoint detection and response on workforce devices feeds the
+  same triage queue. Device management and EDR are customer-owned
+  and out of scope for this repository.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

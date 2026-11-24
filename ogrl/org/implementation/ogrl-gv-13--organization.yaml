@@ -1,0 +1,22 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-gv-13
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-gv-13
+external_references:
+  - source: "32 CFR part 170 (CMMC Program)"
+    url: "https://www.ecfr.gov/current/title-32/subtitle-A/chapter-I/subchapter-G/part-170"
+narrative: >-
+  The company completes the CMMC assessment its DoD contracts
+  require, enters the result in SPRS (level, status date, scope,
+  CAGE codes, score, POA&M), closes any POA&M within 180 days of
+  Conditional status, and the Affirming Official affirms in SPRS
+  after each assessment and annually. No Rev 2 requirement maps to
+  this control: it is a 32 CFR 170 program obligation, not an
+  800-171 requirement. Test: manual evidence, SPRS record and
+  affirmation dates. Policy template arrives with issue #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

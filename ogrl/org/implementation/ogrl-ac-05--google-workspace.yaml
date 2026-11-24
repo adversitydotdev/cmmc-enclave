@@ -1,0 +1,30 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-ac-05
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-ac-05
+external_references:
+  - source: "Google Workspace: deploy 2-Step Verification"
+    url: "https://knowledge.workspace.google.com/admin/security/deploy-2-step-verification"
+  - source: Google Workspace CMMC implementation guide 2025
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - source: Cloud Identity Policy API supported settings
+    url: "https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings"
+narrative: >-
+  Google Workspace is the identity provider for AWS and carries MFA
+  for every user. 2-Step Verification is enforced on the CUI and
+  non-CUI OUs with Methods set to Only security key (passkeys
+  count), so every sign-in, local or network, privileged or not,
+  needs a phishing-resistant factor. Identity Center MFA is not used
+  because it does not apply to external IdPs. Set by runbook step in
+  the Admin console (Security > Authentication > 2-step
+  verification); tested by a Cloud Identity Policy API read of the
+  2SV enforcement and allowed-methods settings, plus the Reports API
+  2SV-enrolled and enforced user attributes for 100% of active
+  users.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

@@ -1,0 +1,27 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-ac-19
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-ac-19
+external_references:
+  - source: Manage external sharing for your organization
+    url: "https://support.google.com/a/answer/60781"
+  - source: Turn a service on or off for Google Workspace users
+    url: "https://support.google.com/a/answer/182442"
+  - source: Cloud Identity Policy API supported settings
+    url: "https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings"
+  - source: "Google Workspace CMMC implementation guide (page 38)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=38"
+narrative: >-
+  For the CUI OU, public and anyone-with-the-link sharing is off or
+  limited to an allowlist, and publishing services such as Google
+  Sites are off for the CUI OU, with publishing rights held by a
+  short admin role roster. Tested by reading
+  drive_and_docs.external_sharing and
+  drive_and_docs.general_access_default through the Policy API;
+  per-OU service state is manual evidence.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

@@ -1,0 +1,26 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-14
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-14
+external_references:
+  - source: AWS IAM password policy
+    url: "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_account-policy.html"
+  - source: AWS Config CMMC 2.0 L2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+narrative: >-
+  Break-glass IAM user only: Terraform
+  aws_iam_account_password_policy sets minimum length 14, upper,
+  lower, number, and symbol classes, reuse prevention 24, and expiry
+  90 days, covering 3.5.7 and 3.5.8 for that account; temporary
+  passwords force reset at first sign-in (3.5.9); console sign-in is
+  TLS and AWS stores credentials (3.5.10). IAM has no account
+  lockout, so 3.1.8 for the break-glass user relies on FIDO key MFA
+  and the use alert. The change-of-4-characters rule is not an IAM
+  option. Tested by Config rule iam-password-policy.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: partial
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

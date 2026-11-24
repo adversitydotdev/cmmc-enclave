@@ -1,0 +1,19 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-bc-03
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-bc-03
+external_references:
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  Local backups of laptops and mobile devices that hold CUI must be
+  encrypted with FIPS-validated modules, stored only on approved
+  media, and protected like the endpoint itself. Endpoints are out
+  of scope for this repository. Test: manual evidence, endpoint
+  backup policy and sample device check.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

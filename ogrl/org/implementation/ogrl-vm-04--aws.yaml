@@ -1,0 +1,27 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-vm-04
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-vm-04
+external_references:
+  - source: AWS security bulletins
+    url: "https://aws.amazon.com/security/security-bulletins/"
+  - source: GuardDuty findings in EventBridge
+    url: "https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings_cloudwatch.html"
+  - source: AWS Config CMMC 2.0 Level 2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+narrative: >
+  GuardDuty and Security Hub findings route through EventBridge to
+  the security notification topic, so alerts reach the owners
+  without console polling. {{ company_name }} also follows AWS
+  security bulletins and AWS Health events for the accounts. Tested
+  by Config rules guardduty-enabled-centralized,
+  securityhub-enabled, and cloudwatch-alarm-action-check; the
+  bulletin subscription is manual evidence. AWS issues the
+  advisories; triage and action are {{ company_name }}'s.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

@@ -1,0 +1,18 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-hr-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-hr-02
+external_references:
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  Company-issued devices are recovered, wiped, and unenrolled at
+  termination or transfer. Endpoints are out of scope for the
+  baseline; the company owns this. Test: manual evidence, device
+  recovery record.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

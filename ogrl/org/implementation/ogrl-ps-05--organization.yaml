@@ -1,0 +1,20 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ps-05
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ps-05
+external_references:
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  For any {{ company_name }} equipment room housing in-scope gear,
+  keep temperature and humidity within manufacturer ranges with
+  alerting, a UPS for orderly shutdown, fire detection, and known
+  water shutoff. Cloud-only sites have no such room and mark this
+  not applicable in the SSP. Test: manual evidence, facility
+  walkthrough record.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

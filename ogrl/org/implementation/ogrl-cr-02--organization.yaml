@@ -1,0 +1,20 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-cr-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-cr-02
+external_references:
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+  - source: AWS KMS key rotation
+    url: "https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html"
+narrative: >
+  {{ company_name }} keeps a key inventory with owner and purpose
+  across AWS KMS, CSE keys, and endpoint recovery keys, and
+  documents key establishment and management procedures. A policy
+  template follows in #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

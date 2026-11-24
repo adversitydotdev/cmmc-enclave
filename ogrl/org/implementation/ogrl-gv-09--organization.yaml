@@ -1,0 +1,24 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-gv-09
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-gv-09
+external_references:
+  - source: >-
+      Google Workspace CMMC implementation guide (2025), page 117
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=117"
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  Acceptable use and rules-of-behavior policy covering CUI handling,
+  approved SaaS, and incident reporting. Each person acknowledges it
+  before Workspace and Identity Center accounts are provisioned, and
+  again annually. Google Workspace has no native feature for this
+  (guide: outside Workspace). Test: manual evidence, the policy,
+  review history, and acknowledgment dates compared with account
+  creation dates. Policy template arrives with issue #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

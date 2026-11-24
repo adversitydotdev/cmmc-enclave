@@ -1,0 +1,19 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-cm-13
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-cm-13
+external_references:
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  The IT lead approves each remote maintenance session by an outside
+  vendor, sessions are logged with person, target, purpose, and
+  times, and vendor access is disabled when work ends. Approved
+  remote support tools are listed in the SSP. Test: manual evidence,
+  session approval and log samples.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

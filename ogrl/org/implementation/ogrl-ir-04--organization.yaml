@@ -1,0 +1,19 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ir-04
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ir-04
+external_references:
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  Staff report suspected incidents to the security team within 24
+  hours through a published channel. Confirmed incidents go to DoD
+  via DIBNet within 72 hours (ogrl-ir-07), and to affected customers
+  and prime contractors by contract terms. Test: manual evidence,
+  report channel posting and incident tickets.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

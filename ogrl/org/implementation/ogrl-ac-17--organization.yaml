@@ -1,0 +1,22 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ac-17
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ac-17
+external_references:
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  {{ company_name }} offices and home networks are untrusted
+  wireless. Enclave access happens only through the authenticated,
+  TLS-protected Workspace and Identity Center path (see ogrl-ac-11).
+  Where an office network exists, the company inventories and
+  authorizes access points, requires WPA2 or WPA3 Enterprise with
+  AES encryption (3.1.17), and keeps guest wireless apart. The
+  scoping decision goes into the SSP. Policy template comes with
+  #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

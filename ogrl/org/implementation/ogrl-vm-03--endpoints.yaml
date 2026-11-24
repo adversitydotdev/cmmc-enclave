@@ -1,0 +1,20 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-vm-03
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-vm-03
+external_references:
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=112"
+narrative: >
+  Centrally managed anti-malware or EDR on every in-scope laptop and
+  server: signatures and engine auto-updated, real-time scan on
+  download, open, and execute, weekly full scans, block and
+  quarantine, alerts to the security on-call, and monthly
+  agent-versus-inventory coverage check. Customer-owned and out of
+  scope for this repository.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ir-04
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ir-04
+external_references:
+  - source: public
+    url: "https://docs.aws.amazon.com/health/latest/ug/what-is-aws-health.html"
+  - source: public
+    url: "https://aws.amazon.com/compliance/dfars/"
+narrative: >-
+  AWS notifies customers of events affecting their resources through
+  AWS Health and security bulletins, and AWS supports DFARS
+  252.204-7012 customers under its FedRAMP authorization.
+  Customer-side reporting is on the Organization row. Test: manual
+  evidence, AWS Health notification contacts set to the security
+  mailbox.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

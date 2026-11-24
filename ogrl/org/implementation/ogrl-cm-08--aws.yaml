@@ -1,0 +1,27 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-cm-08
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-cm-08
+external_references:
+  - url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - url: "https://github.com/awslabs/aws-config-rules/blob/master/aws-config-conformance-packs/Operational-Best-Practices-for-CMMC-2.0-Level-2.yaml"
+  - url: "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html"
+  - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  Least functionality on AWS is set in Terraform: default-deny
+  security groups, no inbound internet except the Fathom ALB, no
+  unrestricted route to an internet gateway for other subnets, VPC
+  endpoints for needed services, and SCPs denying unused services
+  and Regions. No general-purpose software installs on workload
+  hosts; images are built from code. Tests: Config rules
+  RESTRICTED_INCOMING_TRAFFIC, INCOMING_SSH_DISABLED,
+  VPC_DEFAULT_SECURITY_GROUP_CLOSED,
+  VPC_SG_OPEN_ONLY_TO_AUTHORIZED_PORTS,
+  NO_UNRESTRICTED_ROUTE_TO_IGW; manual quarterly review of the
+  allowed ports and image package lists.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

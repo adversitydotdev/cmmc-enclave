@@ -1,0 +1,19 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-17
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-17
+external_references:
+  - source: AWS shared responsibility model
+    url: "https://aws.amazon.com/compliance/shared-responsibility-model/"
+narrative: >-
+  The enclave has no customer-run wireless in AWS. Wireless access
+  at AWS facilities is operated and authorized by AWS and covered by
+  its FedRAMP authorization; the shared responsibility model places
+  physical and facility wireless on AWS.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

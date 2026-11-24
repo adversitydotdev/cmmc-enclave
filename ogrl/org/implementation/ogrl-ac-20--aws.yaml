@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-20
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-20
+external_references:
+  - source: AWS IAM Identity Center with Google Workspace
+    url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html"
+  - source: AWS Config CMMC 2.0 L2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+narrative: >-
+  Identity Center sign-in is SAML via Workspace with TLS 1.2+ and 1
+  hour sessions, so assertions cannot be replayed beyond their
+  validity. Break-glass console login uses FIDO2 plus password over
+  TLS; the AWS sign-in page masks the password field (3.5.11).
+  Tested by manual evidence (sign-in screenshot, IdP configuration
+  export); no Config rule exists for this.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

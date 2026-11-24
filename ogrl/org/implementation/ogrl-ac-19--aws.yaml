@@ -1,0 +1,22 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-19
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-19
+external_references:
+  - source: AWS Config CMMC 2.0 Level 2 operational best practices
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+narrative: >-
+  Nothing in the enclave account is public: S3 public access is
+  blocked at account level and per bucket, and the only
+  internet-facing endpoint is the authenticated Fathom ALB. Tested
+  by Config rules s3-account-level-public-access-blocks-periodic,
+  s3-bucket-public-read-prohibited,
+  s3-bucket-public-write-prohibited,
+  rds-snapshots-public-prohibited,
+  ebs-snapshot-public-restorable-check.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

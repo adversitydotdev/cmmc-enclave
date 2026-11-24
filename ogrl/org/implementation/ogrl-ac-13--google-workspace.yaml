@@ -1,0 +1,28 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-ac-13
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-ac-13
+external_references:
+  - source: AWS IAM Identity Center with Google Workspace
+    url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html"
+  - source: Google Workspace CMMC implementation guide 2025
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - source: Cloud Identity Policy API supported settings
+    url: "https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings"
+narrative: >-
+  Workspace is the central identity provider: each person has one
+  unique user in the directory, authenticates once via 2-Step
+  Verification, and reaches AWS through the Identity Center SAML app
+  (manual runbook step). No shared user accounts; users are managed
+  by Terraform (macadmins/googleworkspace) and SCIM users-only sync.
+  Tested by a Cloud Identity Policy API read of SSO profile
+  assignment and the Directory API user list. Workspace audit logs
+  (login events) land in the AWS log archive so actions trace to one
+  user.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

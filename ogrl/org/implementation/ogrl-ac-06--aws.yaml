@@ -1,0 +1,27 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-06
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-06
+external_references:
+  - source: AWS IAM Identity Center SCIM provisioning
+    url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/provision-automatically.html"
+  - source: AWS Config CMMC 2.0 L2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: AWS IAM password policy
+    url: "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_account-policy.html"
+narrative: >-
+  The only static AWS credential is the Identity Center SCIM access
+  token, valid one year by design and rotated before expiry; Fathom
+  tests token age and alerts inside the 90 day window (the library
+  default rotation_period of 90 days is shorter than the one-year
+  token life, see report). Break-glass has a console password and
+  FIDO keys but no access keys; Config rule access-keys-rotated (90
+  days) proves none exist. Any initial IAM password is created with
+  password reset required.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

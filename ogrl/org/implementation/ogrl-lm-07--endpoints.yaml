@@ -1,0 +1,18 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-lm-07
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-lm-07
+external_references:
+  - source: "NIST SP 800-171 Rev 2, 3.3.7"
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  Endpoints are out of scope for this repository. {{ company_name }}
+  must keep endpoint clocks on OS network time (default on macOS,
+  Windows, ChromeOS) so any endpoint audit records are comparable.
+  Evidence is manual: MDM or device settings export.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

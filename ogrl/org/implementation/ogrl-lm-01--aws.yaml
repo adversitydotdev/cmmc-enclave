@@ -1,0 +1,37 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-lm-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-lm-01
+external_references:
+  - source: AWS CloudTrail organization trails
+    url: "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/creating-trail-organization.html"
+  - source: AWS Config CMMC 2.0 Level 2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: CloudTrail userIdentity element
+    url: "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html"
+narrative: >
+  AWS generates the control-plane records (CloudTrail management
+  events; the userIdentity block names the IAM Identity Center
+  principal, which gives 3.3.2); {{ company_name }} chooses what is
+  logged and keeps it. Terraform sets an organization CloudTrail
+  (all accounts, all regions, management events plus S3 data events
+  on the log archive and enclave buckets) delivering to an Object
+  Lock bucket in the log archive account with a CMK, kept 365 days
+  (S3 lifecycle; CloudWatch log groups at 365 days). Also on: VPC
+  flow logs, ALB access logs, Config. Config rules from the CMMC 2.0
+  L2 conformance pack test it: cloudtrail-enabled,
+  multi-region-cloudtrail-enabled, cloudtrail-s3-dataevents-enabled,
+  cloud-trail-cloud-watch-logs-enabled,
+  cw-loggroup-retention-period-check (365), elb-logging-enabled,
+  s3-bucket-logging-enabled. Library test test
+  --ogrl-lm-01-audit-logging fits this row. Privileged function
+  execution (3.1.7) is captured by CloudTrail management events for
+  IAM, Organizations, and permission set changes. Review of event
+  types (3.3.3) is the Organization row.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

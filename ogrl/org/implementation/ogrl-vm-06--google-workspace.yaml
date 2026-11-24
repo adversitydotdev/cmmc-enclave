@@ -1,0 +1,30 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-vm-06
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-vm-06
+external_references:
+  - source: Context-Aware Access
+    url: "https://support.google.com/a/answer/9275380"
+  - source: Endpoint Verification
+    url: "https://support.google.com/a/answer/9007320"
+  - source: Manage devices with Google endpoint management
+    url: "https://support.google.com/a/answer/1734200"
+  - source: "Google Workspace CMMC implementation guide (page 33)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=33"
+  - source: "Google Workspace CMMC implementation guide (page 35)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=35"
+narrative: >-
+  Workspace gates the SAML app and CUI services with context-aware
+  access that requires an enrolled, compliant device (Endpoint
+  Verification, advanced mobile management for phones, with device
+  encryption and screen lock required). Enrolled devices are listed
+  in the Admin console. Context-aware access and mobile settings
+  have no Policy API read; evidence is access level screenshots and
+  the device inventory export. Google management only works if the
+  company enrolls its devices.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

@@ -1,0 +1,20 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-bc-03
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-bc-03
+external_references:
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  {{ company_name }} owns the backup procedure for CUI outside the
+  cloud accounts: Vault or Takeout exports, paper and
+  removable-media backups, and any on-premises copies. All such
+  copies are encrypted or kept in locked storage under the media
+  controls (ogrl-ps-09). Backup restores are exercised annually.
+  Test: manual evidence, backup inventory and restore test record.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

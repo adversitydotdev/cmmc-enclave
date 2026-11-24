@@ -1,0 +1,28 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-hr-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-hr-02
+external_references:
+  - source: >-
+      IAM Identity Center: Google Workspace and SCIM (deprovisioning
+      settings)
+    url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html"
+  - source: >-
+      Google Workspace CMMC implementation guide (2025), page 72
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=72"
+narrative: >-
+  Workspace is the IdP for IAM Identity Center over SAML, so a
+  suspended user gets no new sessions, and permission set sessions
+  last 1 hour at most. SCIM auto-provisioning is set to suspend
+  deprovisioned users within 24 hours (the shortest option; others
+  run to 30 days). The break-glass IAM user and its FIDO keys are
+  removed by hand if the leaver held them. Test: manual evidence,
+  Identity Center user status after offboarding and break-glass key
+  inventory.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

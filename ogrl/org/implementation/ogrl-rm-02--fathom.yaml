@@ -1,0 +1,17 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.fathom.ogrl-rm-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.fathom
+control_ref: control--ogrl-rm-02
+external_references:
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  Fathom holds the risk register (OGRL risk objects) and links risks
+  to findings and POA&M items. Fathom does not assess risk. Test:
+  manual evidence, register export.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

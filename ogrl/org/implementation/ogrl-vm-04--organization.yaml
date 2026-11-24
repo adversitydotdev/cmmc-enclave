@@ -1,0 +1,22 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-vm-04
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-vm-04
+external_references:
+  - source: CISA Known Exploited Vulnerabilities catalog
+    url: "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=81"
+narrative: >
+  Subscribe to vendor advisories for in-scope software and cloud
+  services, the CISA Known Exploited Vulnerabilities catalog, and
+  GitHub advisories. Triage each within 2 business days, send
+  actionable ones to service owners, and track actions to closure in
+  the issue tracker (patch timelines follow the flaw remediation
+  control). Policy template still to be written (issue 20).
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

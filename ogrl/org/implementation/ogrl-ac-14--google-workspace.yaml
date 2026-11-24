@@ -1,0 +1,30 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-ac-14
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-ac-14
+external_references:
+  - source: "Google Workspace: password requirements"
+    url: "https://knowledge.workspace.google.com/admin/users/enforce-and-monitor-password-requirements-for-users"
+  - source: Google Workspace CMMC implementation guide 2025
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - source: Cloud Identity Policy API supported settings
+    url: "https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings"
+narrative: >-
+  Users: password management enforces minimum length 12, Enforce
+  strong password (Google screens for common and compromised
+  values), and enforcement at next sign-in; passwords are sent over
+  TLS. Gaps that Google does not expose: password history for reuse
+  (3.5.8, 24 generations cannot be set; only Allow reuse on/off, set
+  off), a changed-characters rule (3.5.7(c)), and an admin-set
+  lockout count (3.1.8; Google applies its own login challenges).
+  Security keys are the real second factor, which limits the risk of
+  the gaps. Tested by Policy API read of password length and
+  strength settings; the gaps stay open until compensating evidence
+  is accepted or a POA&M item is raised.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: partial
+subservice_ref: party--dev.adversity.cmmc-enclave.google

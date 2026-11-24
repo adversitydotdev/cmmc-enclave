@@ -1,0 +1,26 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-cm-05
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-cm-05
+external_references:
+  - url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/permissionsetsconcept.html"
+  - url: "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_oidc.html"
+  - url: "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html"
+  - url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  Only the deployment pipeline role (GitHub OIDC) and a small named
+  set of platform engineers can change production. Humans use IAM
+  Identity Center permission sets with 1 hour sessions, read-only by
+  default with elevation. SCPs block changes to logging, guardrails,
+  and Config. Break-glass is an IAM user with FIDO keys, alerted on
+  use. Tests: Config rules
+  IAM_POLICY_NO_STATEMENTS_WITH_ADMIN_ACCESS and
+  IAM_USER_NO_POLICIES_CHECK; manual quarterly review of permission
+  set assignments and the apply role trust policy.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

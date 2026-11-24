@@ -1,0 +1,25 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-cm-11
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-cm-11
+external_references:
+  - source: public
+    url: "https://aws.amazon.com/compliance/data-center/controls/"
+  - source: public
+    url: "https://aws.amazon.com/compliance/fedramp/"
+narrative: >
+  AWS sanitizes or destroys storage media before equipment leaves
+  its data centers for repair or return, using NIST SP 800-88
+  techniques per its public data center controls. Customer data is
+  also protected by KMS CMK encryption in Terraform, so media
+  removed by AWS holds only ciphertext. Test: manual evidence,
+  annual review of the AWS FedRAMP authorization listing (Moderate
+  for US East/West, High for GovCloud) and the public AWS data
+  center controls page.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

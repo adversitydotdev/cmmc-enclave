@@ -1,0 +1,29 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-lm-07
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-lm-07
+external_references:
+  - source: Amazon Time Sync Service on EC2
+    url: "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configure-ec2-ntp.html"
+  - source: CloudTrail userIdentity and eventTime fields
+    url: "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html"
+narrative: >
+  AWS services stamp CloudTrail, Config, and flow log records in UTC
+  from their own clocks; AWS keeps them synchronized to its time
+  infrastructure (Amazon Time Sync Service, UTC-traceable). Enclave
+  compute uses the link-local Amazon Time Sync address through
+  chrony, the AMI default, and our Terraform must not point
+  instances at other NTP servers. Test: manual evidence (chronyc
+  tracking on a sample instance; CloudTrail eventTime in ISO 8601
+  UTC). The conformance pack has no Config rule for this
+  requirement. The SSP records reliance on the AWS time service.
+  Public docs describe the EC2 time service only; how AWS
+  disciplines the clocks of managed service log writers is not
+  described in the sources we use.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

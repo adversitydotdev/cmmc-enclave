@@ -1,0 +1,20 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ps-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ps-02
+external_references:
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  {{ company_name }} enforces entry control at each office or
+  equipment room with badge readers or keyed locks, keeps entry logs
+  at least 1 year, secures unissued keys, inventories access devices
+  annually, and rekeys on loss. Home offices rely on a locked room
+  or container (ogrl-ps-12). Test: manual evidence, entry log sample
+  and device inventory.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

@@ -1,0 +1,28 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-lm-04
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-lm-04
+external_references:
+  - source: AWS CloudTrail docs
+    url: "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+  - source: AWS Security Hub docs
+    url: "https://docs.aws.amazon.com/securityhub/latest/userguide/what-is-securityhub.html"
+  - source: AWS Config CMMC 2.0 Level 2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+narrative: >
+  AWS provides the review data: the org CloudTrail in the Object
+  Lock log archive, Security Hub and GuardDuty findings, and Config
+  history for changes to security tooling. {{ company_name }} still
+  has to define the saved weekly review queries (for example Athena
+  or CloudWatch Logs Insights over privileged API calls, break-glass
+  use, and disabled security services). Planned until those queries
+  exist. Test: manual evidence, the weekly review ticket with query
+  output attached. Covers the AWS side of 3.3.5 (correlate audit
+  review) and 3.14.7.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: planned
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

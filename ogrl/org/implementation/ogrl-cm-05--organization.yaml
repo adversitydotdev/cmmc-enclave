@@ -1,0 +1,18 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-cm-05
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-cm-05
+external_references:
+  - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  {{ company_name }} owns the rules for who may change production,
+  GitHub branch protection and environment reviewers, the emergency
+  change path, and the quarterly access review. Test: manual review
+  of repository settings and the review record. Policy template
+  follows in issue #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

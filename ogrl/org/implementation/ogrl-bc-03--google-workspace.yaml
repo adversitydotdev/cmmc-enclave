@@ -1,0 +1,24 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-bc-03
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-bc-03
+external_references:
+  - source: public
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=99"
+  - source: public
+    url: "https://www.google.com/about/datacenters/data-security/"
+narrative: >-
+  Google stores the redundant copies of Workspace data it keeps for
+  durability, encrypted at rest by default, and the Workspace guide
+  marks MP.L2-3.8.9 as Google's responsibility. Workspace has no
+  customer-run backup of mailboxes or Drive; any customer export of
+  CUI (Vault export, Takeout) is a backup copy covered by the
+  Organization row. Test: manual evidence, annual review of the
+  Google guide entry and FedRAMP High listing.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

@@ -1,0 +1,22 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.fathom.ogrl-ac-05
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.fathom
+control_ref: control--ogrl-ac-05
+external_references:
+  - source: "Google Workspace: deploy 2-Step Verification"
+    url: "https://knowledge.workspace.google.com/admin/security/deploy-2-step-verification"
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  Fathom is a Security Protection Asset in the grc account.
+  Operators sign in to Fathom through Workspace SSO (planned, M4),
+  so the Workspace security-key requirement applies. Fathom keeps no
+  local password accounts, so there is no separate factor to
+  enforce. Tested by Fathom checking its auth configuration against
+  the same Workspace 2SV setting.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

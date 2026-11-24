@@ -1,0 +1,33 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-12
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-12
+external_references:
+  - source: AWS shared responsibility model
+    url: "https://aws.amazon.com/compliance/shared-responsibility-model/"
+  - source: VPC endpoints
+    url: "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints.html"
+  - source: AWS Organizations service control policies
+    url: "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html"
+  - source: AWS Config CMMC 2.0 Level 2 operational best practices
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+narrative: >-
+  The enclave VPC has no internet gateway route to workload subnets
+  except the Fathom ALB (WAF attached), public IPs are off by
+  default, security groups default closed, S3 public access is
+  blocked at account level, and VPC endpoints keep AWS API traffic
+  private. SCPs deny actions that would open these paths. Isolation
+  between AWS tenants and clearing of released memory and storage is
+  AWS-operated (3.13.4). Tested by Config rules
+  no-unrestricted-route-to-igw,
+  internet-gateway-authorized-vpc-only,
+  vpc-default-security-group-closed, restricted-ssh,
+  restricted-common-ports, subnet-auto-assign-public-ip-disabled,
+  ec2-instance-no-public-ip,
+  s3-account-level-public-access-blocks-periodic, alb-waf-enabled.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

@@ -1,0 +1,27 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-cr-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-cr-01
+external_references:
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=76"
+  - source: Gmail secure TLS connection
+    url: "https://support.google.com/a/answer/2520500"
+  - source: Workspace client-side encryption
+    url: "https://support.google.com/a/answer/10743588"
+narrative: >
+  Workspace encrypts data in transit between clients and Google and
+  at rest by default. Our share: Gmail secure transport (TLS)
+  compliance rules and MTA-STS for CUI mail, and optionally CSE for
+  the CUI OU (required for the ITAR tier). Both are runbook steps
+  tested by Policy API reads of the Gmail TLS compliance and MTA-STS
+  settings. Session authenticity (3.13.15) rests on Google sign-in
+  with DKIM on the domain. Google guide rates 3.13.8 shared and
+  3.13.16 native.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

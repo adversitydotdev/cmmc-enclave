@@ -1,0 +1,22 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-cm-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-cm-02
+external_references:
+  - url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - url: "https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings"
+  - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  The baseline is the runbook of Workspace security settings aligned
+  to Google's CMMC guide (Enterprise Plus with Assured Controls
+  Plus), plus Terraform-managed pieces. Settings are applied in the
+  Admin console, so the runbook is the baseline of record. Test:
+  Cloud Identity Policy API read of each baseline setting compared
+  with the runbook value. Policy API coverage per setting is not yet
+  confirmed.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-cm-05
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-cm-05
+external_references:
+  - url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - url: "https://support.google.com/a/answer/2405986"
+  - url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  Super admin and delegated admin roles limit who can change
+  Workspace security settings. Super admins are few, use security
+  keys, and are listed in the runbook. Terraform-managed settings
+  change only through the pipeline. Test: manual quarterly export of
+  admin role assignments from the Admin console; Admin audit log
+  review.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

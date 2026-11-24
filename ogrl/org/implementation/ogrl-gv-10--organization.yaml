@@ -1,0 +1,24 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-gv-10
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-gv-10
+external_references:
+  - source: >-
+      Google Workspace CMMC implementation guide (2025), page 125
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=125"
+  - source: NIST SP 800-171A
+    url: "https://csrc.nist.gov/pubs/sp/800/171/a/final"
+narrative: >-
+  Annual assessment of the security controls (CMMC Level 2
+  self-assessment or C3PAO assessment, using 800-171A procedures) by
+  a party independent of the control operators, with a written
+  approved plan and a report to leadership. Findings go to
+  deficiency tracking (OGRL-GV-12). Test: manual evidence, the plan,
+  the report, and the delivery record. Policy template arrives with
+  issue #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

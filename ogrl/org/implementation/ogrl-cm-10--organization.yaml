@@ -1,0 +1,20 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-cm-10
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-cm-10
+external_references:
+  - source: public
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >-
+  {{ company_name }} keeps a maintenance procedure, an approved
+  maintenance tool register, and maintenance records for systems it
+  owns outside the cloud (offices, network gear, printers).
+  Approvals come from the IT lead. Records are reviewed quarterly
+  and the tool register annually. Test: manual evidence, maintenance
+  log and tool register review.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

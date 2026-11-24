@@ -1,0 +1,28 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-cr-02
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-cr-02
+external_references:
+  - source: AWS Config CMMC 2.0 Level 2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: AWS KMS key rotation
+    url: "https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html"
+  - source: AWS FIPS 140-3 compliance
+    url: "https://aws.amazon.com/compliance/fips/"
+narrative: >
+  AWS KMS generates and stores keys in FIPS 140 validated HSMs. Our
+  Terraform creates customer managed keys per data class with
+  automatic annual rotation, a 30 day deletion window, key policies
+  that separate key administrators from key users, and CloudTrail
+  logging of every KMS call to the log archive. Tested by Config
+  rules cmk-backing-key-rotation-enabled,
+  kms-cmk-not-scheduled-for-deletion,
+  iam-customer-policy-blocked-kms-actions,
+  iam-inline-policy-blocked-kms-actions.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

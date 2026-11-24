@@ -1,0 +1,24 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ps-05
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ps-05
+external_references:
+  - source: public
+    url: "https://aws.amazon.com/compliance/data-center/controls/"
+  - source: public
+    url: "https://aws.amazon.com/compliance/data-center/data-centers/"
+  - source: public
+    url: "https://aws.amazon.com/compliance/fedramp/"
+narrative: >
+  AWS provides power backup, fire detection and suppression, and
+  climate control in its data centers. Test: manual evidence, annual
+  review of the AWS FedRAMP authorization listing (Moderate for US
+  East/West, High for GovCloud) and the public AWS data center
+  controls page.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

@@ -1,0 +1,31 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-lm-08
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-lm-08
+external_references:
+  - source: >-
+      Google Workspace CMMC L2 guide, AU.L2-3.3.5 (p.42) and 3.3.6
+      (p.43), Shared; Security investigation tool
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=42"
+  - source: Security investigation tool data sources
+    url: "https://support.google.com/a/answer/11482175"
+  - source: Alert center
+    url: "https://support.google.com/a/answer/9104586"
+narrative: >
+  Workspace provides the security investigation tool (search and
+  filter across audit data sources, saved as reports), reporting and
+  activity rules, and the alert center for on-demand reduction and
+  reporting (3.3.6) and rule based response (3.3.5). Baseline:
+  investigation tool roles limited to the security team; rules for
+  suspicious sign in, admin setting change, and external sharing
+  alert the security on-call team. Customer configured per the
+  guide, not Google native. Test: manual evidence (exported rule
+  list, a saved investigation query run during the annual capability
+  test). Cross-source correlation with AWS is in the AWS row.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

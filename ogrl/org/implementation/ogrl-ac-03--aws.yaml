@@ -1,0 +1,30 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-03
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-03
+external_references:
+  - source: IAM Identity Center permission sets
+    url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/permissionsetsconcept.html"
+  - source: AWS Organizations service control policies
+    url: "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html"
+  - source: IAM Access Analyzer
+    url: "https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html"
+  - source: AWS Config CMMC 2.0 Level 2 operational best practices
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+narrative: >-
+  IAM Identity Center permission sets define the roles: admin,
+  auditor (read only), and Fathom operator, each with a 1 hour
+  session; no standing IAM users except sealed break-glass. SCPs set
+  the maximum permissions for every account. IAM Access Analyzer
+  flags unintended external and unused access. Tested by the library
+  test test--ogrl-ac-03-least-privilege and Config rules
+  iam-policy-no-statements-with-admin-access,
+  iam-policy-no-statements-with-full-access,
+  iam-user-no-policies-check, iam-no-inline-policy-check,
+  iam-root-access-key-check.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

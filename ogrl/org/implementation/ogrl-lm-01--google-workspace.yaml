@@ -1,0 +1,34 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-lm-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-lm-01
+external_references:
+  - source: >-
+      Google Workspace CMMC L2 guide, AU.L2-3.3.1 (Shared; Reports
+      API, p.40), 3.3.3 (p.41), 3.3.2 (Google, p.88)
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=40"
+  - source: Reports API
+    url: "https://developers.google.com/admin-sdk/reports/v1/get-start/getting-started"
+  - source: Security investigation tool data sources
+    url: "https://support.google.com/a/answer/11482175"
+narrative: >
+  Google generates and structures Workspace audit records (Admin,
+  Login, Drive, Token, and the other Reports API applications, each
+  carrying the actor email) and fixes their content, so 3.3.2 is
+  Google's. {{ company_name }} specifies the event types and
+  retention: the Reports API collector (issue #30) pulls every
+  activity application into the log archive account on a 5 minute
+  schedule, where it is held 365 days under Object Lock, longer than
+  Workspace's own per-event retention. Admin console Audit and
+  investigation covers ad hoc review (3.3.3). Test: the collector's
+  last-success timestamp and a sample archived record, plus a Cloud
+  Identity Policy API read of audit-related settings; manual
+  evidence until the collector exists. Chrome and device log events
+  are outside the CUI data path and not collected.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

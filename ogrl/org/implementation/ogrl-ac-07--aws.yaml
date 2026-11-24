@@ -1,0 +1,29 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-07
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-07
+external_references:
+  - source: IAM Identity Center permission sets
+    url: "https://docs.aws.amazon.com/singlesignon/latest/userguide/permissionsetsconcept.html"
+  - source: AWS Organizations service control policies
+    url: "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html"
+  - source: AWS Config CMMC 2.0 Level 2 operational best practices
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+narrative: >-
+  Privileged work uses a dedicated admin permission set, separate
+  from the auditor and daily roles, with 1 hour sessions, so
+  privileged users do not use admin rights for routine work (3.1.6).
+  Root is sealed with hardware MFA and no access keys; break-glass
+  is an IAM user with two FIDO keys and no access keys, with an
+  EventBridge alert on use. CloudTrail org trail records every
+  privileged API call (3.1.7), and attempts blocked by SCPs appear
+  as denied calls. Tested by Config rules
+  root-account-hardware-mfa-enabled, iam-root-access-key-check,
+  cloudtrail-enabled, multi-region-cloudtrail-enabled,
+  iam-policy-no-statements-with-admin-access.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented

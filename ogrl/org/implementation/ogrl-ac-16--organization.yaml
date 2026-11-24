@@ -1,0 +1,23 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-ac-16
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-ac-16
+external_references:
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+  - source: "Google Workspace CMMC implementation guide (page 115)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=115"
+narrative: >-
+  {{ company_name }} records which privacy and security notice
+  applies to each CUI category and contract, has counsel approve one
+  banner text, and reviews it annually. Neither Workspace sign-in
+  nor AWS Identity Center shows a customer system use notice before
+  access, so the notice is shown on managed endpoints at login and
+  the gap is tracked for a POA&M until a tested path exists. Policy
+  template comes with #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: provider
+status: planned

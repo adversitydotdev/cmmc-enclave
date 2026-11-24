@@ -1,0 +1,25 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-vm-07
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-vm-07
+external_references:
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=79"
+  - source: Google Meet security and privacy
+    url: "https://support.google.com/meet/answer/9852160"
+narrative: >
+  Google guide rates this shared. Meet hardware, if used, shows
+  in-use indicators, but an admin can remotely join a device to a
+  meeting from the Admin console and no setting disables that, so
+  the customer must prohibit it by policy and limit Meet hardware
+  admin roles. Our runbook sets the Meet camera and microphone
+  defaults and turns Meet hardware off unless needed. Test: manual
+  evidence (admin role list, Meet settings screenshots) and a Policy
+  API read of Meet settings where supported.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

@@ -1,0 +1,27 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.google-workspace.ogrl-ac-20
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.google-workspace
+control_ref: control--ogrl-ac-20
+external_references:
+  - source: "Google Workspace: deploy 2-Step Verification"
+    url: "https://knowledge.workspace.google.com/admin/security/deploy-2-step-verification"
+  - source: Google Workspace CMMC implementation guide 2025
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf"
+  - source: Cloud Identity Policy API supported settings
+    url: "https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings"
+narrative: >-
+  Replay resistance (3.5.4): sign-in uses security keys
+  (FIDO2/WebAuthn, challenge-response) and TLS-protected SAML with
+  signed, time-bound assertions to AWS. Obscured feedback (3.5.11):
+  Google and AWS sign-in forms mask passwords. Legacy protocols that
+  send reusable secrets are not used; the 2SV Only security key
+  setting means password-only IMAP/POP style access cannot
+  authenticate. Tested by Policy API read of the 2SV methods
+  setting; masking is manual screenshot evidence.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: subservice
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.google

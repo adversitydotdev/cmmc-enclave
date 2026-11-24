@@ -1,0 +1,30 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-21
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-21
+external_references:
+  - source: AWS Config CMMC 2.0 Level 2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: AWS Organizations management account best practices
+    url: "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_best-practices_mgmt-acct.html"
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  Management functions sit in separate AWS accounts and roles from
+  user functions: the management account holds only Organizations
+  and Identity Center, workloads run in the enclave and grc
+  accounts, and administration is limited to the admin and Fathom
+  operator permission sets via SAML (1 hour sessions). End users
+  never get AWS console access to the CUI data plane. The
+  break-glass IAM user is the only IAM user. Tested by Config rules
+  iam-user-no-policies-check,
+  iam-policy-no-statements-with-admin-access,
+  iam-no-inline-policy-check, account-part-of-organizations, plus an
+  Identity Center permission set export.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws
