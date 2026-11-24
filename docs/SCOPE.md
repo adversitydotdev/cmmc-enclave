@@ -111,10 +111,10 @@ Facts behind the table:
 
 ### How much of Workspace can Terraform do
 
-Less than we'd like. HashiCorp archived its `googleworkspace` provider on June 30, 2025 ([repo](https://github.com/hashicorp/terraform-provider-googleworkspace)). Two community forks are maintained; we use `macadmins/googleworkspace` (D5), pinned to an exact version. Both cover users, groups, OUs, roles, role assignments, schemas, and Chrome policy, not security settings. Neither can create a SAML app or turn services on or off per OU. The Cloud Identity Policy API reads most Admin console settings but only writes DLP rules ([supported settings](https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings)). So the plan is:
+Less than we'd like. HashiCorp archived its `googleworkspace` provider on June 30, 2025 ([repo](https://github.com/hashicorp/terraform-provider-googleworkspace)). Two community forks are maintained; we use `macadmins/googleworkspace` (D5), pinned to an exact version. Both cover users, groups, OUs, roles, role assignments, schemas, and Chrome policy, not security settings. Neither can create a SAML app or turn services on or off per OU. The Cloud Identity Policy API reads most Admin console settings, including per-OU service status, and writes a growing subset: DLP rules and detectors, Drive general access default, Meet settings, multi-party approval, passkeys restriction ([supported settings](https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings)). Most `security.*` settings stay read-only. The per-setting breakdown is in `workspace/settings.yaml` (#27): 56 settings, 10 Terraform, 4 Policy API write, 42 manual. So the plan is:
 
 1. Terraform (fork provider) for OUs, groups, and admin roles.
-2. Policy API for DLP rules where it can write.
+2. Policy API writes where supported (DLP, Drive general access, multi-party approval, passkeys).
 3. A short, ordered manual runbook for everything else (including the AWS SAML app and per-OU service access), with each step paired to a Policy API read so Fathom can test that it stuck.
 
 That last part matters: even when we can't set it, we can check it, and the check is what the assessor cares about.
@@ -196,6 +196,8 @@ Buckets we expect to land in the "still on you" column regardless of tier:
 12. **Vulnerability scanning (3.11.2, 3.11.3).** Google says Google, nothing to configure ([p.103](https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=103)). The pack has customer checks for 3.11.2 only. Google is subservice for its systems; we scan our AWS workloads (Inspector, ECR scan on push) and endpoints.
 13. **Process families (AT, PS 3.9.1, RA 3.11.1, CA).** Google's summary puts them outside Workspace, but each control page ticks "Shared" with no features ([pp.117 to 127](https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=117)). We treat them as the company's alone.
 14. **Deprovisioning (3.9.2).** Google's SCIM sync offers suspend and delete delays of 24 hours up to 30 days ([AWS](https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html)). We set 24 hours; a disabled user can keep an Identity Center session for up to 1 more hour.
+15. **FIPS endpoints can't be enforced by policy, and not every service has one (3.13.11).** No IAM or SCP condition key reveals which endpoint a request used, so FIPS is a client setting (`use_fips_endpoint` in every provider). In commercial regions, AWS Backup, IAM Identity Center's admin API, and identitystore have no FIPS endpoint (botocore `endpoints.json` 1.44.10); GovCloud lacks one only for Backup. Of the workload VPC's PrivateLink services, only STS, KMS, S3 and DynamoDB offer FIPS variants ([PrivateLink services](https://docs.aws.amazon.com/vpc/latest/privatelink/aws-services-privatelink-support.html)); SSM, CloudWatch Logs, ECR and Secrets Manager calls from the no-egress workload VPC use standard endpoints. We record these as shared with a documented gap on AWS commercial; the ITAR tier (GovCloud) closes most of it.
+16. **Single-region keys and backups.** KMS keys, EBS default encryption, and AWS Backup are configured in the home region only. Using another allowed region for CUI needs keys and backup plans there too.
 
 ## 10. Out of scope
 
