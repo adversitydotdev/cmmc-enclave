@@ -1,0 +1,25 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-sd-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-sd-01
+external_references:
+  - source: AWS Config CMMC 2.0 Level 2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  The enclave Terraform applies security engineering principles:
+  least privilege through Identity Center permission sets and SCPs,
+  defense in depth (account separation, VPC with a single public
+  entry, KMS, logging), secure defaults (encryption by default, FIPS
+  endpoints, public access blocks), and reviewed changes by pull
+  request. Tested by Config rules account-part-of-organizations,
+  s3-account-level-public-access-blocks-periodic, vpc-default-
+  security-group-closed, and the CMMC 2.0 L2 conformance pack
+  overall.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: implemented

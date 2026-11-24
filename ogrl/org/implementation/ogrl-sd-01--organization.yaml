@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.organization.ogrl-sd-01
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.organization
+control_ref: control--ogrl-sd-01
+external_references:
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=128"
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  {{ company_name }} documents the secure development lifecycle and
+  architecture principles (threat modeling, least privilege, defense
+  in depth), reviewed annually and approved by the SSP signer. The
+  Google guide marks 3.13.2 customer; no vendor carries it. A policy
+  template follows in #20.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

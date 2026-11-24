@@ -1,0 +1,31 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-cr-06
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-cr-06
+external_references:
+  - source: AWS FIPS 140-3 compliance
+    url: "https://aws.amazon.com/compliance/fips/"
+  - source: "Terraform AWS provider (use_fips_endpoint)"
+    url: "https://registry.terraform.io/providers/hashicorp/aws/latest/docs"
+  - source: AWS ALB security policies
+    url: "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html"
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=108"
+narrative: >
+  AWS commercial regions use FIPS-validated modules only when FIPS
+  endpoints are called, so our Terraform sets use_fips_endpoint in
+  every AWS provider block and the SCP denies non-FIPS endpoints
+  where condition keys allow. ALB listeners use FIPS TLS policies
+  and KMS uses FIPS 140 validated HSMs. GovCloud (ITAR tier) uses
+  FIPS endpoints by default. Test: terraform plan assertion on
+  provider config plus the ALB policy Config rule elb-predefined-
+  security-policy-ssl-check, and manual CMVP certificate numbers in
+  the crypto inventory. Google lists this native, AWS commercial is
+  shared (SCOPE section 9, item 4).
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

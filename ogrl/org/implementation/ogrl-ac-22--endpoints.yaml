@@ -1,0 +1,26 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-ac-22
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-ac-22
+external_references:
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=106"
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  Endpoints are outside this repo; the customer brings its own
+  managed devices. Split tunneling is an endpoint and VPN control.
+  The enclave has no VPN: CUI is reached only over TLS through
+  Workspace and AWS (Identity Center). The customer must document in
+  the SSP how remote devices are prevented from bridging networks,
+  or run a full-tunnel or ZTNA client that the MDM profile locks.
+  Sources disagree: Google lists it native, AWS lists it customer
+  only (SCOPE section 9, item 3); we take customer. Evidence: client
+  configuration profile and a test showing local networks are
+  unreachable while connected.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

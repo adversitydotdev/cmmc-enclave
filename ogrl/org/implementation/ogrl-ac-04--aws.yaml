@@ -1,0 +1,32 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.aws.ogrl-ac-04
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.aws
+control_ref: control--ogrl-ac-04
+external_references:
+  - source: AWS Config CMMC 2.0 Level 2 conformance pack
+    url: "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html"
+  - source: AWS VPC security best practices
+    url: "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-best-practices.html"
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+narrative: >
+  AWS secures its own network and hypervisor boundary. Our Terraform
+  builds the enclave boundary: a VPC with no inbound internet path
+  except the Fathom ALB in the grc account, public subnets holding
+  only that ALB (3.13.5), private subnets for everything else,
+  default security groups closed, security groups and NACLs default-
+  deny with explicit allows (3.13.6), VPC endpoints for AWS APIs,
+  and flow logs to the log archive. GuardDuty and Security Hub
+  monitor the boundary (3.13.1). Tested by Config rules vpc-default-
+  security-group-closed, vpc-sg-open-only-to-authorized-ports,
+  restricted-common-ports, restricted-ssh, no-unrestricted-route-to-
+  igw, subnet-auto-assign-public-ip-disabled, internet-gateway-
+  authorized-vpc-only, guardduty-enabled-centralized, securityhub-
+  enabled.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: shared
+status: implemented
+subservice_ref: party--dev.adversity.cmmc-enclave.aws

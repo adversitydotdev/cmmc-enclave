@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-vm-07
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-vm-07
+external_references:
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+  - source: "Google Workspace CMMC implementation guide (2025)"
+    url: "https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf#page=79"
+narrative: >
+  Endpoints are outside this repo; the customer brings its own
+  managed devices. MDM privacy profiles allow only approved
+  conferencing apps to use camera and microphone, remote-support
+  tools cannot activate them, and OS or hardware indicators stay on.
+  Evidence is the MDM compliance report, verified quarterly.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned

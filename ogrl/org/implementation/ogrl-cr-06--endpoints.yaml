@@ -1,0 +1,21 @@
+type: implementation
+id: implementation--dev.adversity.cmmc-enclave.endpoints.ogrl-cr-06
+spec_version: "0.2.0"
+created: "2026-11-23T00:00:00Z"
+modified: "2026-11-23T00:00:00Z"
+component_ref: component--dev.adversity.cmmc-enclave.endpoints
+control_ref: control--ogrl-cr-06
+external_references:
+  - source: NIST SP 800-171 Rev 2
+    url: "https://csrc.nist.gov/pubs/sp/800/171/r2/upd1/final"
+  - source: AWS FIPS 140-3 compliance
+    url: "https://aws.amazon.com/compliance/fips/"
+narrative: >
+  Endpoints are outside this repo; the customer brings its own
+  managed devices. Device encryption and any VPN or TLS client must
+  use FIPS-validated modules in approved mode (for example Windows
+  FIPS policy, Apple corecrypto). Evidence is the MDM FIPS setting
+  and CMVP certificate numbers.
+owner_ref: party--dev.adversity.cmmc-enclave.ssp-signer
+responsibility: customer
+status: planned
