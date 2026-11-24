@@ -1,0 +1,12 @@
+# Logging module inputs (stacks/baseline/logging.tf)
+organization_root_id = "r-xxxx"
+
+kms_key_arns = {
+  log_archive = "arn:aws:kms:us-east-1:111111111111:key/00000000-0000-0000-0000-000000000000"
+  security    = "arn:aws:kms:us-east-1:222222222222:key/00000000-0000-0000-0000-000000000000"
+  management  = "arn:aws:kms:us-east-1:333333333333:key/00000000-0000-0000-0000-000000000000"
+  workload    = "arn:aws:kms:us-east-1:444444444444:key/00000000-0000-0000-0000-000000000000"
+}
+
+# enclave_bucket_arns = ["arn:aws:s3:::example-enclave-bucket"]
+# notification_emails = ["security@example.com"]
