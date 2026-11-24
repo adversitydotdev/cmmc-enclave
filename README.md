@@ -36,7 +36,7 @@ Last checked: 2026-11-23. This moves; check the sources.
 | Standard (default) | Commercial US East/West (FedRAMP Moderate) | Enterprise Plus with Assured Controls Plus, FedRAMP High services only | CUI without export controlled data |
 | ITAR | AWS GovCloud (US) (FedRAMP High, US citizen operated) | Enterprise Plus with Assured Controls Plus and client-side encryption | ITAR or EAR controlled technical data |
 
-Details, sources, and the open decisions are in [docs/SCOPE.md](docs/SCOPE.md).
+Details, sources, and the open decisions are in [docs/SCOPE.md](docs/SCOPE.md). Monthly cost for both tiers is in [section 13](docs/SCOPE.md#13-cost).
 
 ## License
 

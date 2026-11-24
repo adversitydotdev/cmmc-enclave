@@ -224,4 +224,67 @@ Buckets we expect to land in the "still on you" column regardless of tier:
 
 ## 13. Cost
 
-Only one number here is sourced so far: Fathom's idle bill of about $26 a month in us-east-1 ([fathom README](https://github.com/adversitydotdev/fathom#estimated-monthly-cost)). Workspace Enterprise Plus and the Assured Controls add-ons are quote based, and AWS logging and security services scale with usage. Building a cost model is its own issue.
+Monthly USD, list prices, no discounts, no tax, no labor. Modeled November 23, 2026. AWS rates are from the public Price List offer files (CLI creds were expired); the usage volumes are our assumptions, not measurements, and should be replaced once a pilot runs.
+
+| Monthly | 10 users | 25 users | 100 users |
+|---|---|---|---|
+| **Standard tier** | | | |
+| AWS fixed (10 workload interface endpoint-AZs, 8 CMKs) | 81 | 81 | 81 |
+| AWS usage (Config, GuardDuty, Security Hub, log storage, flow logs, KMS requests, Lambda) | 83 | 116 | 246 |
+| Fathom (template idle + ALB + grc endpoints + NAT + logs) | 136 | 136 | 156 |
+| **AWS total** | **300** | **333** | **483** |
+| Workspace Enterprise Plus + Assured Controls Plus (reseller list, $65/user, not a Google quote) | 650 | 1,625 | 6,500 |
+| **Standard total** | **~950** | **~1,960** | **~6,980** |
+| Fallback: Enterprise Plus + Assured Controls (reseller list, $55/user), total | ~850 | ~1,710 | ~5,980 |
+| **ITAR tier** | | | |
+| AWS fixed (GovCloud endpoints $0.0125/hr) | 99 | 99 | 99 |
+| AWS usage in GovCloud (GovCloud rates) | 101 | 142 | 304 |
+| Commercial remnant (mgmt, log archive, grc; 40% of standard usage lines + 3 CMKs) | 36 | 50 | 101 |
+| Fathom (commercial, same as standard) | 136 | 136 | 156 |
+| **AWS total** | **372** | **426** | **661** |
+| Workspace EP + ACP (same list) | 650 | 1,625 | 6,500 |
+| **ITAR total before CSE** | **~1,020** | **~2,050** | **~7,160** |
+| CSE key service, Flowcrypt published list (EUR) | 67 | 117 | 217 |
+| CSE key service, Thales, Virtru, Fortanix and others | quote | quote | quote |
+| CSE key service, self-built (our estimate, unsourced) | 100 to 300 infra plus engineering | same | same |
+
+Where the money goes: Workspace is about 68% of the Standard total at 10 users and 93% at 100. AWS is mostly fixed: roughly $220 a month before the first user (endpoints, keys, Fathom with NAT, Config baseline). Per-user AWS cost is about $1.50 to $2 a month, almost all log and Config volume.
+
+### Workspace
+
+Enterprise Plus, Assured Controls, and Assured Controls Plus are quote based. Only reseller list prices are public, from Hiview Solutions (checked November 1, 2026): Enterprise Plus $35 annual ($42 flexible), Assured Controls add-on $20 annual, Assured Controls Plus add-on $30 annual ($36 flexible), Business Plus $22 annual ($26.40 flexible). Treat the table as a ceiling for planning; the reseller notes real prices may be lower. Carahsoft lists a GSA OneGov Enterprise Plus plus ACP promotion at $257.40 per user per year through December 31, 2026, federal buyers only, not used here.
+
+### Usage assumptions (10 / 25 / 100 users)
+
+- Management events across all accounts: 0.5M / 0.8M / 2M a month. One org trail, so the first copy is free. No data events, no CloudTrail Lake.
+- Config items recorded: 4k / 6k / 12k. Conformance pack evaluations: 40k / 50k / 80k. The CMMC 2.0 Level 2 pack has 130 rules ([pack](https://github.com/awslabs/aws-config-rules/blob/master/aws-config-conformance-packs/Operational-Best-Practices-for-CMMC-2.0-Level-2.yaml)). Evaluations are the least certain line and the largest usage cost.
+- GuardDuty: management events as above at $4 per million, plus 5 / 10 / 40 GB a month of flow and DNS data at $1 per GB (first 500 GB tier). Foundational only: no S3, EKS, runtime, or malware protection. 30 day free trial ignored.
+- Security Hub CSPM: 15k / 20k / 40k security checks a month across accounts at $0.001. The newer Essentials plan prices by resource and is not modeled.
+- VPC flow logs to S3: 5 / 10 / 40 GB a month at $0.25 per GB delivered.
+- Log archive growth: 6.5 / 13 / 49 GB a month (CloudTrail, Config, flow logs, and Workspace audit logs at 0.05 GB per user), kept 12 months in S3 Standard with Object Lock (no extra Object Lock fee).
+- Workspace audit collector: 5 minute schedule, Lambda and logs about $2.
+- KMS: 8 customer managed keys at $1 each, 1M / 2M / 5M requests a month at $0.03 per 10k. Rotation fees not modeled.
+- Interface endpoints at $0.01 per endpoint-AZ-hour ($7.30 a month): workload account 5 endpoints in 2 AZs, grc account 6 endpoints in 1 AZ (in the Fathom line). Endpoint data $0.01 per GB, assumed negligible.
+- Fathom: [template](https://github.com/adversitydotdev/fathom/blob/main/deploy/aws/template.yaml) idle $26.26, plus ALB $23.73 and one LCU ($5.84), plus 6 grc endpoints ($43.80), plus $3 for logs and DNS. At 100 users the task goes to medium (+$8.51) and the database to `db.t4g.small` (+$11.68). Evidence S3 is 5 GB, then 20 GB.
+- ITAR commercial remnant: GovCloud holds management, log archive, security, and workload accounts. Commercial keeps a management, log archive, and grc account for Fathom, at 40% of the commercial usage lines. This split is our assumption.
+- Free: Organizations, IAM Identity Center, IAM Roles Anywhere with an external CA trust anchor. A Private CA trust anchor adds $50 a month (short-lived mode) or $400 (general purpose).
+- Not included: AWS Support plan, WAF, Inspector, Macie, backups, SES, data transfer out, Route 53, domain, a SIEM, EDR and MDM, the model provider for Fathom, and any labor or assessor fees.
+
+### GovCloud deltas (us-gov-west-1 vs us-east-1)
+
+Config item $0.0036 vs $0.003, conformance evaluation $0.0012 vs $0.001, GuardDuty events $4.80 vs $4.00 per million, GuardDuty flow data $1.20 vs $1.00 per GB, Security Hub check $0.0012 vs $0.001, S3 $0.039 vs $0.023 per GB-month, VPC endpoint hour $0.0125 vs $0.01, KMS requests $0.04 vs $0.03 per 10k, vended logs to S3 $0.338 vs $0.25 per GB. Unchanged: KMS key $1, CloudTrail, Lambda requests, public IPv4 $0.005 per hour. GovCloud-priced lines run about 20 to 25% higher, and the split adds the remnant.
+
+### Open points
+
+- **NAT.** Fathom must reach Google APIs and the GovCloud endpoints over the internet, and neither has PrivateLink. Section 5 says no public task IPs, so the table includes one NAT gateway in the grc account: +$32.85 a month net of the dropped IPv4, plus $0.045 per GB processed.
+- **Interface endpoints are the largest fixed line** ($117 a month in the table). Fewer endpoints or one AZ halves it; the workload account's real endpoint list is not designed yet.
+- **CSE vendor.** An ITAR key service must be operated under ITAR rules; check where each partner operates and who has access before counting Flowcrypt as viable. Flowcrypt also publishes a second, package-based scheme (free up to 100 users with limits), and the two pages disagree. Prices are EUR, not converted.
+- **Not sourced:** Google's own Enterprise Plus, Assured Controls, and Assured Controls Plus quotes; Thales, Virtru, Fortanix, Futurex, and Stormshield CSE pricing; real log and Config volumes.
+
+### Sources (retrieved November 23, 2026)
+
+- AWS Price List offer files, published about November 8, 2026: `https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/{AWSCloudTrail,AWSConfig,AmazonGuardDuty,AWSSecurityHub,awskms,AmazonVPC,AmazonCloudWatch,AmazonS3,AWSLambda,AWSCertificateManager}/current/index.json`, regions us-east-1 and us-gov-west-1.
+- Fathom idle bill and add-on prices: [fathom README](https://github.com/adversitydotdev/fathom#estimated-monthly-cost), prices as of November 9, 2026.
+- Workspace reseller list prices: [Hiview Solutions](https://hiviewsolutions.com/google-workspace-plans/), checked by them November 1, 2026. Federal promo: [Carahsoft](https://www.carahsoft.com/google/gsa-onegov/workspace).
+- CSE partners and Flowcrypt tiers: [Flowcrypt Workspace Key Manager terms and pricing](https://flowcrypt.com/docs/technical/workspace-key-manager/usage/terms-and-pricing.html) (undated).
+- Roles Anywhere trust anchors: [AWS docs](https://docs.aws.amazon.com/rolesanywhere/latest/userguide/getting-started.html).
