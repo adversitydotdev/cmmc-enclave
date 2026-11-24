@@ -1,0 +1,617 @@
+#!/usr/bin/env python3
+"""One-command bootstrap and deploy for the cmmc-enclave stacks (issue #35).
+
+Usage: scripts/bootstrap --config <dir|zip> [--stage NAME] [--resume]
+                         [--plan-only] [--yes] [--profile P] [--backend-config F]
+
+<config> is the wizard's enclave-config-v1 output (contract v1). Stages, in order:
+
+  preflight         tool versions, AWS identity, Organizations, Workspace creds,
+                    collector builds, config validity; prints a PASS/FAIL table
+  org               terraform stacks/org; then writes baseline.org-outputs.auto.tfvars.json
+  baseline-1        terraform stacks/baseline with fathom_enable_services=false
+  manual-workspace  prints the manual Workspace and Fathom steps; waits for you
+  workspace         terraform stacks/workspace
+  seed-package      scripts/package-fathom-seed <config>/ogrl -> <config>/fathom-seed.tar.gz
+  baseline-2        terraform stacks/baseline with fathom_enable_services=true and the seed bundle
+  verify            terraform output, ogrl lint, total time against the one-hour objective (#3)
+
+State lives in <config>/.bootstrap-state.json; logs in <config>/logs/<stage>.log.
+--resume skips stages already complete. Without --backend-config, Terraform keeps
+local state in each stack directory (terraform.tfstate); no remote state is built.
+Python 3 standard library only (package-fathom-seed itself needs PyYAML).
+"""
+
+import argparse
+import json
+import os
+import re
+import shlex
+import subprocess
+import sys
+import time
+import zipfile
+from datetime import datetime, timezone
+from pathlib import Path
+
+STAGES = ["preflight", "org", "baseline-1", "manual-workspace", "workspace",
+          "seed-package", "baseline-2", "verify"]
+TF_STAGES = {"org": "org", "baseline-1": "baseline", "workspace": "workspace",
+             "baseline-2": "baseline"}
+REQUIRED_FILES = ["answers.json", "checklist.md", "terraform/org.auto.tfvars.json",
+                  "terraform/baseline.auto.tfvars.json", "terraform/workspace.auto.tfvars.json",
+                  "ogrl/org/bundle.yaml"]
+OBJECTIVE_SECONDS = 3600
+ORG_OUTPUTS = "baseline.org-outputs.auto.tfvars.json"
+STATE_NAME = ".bootstrap-state.json"
+PLACEHOLDER = "{{"
+REPO = Path(__file__).resolve().parent.parent
+
+
+class StageFailure(Exception):
+    def __init__(self, stage, command, log, rc, detail=""):
+        super().__init__(f"{stage} failed")
+        self.stage, self.command, self.log, self.rc, self.detail = stage, command, log, rc, detail
+
+
+class Declined(Exception):
+    pass
+
+
+def now():
+    return time.time()
+
+
+def iso(ts):
+    return datetime.fromtimestamp(ts, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def fmt_dur(s):
+    s = int(round(s))
+    return f"{s // 3600}h{s % 3600 // 60:02d}m{s % 60:02d}s" if s >= 3600 else f"{s // 60}m{s % 60:02d}s"
+
+
+def declared_variables(stack_dir):
+    names = set()
+    for tf in Path(stack_dir).glob("*.tf"):
+        names.update(re.findall(r'^variable\s+"([^"]+)"', tf.read_text(), re.M))
+    return names
+
+
+def mise_versions(repo):
+    out = {}
+    for line in (Path(repo) / "mise.toml").read_text().splitlines():
+        m = re.match(r'^\s*"?([\w-]+)"?\s*=\s*"([^"]+)"', line)
+        if m:
+            out[m.group(1)] = m.group(2)
+    return out
+
+
+def default_library_ref(repo):
+    text = (Path(repo) / "terraform/stacks/baseline/fathom_seed.tf").read_text()
+    m = re.search(r'variable "ogrl_library_ref".*?default\s*=\s*"([0-9a-f]{40})"', text, re.S)
+    return m.group(1) if m else None
+
+
+def resolve_config(arg):
+    """Directory as given, or a zip extracted next to itself (reused on resume)."""
+    p = Path(arg).expanduser().resolve()
+    if p.is_dir():
+        return p
+    if p.is_file() and zipfile.is_zipfile(p):
+        dest = p.parent / (p.stem + "-extracted")
+        if not dest.is_dir():
+            dest.mkdir()
+            with zipfile.ZipFile(p) as z:
+                for name in z.namelist():
+                    if not (dest / name).resolve().is_relative_to(dest.resolve()):
+                        raise SystemExit(f"bootstrap: unsafe path in zip: {name}")
+                z.extractall(dest)
+        inner = dest / "enclave-config"
+        return inner if inner.is_dir() else dest
+    raise SystemExit(f"bootstrap: --config {arg}: not a directory or zip file")
+
+
+class Bootstrap:
+    def __init__(self, config, repo=REPO, profile=None, backend_config=(), plan_only=False,
+                 yes=False, library_ref=None, ogrl_library=None, config_arg=None, out=None):
+        self.cfg = Path(config)
+        self.repo = Path(repo)
+        self.profile = profile
+        self.backend_config = list(backend_config)
+        self.plan_only, self.yes = plan_only, yes
+        self.library_ref_arg = library_ref
+        self.ogrl_library = ogrl_library or os.environ.get("OGRL_LIBRARY")
+        self.config_arg = config_arg or str(config)
+        self.out = out or sys.stdout
+        self.state_path = self.cfg / STATE_NAME
+        self.state = {"stages": {}}
+        self.selected = list(STAGES)
+        self.env = dict(os.environ)
+        if profile:
+            self.env["AWS_PROFILE"] = profile
+        self.warned_local_state = False
+
+    # ---- output / state -------------------------------------------------
+    def say(self, msg=""):
+        print(msg, file=self.out, flush=True)
+
+    def load_state(self):
+        if self.state_path.is_file():
+            self.state = json.loads(self.state_path.read_text())
+
+    def save_state(self):
+        self.state_path.write_text(json.dumps(self.state, indent=2) + "\n")
+
+    def set_stage(self, name, **kw):
+        self.state["stages"].setdefault(name, {}).update(kw)
+        self.save_state()
+
+    def log_path(self, stage):
+        return self.cfg / "logs" / f"{stage}.log"
+
+    def reset_log(self, stage):
+        self.log_path(stage).parent.mkdir(parents=True, exist_ok=True)
+        self.log_path(stage).write_text("")
+
+    # ---- command execution ----------------------------------------------
+    def run(self, cmd, cwd=None):
+        """Capture-only run for probes; never raises on a nonzero exit."""
+        return subprocess.run(cmd, cwd=cwd, env=self.env, capture_output=True, text=True)
+
+    def run_logged(self, stage, cmd, cwd=None):
+        """Run cmd, tee combined output to <config>/logs/<stage>.log; raise StageFailure on rc != 0."""
+        log = self.log_path(stage)
+        log.parent.mkdir(parents=True, exist_ok=True)
+        printable = " ".join(shlex.quote(str(c)) for c in cmd)
+        self.say(f"+ {printable}" + (f"   (in {cwd})" if cwd else ""))
+        with log.open("a") as fh:
+            fh.write(f"$ {printable}\n")
+            proc = subprocess.Popen(cmd, cwd=cwd, env=self.env, stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT, text=True)
+            for line in proc.stdout:
+                fh.write(line)
+                self.out.write(line)
+            rc = proc.wait()
+            fh.write(f"[exit {rc}]\n")
+        if rc != 0:
+            raise StageFailure(stage, printable, str(log), rc)
+
+    @staticmethod
+    def mise(*cmd):
+        return ["mise", "exec", "--", *cmd]
+
+    # ---- preflight ------------------------------------------------------
+    def check_config(self):
+        checks = []
+        cfg = self.cfg
+        missing = [f for f in REQUIRED_FILES if not (cfg / f).is_file()]
+        checks.append(("config: required files", not missing,
+                       "all present" if not missing else "missing " + ", ".join(missing)))
+        version = None
+        try:
+            version = json.loads((cfg / "answers.json").read_text()).get("schema_version")
+        except (OSError, ValueError):
+            pass
+        checks.append(("config: schema_version 1", str(version) == "1", f"found {version!r}"))
+        leftovers = []
+        skip = {"logs", "plans", ".terraform"}
+        for p in sorted(cfg.rglob("*")):
+            rel = p.relative_to(cfg)
+            if not p.is_file() or rel.parts[0] in skip or p.name == STATE_NAME:
+                continue
+            try:
+                if PLACEHOLDER in p.read_text():
+                    leftovers.append(str(rel))
+            except (UnicodeDecodeError, OSError):
+                continue
+        checks.append(('config: no leftover "{{"', not leftovers,
+                       "none" if not leftovers else ", ".join(leftovers[:5])))
+        bad = []
+        for stack in ("org", "baseline", "workspace"):
+            declared = declared_variables(self.repo / "terraform/stacks" / stack)
+            for f in self.var_files(stack):
+                try:
+                    keys = set(json.loads(f.read_text()))
+                except ValueError:
+                    bad.append(f"{f.name}: invalid JSON")
+                    continue
+                extra = sorted(keys - declared)
+                if extra:
+                    bad.append(f"{f.name}: undeclared {', '.join(extra)}")
+        checks.append(("config: tfvars names match stacks", not bad, "ok" if not bad else "; ".join(bad)))
+        return checks
+
+    def check_tools(self):
+        checks = []
+        want = mise_versions(self.repo)
+        probes = {"terraform": ["terraform", "version", "-json"], "tflint": ["tflint", "--version"]}
+        for tool, cmd in probes.items():
+            label = f"tool: {tool} {want.get(tool)}"
+            try:
+                r = self.run(self.mise(*cmd), cwd=self.repo)
+                if tool == "terraform":
+                    have = json.loads(r.stdout)["terraform_version"]
+                else:
+                    have = re.search(r"version\s+(\d+\.\d+\.\d+)", r.stdout).group(1)
+                checks.append((label, r.returncode == 0 and have == want.get(tool), f"found {have}"))
+            except (OSError, ValueError, AttributeError, KeyError) as e:
+                checks.append((label, False, f"cannot run via mise exec: {e}"))
+        try:
+            r = self.run([sys.executable, "-c", "import yaml"])
+            checks.append(("tool: PyYAML (package-fathom-seed)", r.returncode == 0,
+                           "importable" if r.returncode == 0 else "pip install pyyaml"))
+        except OSError as e:
+            checks.append(("tool: PyYAML (package-fathom-seed)", False, str(e)))
+        return checks
+
+    def aws_json(self, *args):
+        r = self.run(["aws", *args, "--output", "json"])
+        if r.returncode != 0:
+            err = (r.stderr or r.stdout).strip().splitlines()
+            return None, err[-1] if err else "failed"
+        return json.loads(r.stdout), None
+
+    def check_aws(self):
+        ident, err = self.aws_json("sts", "get-caller-identity")
+        if ident is None:
+            return [("aws: credentials (sts get-caller-identity)", False, err)]
+        account = ident["Account"]
+        checks = [("aws: credentials", True, ident["Arn"])]
+        org, err = self.aws_json("organizations", "describe-organization")
+        create = self.tfvar("org", "create_organization", True)
+        if org is None:
+            if "AWSOrganizationsNotInUse" in err:
+                ok = create is not False
+                checks.append(("aws: organization state", ok,
+                               "none exists; org stack will create it in this account" if ok
+                               else "none exists but org tfvars set create_organization=false"))
+            else:
+                checks.append(("aws: organization state", False, f"describe-organization: {err}"))
+            return checks
+        o = org["Organization"]
+        master = o.get("ManagementAccountId") or o.get("MasterAccountId")
+        checks.append(("aws: caller is management account", master == account,
+                       f"caller {account}, management {master}"))
+        org_done = self.state["stages"].get("org", {}).get("status") == "complete"
+        ok = org_done or create is False
+        checks.append(("aws: organization state", ok,
+                       f"{o['Id']} exists, feature set {o.get('FeatureSet')}"
+                       + ("" if ok else "; org tfvars has create_organization=true: set it false or import the org")))
+        return checks
+
+    def check_workspace(self):
+        env = self.env.get("GOOGLEWORKSPACE_CREDENTIALS")
+        tfv = self.tfvar("workspace", "credentials", None)
+        return [("workspace: GOOGLEWORKSPACE_CREDENTIALS", bool(env or tfv),
+                 "set in environment" if env else "set via tfvars credentials" if tfv
+                 else "not set; export the service account key path")]
+
+    def check_collectors(self):
+        checks = []
+        for script in sorted((self.repo / "collectors").glob("*/build.sh")):
+            d = script.parent
+            if (d / "build").is_dir():
+                checks.append((f"collector: {d.name} build", True, "build/ present"))
+                continue
+            try:
+                self.run_logged("preflight", [str(script)])
+                checks.append((f"collector: {d.name} build", True, "ran build.sh"))
+            except StageFailure as e:
+                checks.append((f"collector: {d.name} build", False, f"build.sh failed, see {e.log}"))
+        return checks
+
+    def preflight(self):
+        self.reset_log("preflight")
+        checks = self.check_tools() + self.check_config()
+        # `--stage preflight` checks for the full run; otherwise only for the stages selected.
+        scope = STAGES if self.selected == ["preflight"] else self.selected
+        if any(s in TF_STAGES for s in scope):
+            checks += self.check_aws()
+            checks += self.check_collectors()
+        if "workspace" in scope:
+            checks += self.check_workspace()
+        width = max(len(c[0]) for c in checks)
+        lines = [f"{'PASS' if ok else 'FAIL'}  {name.ljust(width)}  {detail}" for name, ok, detail in checks]
+        self.say("\n".join(lines))
+        with self.log_path("preflight").open("a") as fh:
+            fh.write("\n".join(lines) + "\n")
+        failed = [c for c in checks if not c[1]]
+        if failed:
+            raise StageFailure("preflight", "preflight checks", str(self.log_path("preflight")), 1,
+                               f"{len(failed)} check(s) FAILED; fix them and rerun")
+        self.say(f"preflight: {len(checks)} checks PASS")
+
+    # ---- helpers for config ---------------------------------------------
+    def var_files(self, stack):
+        d = self.cfg / "terraform"
+        return sorted(set(d.glob(f"{stack}.auto.tfvars.json")) | set(d.glob(f"{stack}.*.auto.tfvars.json")))
+
+    def tfvar(self, stack, name, default):
+        for f in self.var_files(stack):
+            try:
+                data = json.loads(f.read_text())
+            except ValueError:
+                continue
+            if name in data:
+                return data[name]
+        return default
+
+    def library_ref(self):
+        return (self.library_ref_arg or self.tfvar("baseline", "ogrl_library_ref", None)
+                or default_library_ref(self.repo))
+
+    @property
+    def seed_path(self):
+        return self.cfg / "fathom-seed.tar.gz"
+
+    # ---- terraform stages -----------------------------------------------
+    def confirm(self, question):
+        if self.yes:
+            return True
+        try:
+            return input(f"{question} [y/N] ").strip().lower() in ("y", "yes")
+        except EOFError:
+            return False
+
+    def terraform(self, stage, extra_vars=()):
+        stack = TF_STAGES[stage]
+        sdir = self.repo / "terraform/stacks" / stack
+        if stack == "baseline" and not (self.cfg / "terraform" / ORG_OUTPUTS).is_file():
+            if self.plan_only:
+                self.say(f"{stage}: {ORG_OUTPUTS} not written yet (org not applied); skipping plan")
+                return "skipped"
+            raise StageFailure(stage, "locate org outputs", str(self.log_path(stage)), 1,
+                               f"{ORG_OUTPUTS} missing; run the org stage first")
+        (self.cfg / "plans").mkdir(exist_ok=True)
+        planfile = self.cfg / "plans" / f"{stage}.tfplan"
+        init = self.mise("terraform", "init", "-input=false", "-no-color")
+        if self.backend_config:
+            init += [f"-backend-config={b.replace('{stack}', stack)}" for b in self.backend_config]
+        elif not self.warned_local_state:
+            self.say("WARNING: no --backend-config; Terraform uses LOCAL state, kept in each stack "
+                     f"directory ({self.repo / 'terraform/stacks'}/<stack>/terraform.tfstate). "
+                     "Back it up; losing it orphans the deployed resources.")
+            self.warned_local_state = True
+        self.reset_log(stage)
+        self.run_logged(stage, init, cwd=sdir)
+        plan = self.mise("terraform", "plan", "-input=false", "-no-color", f"-out={planfile}")
+        plan += [f"-var-file={f}" for f in self.var_files(stack)]
+        plan += [f"-var={k}={v}" for k, v in extra_vars]
+        self.run_logged(stage, plan, cwd=sdir)
+        if self.plan_only:
+            self.say(f"{stage}: plan written to {planfile} (--plan-only, not applying)")
+            return "planned"
+        if not self.confirm(f"Apply {stage} ({stack}) with {planfile}?"):
+            raise Declined(stage)
+        self.run_logged(stage, self.mise("terraform", "apply", "-input=false", "-no-color", str(planfile)),
+                        cwd=sdir)
+        return "complete"
+
+    def stage_org(self):
+        status = self.terraform("org")
+        if status != "complete":
+            return status
+        cmd = self.mise("terraform", "output", "-json")
+        r = self.run(cmd, cwd=self.repo / "terraform/stacks/org")
+        if r.returncode != 0:
+            raise StageFailure("org", " ".join(cmd) + " (stacks/org)", str(self.log_path("org")),
+                               r.returncode, r.stderr.strip())
+        outs = json.loads(r.stdout)
+        try:
+            data = {k: outs[k]["value"] for k in ("account_ids", "organization_id", "organization_root_id")}
+        except KeyError as e:
+            raise StageFailure("org", " ".join(cmd) + " (stacks/org)", str(self.log_path("org")),
+                               1, f"org output {e} missing")
+        path = self.cfg / "terraform" / ORG_OUTPUTS
+        path.write_text(json.dumps(data, indent=2) + "\n")
+        self.say(f"org: wrote {path}")
+        return "complete"
+
+    def stage_baseline_1(self):
+        return self.terraform("baseline-1", [("fathom_enable_services", "false")])
+
+    def stage_baseline_2(self):
+        if not self.seed_path.is_file():
+            raise StageFailure("baseline-2", "locate seed bundle", str(self.log_path("baseline-2")), 1,
+                               f"{self.seed_path} missing; run --stage seed-package")
+        return self.terraform("baseline-2", [("fathom_enable_services", "true"),
+                                             ("fathom_seed_bundle_path", self.seed_path)])
+
+    def stage_workspace(self):
+        return self.terraform("workspace")
+
+    def stage_seed_package(self):
+        ref = self.library_ref()
+        if not ref:
+            raise StageFailure("seed-package", "resolve library ref", str(self.log_path("seed-package")),
+                               1, "no ogrl_library_ref; pass --library-ref")
+        self.reset_log("seed-package")
+        self.run_logged("seed-package", [sys.executable, str(self.repo / "scripts/package-fathom-seed"),
+                                         str(self.cfg / "ogrl"), str(self.seed_path), "--library-ref", ref])
+        return "complete"
+
+    # ---- manual steps -----------------------------------------------------
+    def example_comment_blocks(self):
+        path = self.repo / "terraform/stacks/baseline/terraform.tfvars.example"
+        blocks, cur = [], []
+        for line in path.read_text().splitlines() + [""]:
+            if line.startswith("#") or (cur and line.strip() and cur[-1].startswith("#")):
+                cur.append(line)
+            else:
+                if cur and any(re.search(r"fathom|acm|dns|oauth", c, re.I) for c in cur):
+                    blocks.append(cur)
+                cur = []
+        return blocks
+
+    def stage_manual(self):
+        if self.plan_only:
+            self.say("manual-workspace: skipped in --plan-only")
+            return "skipped"
+        self.say("\n=== Manual steps (do these now, before continuing) ===\n")
+        runbook = self.repo / "docs/runbook/workspace.md"
+        if runbook.is_file():
+            self.say(f"Workspace: follow {runbook.relative_to(self.repo)}. Sections:")
+            for line in runbook.read_text().splitlines():
+                if re.match(r"^#{1,3}\s", line):
+                    self.say("  " + line)
+        else:
+            self.say("Workspace runbook docs/runbook/workspace.md not found on this checkout; "
+                     "see issue #29 (Workspace manual runbook).")
+        self.say(f"Also see {self.cfg / 'checklist.md'}.\n")
+        self.say("Fathom (comments from terraform/stacks/baseline/terraform.tfvars.example):")
+        for block in self.example_comment_blocks():
+            for line in block:
+                self.say("  " + line)
+            self.say()
+        self.say("  - OAuth client: create the Google OAuth web client; store its secret in SSM in the grc\n"
+                 "    account (fathom_oidc_client_secret_parameter); client id goes in the baseline tfvars.\n"
+                 "  - ACM certificate: request and validate one for the Fathom domain in the grc account and\n"
+                 "    home region; set fathom_certificate_arn.\n"
+                 "  - DNS: point the Fathom domain at the ALB (automatic when fathom_hosted_zone_id is set,\n"
+                 "    otherwise by hand).\n"
+                 "  baseline-2 plans from the baseline tfvars as they are then, so edit them before continuing.\n")
+        if self.yes:
+            self.say("--yes: not waiting for confirmation.")
+        elif not self.confirm("Manual steps done?"):
+            raise Declined("manual-workspace")
+        return "complete"
+
+    # ---- verify -----------------------------------------------------------
+    def stage_verify(self):
+        if self.plan_only:
+            self.say("verify: skipped in --plan-only")
+            return "skipped"
+        self.reset_log("verify")
+        self.run_logged("verify", self.mise("terraform", "output"),
+                        cwd=self.repo / "terraform/stacks/baseline")
+        has_ogrl = self.run(["sh", "-c", "command -v ogrl"]).returncode == 0
+        if has_ogrl and self.ogrl_library:
+            self.run_logged("verify", ["ogrl", "lint", str(self.cfg / "ogrl/org"), "--library",
+                                       self.ogrl_library, "--profile", "organization"])
+        elif has_ogrl:
+            self.say("verify: ogrl lint skipped; pass --ogrl-library (or set OGRL_LIBRARY) to the "
+                     "ogrl-library library/ dir")
+        else:
+            self.say("verify: ogrl not on PATH; skipping ogrl lint")
+        self.say("\nReminder: Fathom read roles need a second pass. Create each aws_role connection in\n"
+                 "Fathom, copy its ExternalId into fathom_read_external_ids (baseline tfvars), then\n"
+                 "rerun with --stage baseline-2.")
+        return "complete"
+
+    # ---- driver -----------------------------------------------------------
+    def handlers(self):
+        return {"preflight": self.preflight, "org": self.stage_org, "baseline-1": self.stage_baseline_1,
+                "manual-workspace": self.stage_manual, "workspace": self.stage_workspace,
+                "seed-package": self.stage_seed_package, "baseline-2": self.stage_baseline_2,
+                "verify": self.stage_verify}
+
+    def resume_command(self):
+        parts = ["scripts/bootstrap", "--config", self.config_arg, "--resume"]
+        if self.profile:
+            parts += ["--profile", self.profile]
+        for b in self.backend_config:
+            parts += ["--backend-config", b]
+        if self.yes:
+            parts.append("--yes")
+        if self.plan_only:
+            parts.append("--plan-only")
+        if self.library_ref_arg:
+            parts += ["--library-ref", self.library_ref_arg]
+        if self.ogrl_library:
+            parts += ["--ogrl-library", self.ogrl_library]
+        return " ".join(shlex.quote(p) for p in parts)
+
+    def run_all(self, only=None, resume=False):
+        self.selected = [only] if only else list(STAGES)
+        if resume or only:
+            self.load_state()
+        else:
+            self.state = {"stages": {}}
+            self.save_state()
+        handlers = self.handlers()
+        if self.backend_config:
+            self.say("Using backend config: " + ", ".join(self.backend_config))
+        for stage in self.selected:
+            st = self.state["stages"].get(stage, {})
+            if resume and not only and st.get("status") == "complete":
+                self.say(f"[{stage}] already complete ({fmt_dur(st.get('duration_s') or 0)}); skipping")
+                continue
+            self.say(f"\n[{stage}] start")
+            t0 = now()
+            self.set_stage(stage, status="running", start=iso(t0), end=None, duration_s=None, error=None)
+            try:
+                status = handlers[stage]() or "complete"
+            except StageFailure as e:
+                self.finish(stage, t0, "failed", error={"command": e.command, "log": e.log,
+                                                        "rc": e.rc, "detail": e.detail})
+                self.say(f"\nFAILED stage: {stage}\n  command: {e.command}\n  log:     {e.log}")
+                if e.detail:
+                    self.say(f"  detail:  {e.detail}")
+                self.say(f"  resume:  {self.resume_command()}")
+                self.summary()
+                return 1
+            except Declined:
+                self.finish(stage, t0, "pending")
+                self.say(f"\nStopped before {stage}. Resume with:\n  {self.resume_command()}")
+                self.summary()
+                return 2
+            except KeyboardInterrupt:
+                self.finish(stage, t0, "failed", error={"command": "interrupted", "log": "", "rc": 130,
+                                                        "detail": ""})
+                self.say(f"\nInterrupted in {stage}. Resume with:\n  {self.resume_command()}")
+                return 130
+            self.finish(stage, t0, status)
+            self.say(f"[{stage}] {status} in {fmt_dur(self.state['stages'][stage]['duration_s'])}")
+        self.summary()
+        return 0
+
+    def finish(self, stage, t0, status, error=None):
+        t1 = now()
+        self.set_stage(stage, status=status, end=iso(t1), duration_s=round(t1 - t0, 3), error=error)
+
+    def summary(self):
+        self.say("\nStage timing")
+        total = 0.0
+        for s in STAGES:
+            st = self.state["stages"].get(s)
+            if not st:
+                continue
+            d = st.get("duration_s")
+            total += d or 0
+            self.say(f"  {s.ljust(18)}{st['status'].ljust(10)}{fmt_dur(d) if d is not None else '-'}")
+        manual = (self.state["stages"].get("manual-workspace") or {}).get("duration_s") or 0
+        verdict = "within" if total <= OBJECTIVE_SECONDS else "OVER"
+        self.say(f"  {'total'.ljust(28)}{fmt_dur(total)}  ({verdict} the one-hour objective, #3; "
+                 f"{fmt_dur(total - manual)} excluding manual-workspace waits)")
+        self.total_seconds = total
+
+
+def parse_args(argv):
+    ap = argparse.ArgumentParser(prog="bootstrap", description=__doc__.split("\n\n")[0],
+                                 epilog="Stages: " + ", ".join(STAGES))
+    ap.add_argument("--config", required=True, help="wizard output directory or enclave-config-v1.zip")
+    ap.add_argument("--stage", choices=STAGES, help="run only this stage")
+    ap.add_argument("--resume", action="store_true", help="skip stages already complete")
+    ap.add_argument("--plan-only", action="store_true", help="stop after terraform plans; apply nothing")
+    ap.add_argument("--yes", action="store_true", help="do not ask before applies or manual steps")
+    ap.add_argument("--profile", help="AWS profile (sets AWS_PROFILE for every command)")
+    ap.add_argument("--backend-config", action="append", default=[], metavar="FILE_OR_K=V",
+                    help="passed to terraform init -backend-config; {stack} expands to the stack name; repeatable")
+    ap.add_argument("--library-ref", help="ogrl-library commit for the seed bundle "
+                    "(default: baseline tfvars ogrl_library_ref, else the variable default)")
+    ap.add_argument("--ogrl-library", help="path to ogrl-library library/ dir for verify (or OGRL_LIBRARY)")
+    return ap.parse_args(argv)
+
+
+def main(argv=None):
+    a = parse_args(argv)
+    cfg = resolve_config(a.config)
+    b = Bootstrap(cfg, profile=a.profile, backend_config=a.backend_config, plan_only=a.plan_only,
+                  yes=a.yes, library_ref=a.library_ref, ogrl_library=a.ogrl_library,
+                  config_arg=a.config)
+    return b.run_all(only=a.stage, resume=a.resume)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

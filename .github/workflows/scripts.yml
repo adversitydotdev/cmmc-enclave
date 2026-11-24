@@ -1,0 +1,26 @@
+name: scripts
+
+on:
+  pull_request:
+    paths: ["scripts/**", "tests/bootstrap/**", "terraform/stacks/**", ".github/workflows/scripts.yml"]
+  push:
+    branches: [main]
+    paths: ["scripts/**", "tests/bootstrap/**", "terraform/stacks/**", ".github/workflows/scripts.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scripts-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Bootstrap tests
+        run: python3 -m unittest discover -s tests/bootstrap
