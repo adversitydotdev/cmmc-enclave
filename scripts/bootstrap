@@ -367,6 +367,11 @@ class Bootstrap:
         planfile = self.cfg / "plans" / f"{stage}.tfplan"
         init = self.mise("terraform", "init", "-input=false", "-no-color")
         if self.backend_config:
+            # The stacks declare no backend (CI validates with -backend=false). An S3 backend
+            # is declared through a Terraform override file (gitignored), then configured here.
+            override = sdir / "backend_override.tf"
+            if not override.exists():
+                override.write_text('terraform {\n  backend "s3" {}\n}\n')
             init += [f"-backend-config={b.replace('{stack}', stack)}" for b in self.backend_config]
         elif not self.warned_local_state:
             self.say("WARNING: no --backend-config; Terraform uses LOCAL state, kept in each stack "

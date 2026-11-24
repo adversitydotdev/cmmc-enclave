@@ -5,3 +5,6 @@
 crash.log
 *.tfvars
 !*.tfvars.example
+__pycache__/
+*.pyc
+backend_override.tf

@@ -28,7 +28,10 @@ import sys
 import tarfile
 from pathlib import Path
 
-import yaml
+try:
+    import yaml
+except ImportError:
+    sys.exit("package-fathom-seed needs PyYAML: pip install pyyaml")
 
 PLACEHOLDER = re.compile(r"\{\{.*?\}\}")
 LIBRARY_ID = "bundle--ogrl-library"
