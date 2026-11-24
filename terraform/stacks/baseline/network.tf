@@ -3,11 +3,6 @@ variable "workload_vpc_cidr" {
   default = "10.10.0.0/16"
 }
 
-variable "grc_vpc_cidr" {
-  type    = string
-  default = "10.20.0.0/16"
-}
-
 module "network_workload" {
   source = "../../modules/network"
   providers = {
