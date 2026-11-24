@@ -38,21 +38,21 @@ These are the documents the mapping and the shared responsibility matrix are bui
 | [AWS Config: Operational Best Practices for CMMC 2.0 Level 2](https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-cmmc_2.0_level_2.html) and [for NIST 800-171](https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist_800-171.html) | Managed Config rules mapped to each practice. This is our starting set of automated tests. | |
 | [GovCloud vs standard regions](https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/govcloud-differences.html), [GovCloud compliance](https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/govcloud-compliance.html) | GovCloud is run by US citizens, supports ITAR, and uses FIPS 140-3 modules on all service endpoints unless noted. | |
 | [AWS FIPS endpoints](https://aws.amazon.com/compliance/fips/) | In standard regions FIPS endpoints are opt in, so 3.13.11 needs us to turn them on. | |
-| [Landing Zone Accelerator on AWS](https://awslabs.github.io/landing-zone-accelerator-on-aws/latest/) | AWS's own multi account baseline with CMMC aligned sample configs. | It's CDK, not Terraform. See decision D5. |
-| [IAM Identity Center with Google Workspace](https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html), [Identity Center in GovCloud](https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/govcloud-sso.html) | SAML plus SCIM from Google Workspace into AWS. | |
+| [Landing Zone Accelerator on AWS](https://awslabs.github.io/landing-zone-accelerator-on-aws/latest/) | AWS's own multi account baseline with CMMC aligned sample configs. | It's CDK, not Terraform. Not used; we borrow controls from it (D5, [#4](https://github.com/adversitydotdev/cmmc-enclave/issues/4)). |
+| [IAM Identity Center with Google Workspace](https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html), [Identity Center in GovCloud](https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/govcloud-sso.html) | SAML plus SCIM from Google Workspace into AWS. | SCIM from Google syncs **users only**: "Automatic group provisioning is not supported at this time." |
 
 ### Google Workspace
 
 | Source | What it gives us | Notes |
 |---|---|---|
-| [Google Workspace CMMC Level 2 Configuration Guide](https://services.google.com/fh/files/helpcenter/gws_implementation_guide_for_cmmc.pdf) (February 2025, 176 pages) | Per requirement guidance for all 110. Puts each in one of three buckets: 47 the customer configures in Workspace, 42 Workspace implements natively, 21 live outside Workspace. | Scoped to **Enterprise Plus with Assured Controls Plus**. Marked "Google Confidential" in the footer even though Google hosts it publicly, so we link to it and don't copy it into the repo. |
+| [Google Workspace CMMC Level 2 Configuration Guide](https://services.google.com/fh/files/misc/google_workspace_cmmc_implementation_guide_2025.pdf) (February 2025, 176 pages) | Per requirement guidance for all 110. Puts each in one of three buckets: 47 the customer configures in Workspace, 42 Workspace implements natively, 21 live outside Workspace. | Scoped to **Enterprise Plus with Assured Controls Plus**. Linked copy is the one from Google's CMMC page (labeled FINAL, no "Google Confidential" footer; same content as the `helpcenter` copy). We link to it and don't copy it into the repo. |
 | Google Workspace CMMC CRM | The full inheritance matrix. | Only available by asking a Google rep. |
 | [Google CMMC compliance page](https://cloud.google.com/security/compliance/cmmc) | Workspace holds FedRAMP High. "For Google Workspace, you must use FedRAMP High authorized services for CMMC compliance, as well as Assured Controls Plus to enable data storage exclusively within the United States." Links to a C3PAO attestation letter for Workspace. | |
 | [Google DFARS compliance page](https://cloud.google.com/security/compliance/dfars) | Google accepts the 7012 flowdown for FedRAMP Moderate and High services, and says data location and Assured Controls "are not explicitly required" for 7012. | Disagrees with the CMMC page. See section 9. |
 | [Workspace FedRAMP configuration guide](https://knowledge.workspace.google.com/admin/compliance/google-workspace-fedramp-configuration-guide) | FedRAMP High covers Enterprise Plus and Standard, Business Plus and Standard, Frontline Plus, and Workspace for Government. Lists the covered services (Gmail, Drive, Docs, Sheets, Slides, Forms, Calendar, Chat, Meet, Keep, Sites, Vault, some Gemini). | |
 | [Assured Controls and Assured Controls Plus](https://knowledge.workspace.google.com/admin/security/about-assured-controls-and-assured-controls-plus) | Paid add-ons on Enterprise Plus or Frontline Plus. Plus adds Access Management, which can limit Google support access to US based personnel. | |
 | [Google ITAR page](https://cloud.google.com/security/compliance/itar) | Workspace supports ITAR data through client-side encryption, which can meet the ITAR end-to-end encryption carve-out at 22 CFR 120.54(a)(5). | |
-| [Google FIPS 140 page](https://cloud.google.com/security/compliance/fips-140-validated) | BoringCrypto is FIPS 140-3 validated and used for encryption in transit and at rest. | |
+| [Google FIPS 140 page](https://cloud.google.com/security/compliance/fips-140-validated) | BoringCrypto is FIPS 140-3 validated and used for encryption in transit and at rest. | Page covers Google Cloud and doesn't mention Workspace. For Workspace we rely on the CMMC guide marking 3.13.11 Google implemented. |
 | [Cloud Identity Policy API, supported settings](https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings) | Read access to most Admin console settings. Writes are limited to data protection (DLP) rules as of mid 2026. | Drives the manual runbook. |
 
 ## 4. Impact tiers
@@ -61,14 +61,14 @@ These are the documents the mapping and the shared responsibility matrix are bui
 |---|---|---|
 | Data | CUI, no export controlled technical data | CUI including ITAR or EAR technical data |
 | AWS | Commercial `us-east-1`/`us-east-2`/`us-west-2`, FedRAMP Moderate, FIPS endpoints forced on | AWS GovCloud (US), FedRAMP High, US citizen operated, FIPS by default |
-| Google Workspace | FedRAMP High edition, only FedRAMP High services on for CUI users. Edition and add-on is decision D1. | Enterprise Plus plus Assured Controls Plus (US person support access), plus client-side encryption with a customer held key service |
-| Fathom | In the commercial enclave account | In GovCloud |
+| Google Workspace | Enterprise Plus with Assured Controls Plus (D1). Assured Controls without Plus as a documented fallback. Only FedRAMP High services on for CUI users. | Enterprise Plus plus Assured Controls Plus (US person support access), plus client-side encryption with a customer held key service |
+| Fathom | Dedicated `grc` account, commercial | Dedicated `grc` account, commercial (an SPA, holds no ITAR data) |
 | Rough sign | Cheapest path that still meets 7012 | More expensive, and GovCloud needs its own account signup tied to a commercial account |
 
 Facts behind the table:
 
 - **Commercial AWS US East/West is fine for CUI** under 7012. AWS: "AWS services in the AWS standard cloud region services are authorized at the FedRAMP Moderate baseline and AWS GovCloud (US) region services are authorized at the FedRAMP High baseline." ([AWS DFARS](https://aws.amazon.com/compliance/dfars/))
-- **Commercial Workspace is FedRAMP High** for Enterprise, Business Standard and Plus, and Frontline Plus editions ([FedRAMP configuration guide](https://knowledge.workspace.google.com/admin/compliance/google-workspace-fedramp-configuration-guide)). So the "expensive gov version" isn't needed for CUI. Whether Assured Controls Plus is needed for the standard tier is the open question in D1.
+- **Commercial Workspace is FedRAMP High** for Enterprise, Business Standard and Plus, and Frontline Plus editions ([FedRAMP configuration guide](https://knowledge.workspace.google.com/admin/compliance/google-workspace-fedramp-configuration-guide)). So the "expensive gov version" isn't needed for CUI. We still default to Enterprise Plus with Assured Controls Plus (D1): the guide's configure steps rely on Enterprise Plus features, and Google's 72 hour incident notice under 7012 (c) applies only to customers with Assured Controls ([Google DFARS](https://cloud.google.com/security/compliance/dfars)).
 - **ITAR on AWS means GovCloud.** AWS has written about a customer running ITAR data in commercial regions on encryption alone after legal review ([AWS blog](https://aws.amazon.com/blogs/publicsector/evaluating-itar-workloads/)), but that's legal judgment, not a baseline. We won't offer it.
 - **ITAR on Workspace means client-side encryption.** Google's ITAR support for Workspace is the CSE carve-out, not data location alone. CSE needs Enterprise Plus (or Frontline Plus) and an external key service, either a Google partner or one we build with the CSE API.
 
@@ -76,12 +76,12 @@ Facts behind the table:
 
 ### AWS
 
-- **Organization and accounts:** management, log archive, security tooling, and one enclave workload account. Fathom runs in the enclave account (or a separate GRC account, decision D7).
+- **Organization and accounts:** management, log archive, security tooling, one enclave workload account, and a `grc` account in its own OU for Fathom (D7). Plain Terraform on AWS Organizations, no Control Tower or LZA (D5).
 - **Guardrails:** SCPs that deny regions outside the tier's allowed list, deny disabling CloudTrail, Config, GuardDuty, and deny non-FIPS endpoints where condition keys allow it.
 - **Logging:** organization CloudTrail to an immutable (Object Lock) bucket in log archive, Config in every account with the CMMC 2.0 Level 2 conformance pack, GuardDuty, Security Hub, VPC flow logs. Workspace audit logs also land here (see below).
 - **Encryption:** customer managed KMS keys per data class. FIPS endpoints set at the provider level (`use_fips_endpoint`). TLS 1.2+ policies on every listener.
 - **Network:** no inbound internet except the Fathom load balancer. VPC endpoints for AWS APIs. No NAT unless a feature needs it.
-- **Identity:** IAM Identity Center with Google Workspace as the SAML IdP and SCIM provisioning ([AWS docs](https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html)). Permission sets for admin, auditor (read only), and Fathom operator. A break-glass IAM user with hardware MFA, sealed. Decision D2 covers whether Workspace stays the IdP.
+- **Identity (D2):** IAM Identity Center with Google Workspace as the SAML IdP in both tiers ([AWS docs](https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html)). Google auto-provisioning syncs users only; groups and memberships are Terraform (`aws_identitystore_group*`) changed by reviewed PR. MFA (3.5.3) is enforced in Workspace (2SV, security keys only for AWS users), since Identity Center MFA doesn't apply to external IdPs. Permission sets for admin, auditor (read only), and Fathom operator, 1 hour sessions. Break-glass: IAM user in management with two FIDO keys, no access keys, alert on use; root sealed. The ITAR tier gets its own Identity Center in GovCloud and a second Workspace SAML app; the Workspace directory is an SPA and holds no ITAR data.
 
 ### Google Workspace
 
@@ -95,11 +95,11 @@ Facts behind the table:
 
 ### How much of Workspace can Terraform do
 
-Less than we'd like. HashiCorp archived its `googleworkspace` provider on June 30, 2025 ([repo](https://github.com/hashicorp/terraform-provider-googleworkspace)). Two community forks are maintained: `macadmins/googleworkspace` (adds roles, dynamic groups, Chrome policy) and `SamuZad/googleworkspace`. They cover users, groups, OUs, roles, and schemas, not security settings. The Cloud Identity Policy API reads most Admin console settings but only writes DLP rules ([supported settings](https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings)). So the plan is:
+Less than we'd like. HashiCorp archived its `googleworkspace` provider on June 30, 2025 ([repo](https://github.com/hashicorp/terraform-provider-googleworkspace)). Two community forks are maintained; we use `macadmins/googleworkspace` (D5), pinned to an exact version. Both cover users, groups, OUs, roles, role assignments, schemas, and Chrome policy, not security settings. Neither can create a SAML app or turn services on or off per OU. The Cloud Identity Policy API reads most Admin console settings but only writes DLP rules ([supported settings](https://cloud.google.com/identity/docs/concepts/supported-policy-api-settings)). So the plan is:
 
-1. Terraform (fork provider) for OUs, groups, admin roles, and the SAML app.
+1. Terraform (fork provider) for OUs, groups, and admin roles.
 2. Policy API for DLP rules where it can write.
-3. A short, ordered manual runbook for everything else, with each step paired to a Policy API read so Fathom can test that it stuck.
+3. A short, ordered manual runbook for everything else (including the AWS SAML app and per-OU service access), with each step paired to a Policy API read so Fathom can test that it stuck.
 
 That last part matters: even when we can't set it, we can check it, and the check is what the assessor cares about.
 
@@ -107,8 +107,8 @@ That last part matters: even when we can't set it, we can check it, and the chec
 
 Fathom already ships a CloudFormation template (`fathom/deploy/aws/template.yaml`: one Fargate task, single AZ Postgres, private S3, SSM). For the enclave it needs to:
 
-- Run in Terraform (wrap the stack or port it, decision D5).
-- Sit behind Identity Center or Workspace SSO, with FIPS endpoints, KMS keys from the enclave, and logs into the log archive.
+- Run in Terraform (wrap the stack or port it) in the `grc` account. It's a Security Protection Asset, so it's in assessment scope and hardened to all 110 requirements (D6).
+- Sit behind Identity Center or Workspace SSO, with FIPS endpoints, KMS keys from the enclave, and logs into the log archive. No public task IPs, a CMK on the bucket, partition-aware ARNs, and the AI assistant off by default.
 - Boot with the pinned ogrl-library release, the `baseline--ogrl-cmmc-l2` baseline, and an enclave bundle: one `system`, `component`s for AWS, Workspace, Fathom, and endpoints, `party` objects for AWS and Google with their FedRAMP authorizations, and an `implementation` per control.
 - Run tests: the AWS read-only integration (`fathom-aws`) plus a new Workspace integration that reads the Policy and Reports APIs.
 
@@ -166,7 +166,7 @@ Buckets we expect to land in the "still on you" column regardless of tier:
 
 ## 9. Where the sources disagree
 
-1. **Is Assured Controls Plus required?** Google's CMMC page and the Workspace CMMC guide assume Enterprise Plus with Assured Controls Plus. Google's DFARS page says data location and Assured Controls are not explicitly required for 7012, and the FedRAMP guide covers cheaper editions. This is decision D1.
+1. **Is Assured Controls Plus required?** Google's CMMC page and the Workspace CMMC guide assume Enterprise Plus with Assured Controls Plus. Google's DFARS page says data location and Assured Controls are not explicitly required for 7012, and the FedRAMP guide covers cheaper editions. Resolved in D1: the same DFARS page limits Google's 72 hour notice to customers with Assured Controls, so we default to Enterprise Plus with Assured Controls Plus.
 2. **Media and physical inheritance.** AWS lists 3.8.1 to 3.8.8 and all of 3.10.1 to 3.10.6 as fully inheritable. Google puts 3.8.1, 3.8.2, 3.8.4, and 3.10.6 outside Workspace. Paper CUI, USB drives, laptops, and home offices exist in every real enclave, so we treat those as customer with the cloud piece inherited.
 3. **Split tunneling (3.13.7) and voice/video (3.13.14).** AWS calls both customer only. Google calls both native. Meet's encryption covers 3.13.14 for Meet, but split tunneling is an endpoint and VPN control. We mark 3.13.7 customer (endpoint) and 3.13.14 subservice for Meet only.
 4. **FIPS (3.13.11).** Google marks it native. AWS commercial regions only use FIPS modules if you call the FIPS endpoints, so it's shared on AWS and the Terraform has to force it. GovCloud uses FIPS endpoints by default.
@@ -195,15 +195,15 @@ Buckets we expect to land in the "still on you" column regardless of tier:
 | M6 ITAR tier | GovCloud variant, Workspace CSE with a key service |
 | M7 Validation and release | CI, end to end test deploy, assessor package, v0.1.0 |
 
-## 12. Open decisions for David
+## 12. Decisions
 
-- **D1** Google Workspace edition and add-ons for the standard tier: Enterprise Plus with Assured Controls Plus (matches Google's CMMC guide, simplest to defend, most expensive) or a cheaper FedRAMP High edition without add-ons (matches Google's DFARS and FedRAMP pages).
-- **D2** Identity: Google Workspace as the IdP for AWS (fewest moving parts) or a separate IdP.
+- **D1** ([#1](https://github.com/adversitydotdev/cmmc-enclave/issues/1)) Decided: Enterprise Plus with Assured Controls Plus by default, Assured Controls as fallback. Business and Enterprise Standard unsupported in v0.1.
+- **D2** ([#2](https://github.com/adversitydotdev/cmmc-enclave/issues/2)) Decided: Google Workspace is the IdP in both tiers. Groups managed in Terraform.
 - **D3** Deploy-time target: confirm "under an hour" and what counts as done.
 - **D4** Repo name (`cmmc-enclave` proposed) and whether it sits under the Fathom name.
-- **D5** Terraform vs OpenTofu, which Workspace provider fork, and whether to build on Landing Zone Accelerator (CDK) or plain Terraform.
-- **D6** Whether Fathom itself is in the CUI boundary. SSP content is usually treated as sensitive, and a security protection asset is in scope either way.
-- **D7** Fathom in the enclave workload account or its own GRC account.
+- **D5** ([#4](https://github.com/adversitydotdev/cmmc-enclave/issues/4)) Decided: HashiCorp Terraform, `macadmins/googleworkspace`, plain Terraform on AWS Organizations (no LZA, no AFT).
+- **D6** ([#7](https://github.com/adversitydotdev/cmmc-enclave/issues/7)) Decided: Fathom is a Security Protection Asset, in scope, hardened to all 110.
+- **D7** ([#7](https://github.com/adversitydotdev/cmmc-enclave/issues/7)) Decided: dedicated `grc` account in its own OU, commercial partition in both tiers.
 - **D8** Whether we offer the ITAR tier in v0.1 or after.
 
 ## 13. Cost
