@@ -13,6 +13,7 @@ Most small defense contractors handling CUI end up with the same shape of enviro
 - **Terraform** for everything that can be automated, plus a short manual runbook for the Google Workspace settings no API can set yet.
 - **OGRL** for the documentation. Every control the enclave implements ships as OGRL objects (system, components, implementations, tests) bound to the `baseline--ogrl-cmmc-l2` baseline in [ogrl-library](https://github.com/adversitydotdev/ogrl-library). Fathom comes up already loaded with them, so the SSP, the shared responsibility matrix, and the POA&M are live from the first login.
 - **A local wizard** that runs in your browser, asks about your company (users, domain, CUI types, ITAR or not), and writes the Terraform variables and OGRL parameters. Nothing leaves your machine. Open `wizard/index.html` in a browser (offline); regenerate its data with `scripts/build-wizard`.
+- **Without a browser:** `scripts/render-config --answers answers.json --out enclave-config/` renders the same config and re-pinned OGRL digests with the wizard's own code (`--help` says where answers.json comes from).
 
 To deploy from the wizard's output: `scripts/bootstrap --config enclave-config/` (add `--plan-only` to review first, `--resume` after a failure; `--help` lists the stages).
 

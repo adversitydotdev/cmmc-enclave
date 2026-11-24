@@ -1,0 +1,104 @@
+#!/usr/bin/env node
+"use strict";
+// Render the enclave config (what the browser wizard downloads) from an
+// answers file, without a browser. No logic lives here: validation, tfvars,
+// OGRL rendering, digest re-pinning, checklist and zip all come from
+// wizard/app.js (WizardCore) and wizard/bundle-data.js, so the output cannot
+// drift from the wizard's.
+
+const fs = require("node:fs");
+const path = require("node:path");
+
+const WIZARD = path.join(__dirname, "..", "wizard");
+
+const HELP = `Usage: scripts/render-config --answers answers.json --out <dir> [--zip <file.zip>] [--force]
+
+Renders the same enclave-config the wizard builds: answers.json,
+terraform/*.auto.tfvars.json, ogrl/ (placeholders replaced, set_value and
+post_render rules applied, resource.digest re-pinned) and checklist.md.
+<dir> is the config directory itself: pass it to scripts/bootstrap --config <dir>.
+--zip also writes enclave-config-v1.zip bytes (entries under enclave-config/).
+--force writes into a non-empty <dir>, replacing the files it manages.
+
+Getting answers.json:
+  - From the wizard: fill it in and download the zip; enclave-config/answers.json
+    inside it is the saved answers (the wizard's "Resume from a saved answers.json").
+  - By hand: copy wizard/test/fixtures/answers.example.json and edit. Either
+    {"schema_version": "1", "answers": {...}} or the bare {...} answers map works.
+    Ids are in wizard/questions.json; omitted ids take the wizard's defaults.
+Answers are validated exactly as the wizard does (required, formats, options).
+They hold no secrets: the OAuth client secret is never an answer.
+`;
+
+function die(msg) {
+  process.stderr.write(`render-config: ${msg}\n`);
+  process.exit(2);
+}
+
+function parseArgs(argv) {
+  const o = {};
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === "-h" || a === "--help") o.help = true;
+    else if (a === "--force") o.force = true;
+    else if (a === "--answers" || a === "--out" || a === "--zip") {
+      if (i + 1 >= argv.length) die(`${a} needs a value`);
+      o[a.slice(2)] = argv[++i];
+    } else die(`unknown argument ${a} (see --help)`);
+  }
+  return o;
+}
+
+async function main() {
+  const o = parseArgs(process.argv.slice(2));
+  if (o.help) return process.stdout.write(HELP);
+  if (!o.answers || !o.out) die("--answers and --out are required (see --help)");
+
+  require(path.join(WIZARD, "bundle-data.js"));
+  require(path.join(WIZARD, "app.js"));
+  const core = globalThis.WizardCore;
+  const D = globalThis.WIZARD_DATA;
+
+  let doc;
+  try {
+    doc = JSON.parse(fs.readFileSync(o.answers, "utf8"));
+  } catch (e) {
+    die(`cannot read ${o.answers}: ${e.message}`);
+  }
+  if (!doc || typeof doc !== "object" || Array.isArray(doc)) die("answers file must be a JSON object");
+  let raw = doc;
+  if ("answers" in doc || "schema_version" in doc) {
+    if (doc.schema_version !== D.schema_version) die(`schema_version ${JSON.stringify(doc.schema_version)} is not ${JSON.stringify(D.schema_version)}`);
+    if (!doc.answers || typeof doc.answers !== "object") die('"answers" must be an object');
+    raw = doc.answers;
+  }
+  const known = new Set(D.questions.questions.map((q) => q.id));
+  const unknown = Object.keys(raw).filter((k) => !known.has(k));
+  if (unknown.length) die(`unknown answer id(s): ${unknown.join(", ")}`);
+
+  const { answers, errors } = core.validate(raw);
+  const bad = Object.keys(errors);
+  if (bad.length) {
+    process.stderr.write(`render-config: ${bad.length} answer(s) invalid:\n`);
+    for (const id of bad) process.stderr.write(`  ${id}: ${errors[id]}\n`);
+    process.exit(1);
+  }
+
+  const out = path.resolve(o.out);
+  if (fs.existsSync(out) && fs.readdirSync(out).length && !o.force) die(`${o.out} is not empty (use --force)`);
+  const files = await core.buildFiles(answers);
+  fs.rmSync(path.join(out, "ogrl"), { recursive: true, force: true });
+  for (const [name, text] of Object.entries(files)) {
+    const dest = path.join(out, name);
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.writeFileSync(dest, text);
+  }
+  if (o.zip) {
+    const bytes = await core.buildZip(answers);
+    fs.mkdirSync(path.dirname(path.resolve(o.zip)), { recursive: true });
+    fs.writeFileSync(o.zip, bytes);
+  }
+  process.stdout.write(`rendered ${Object.keys(files).length} files to ${o.out}${o.zip ? `; zip ${o.zip}` : ""}\n`);
+}
+
+main().catch((e) => die(e.message));
